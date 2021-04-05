@@ -5,6 +5,8 @@ interface INodeModel{
     label: string;
     href: string;
     hostname: string;
+    caps: object;
+    services: object[];
     // services: IServicesModel[]
 }
 

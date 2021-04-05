@@ -7,7 +7,8 @@ import { UtilsService } from "./utils-service";
 
 export class AppService implements IAppService{
     getHostname(): string {
-        throw new Error("Method not implemented.");
+        return "localhost";
+        // throw new Error("Method not implemented.");
     }
     utilsService: IUtilsService;
     mdnsService: IMdnsClientService;

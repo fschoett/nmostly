@@ -7,6 +7,8 @@ class NodeModel implements INodeModel{
     label: string;
     href: string;
     hostname: string;
+    caps: object;
+    services: object[];
 
     constructor( appService: IAppService, label, href ){
         this.id = appService.utilsService.generateUuid();
