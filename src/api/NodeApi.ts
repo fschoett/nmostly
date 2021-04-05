@@ -1,15 +1,17 @@
-import { IDeviceModel } from "../models/i-device-model";
-import { IFlowModel } from "../models/i-flow-model";
-import { INodeModel } from "../models/i-node-model";
-import { IReceiverModel } from "../models/i-receiver-model";
-import { ISenderModel } from "../models/i-sender-model";
-import { ISourceModel } from "../models/i-source-model";
+import { IDeviceModel, IDeviceModelConfig } from "../models/interfaces/i-device-model";
+import { IFlowModel } from "../models/interfaces/i-flow-model";
+import { INodeModel } from "../models/interfaces/i-node-model";
+import { IReceiverModel } from "../models/interfaces/i-receiver-model";
+import { ISenderModel } from "../models/interfaces/i-sender-model";
+import { ISourceModel, ISourceModelConfig } from "../models/interfaces/i-source-model";
 import { AppService } from "../services/app-service";
-import { IAppService } from "../services/i-app-service";
 import { IMdnsClientService } from "../services/i-mdns-client-service";
 
 import express from "express";
 import { NodeModel } from "../models/node-model";
+import { DeviceModel } from "../models/device-model";
+import { IAppService } from "../services/i-app-service";
+import { SourceModel } from "../models/source-model";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -33,17 +35,19 @@ export class NodeApi {
     private senders: ISenderModel[];
     private receiver: IReceiverModel[];
 
+    private appService: IAppService;
+
     constructor(config: INodeApiConfig) {
         this.config = config;
 
-        const appService = new AppService();
-        this.self = new NodeModel(appService, "some label", "href");
+        this.appService = new AppService();
+        this.self = new NodeModel( this.appService, "some label", "href");
         this.sources = [];
         this.flows = [];
         this.devices = [];
         this.senders = [];
         this.receiver = [];
-        this.mdnsClient = appService.mdnsService;
+        this.mdnsClient = this.appService.mdnsService;
     }
 
     public async start(): Promise<boolean> {
@@ -107,7 +111,9 @@ export class NodeApi {
 
         // Get a single source
         nodeApiRouter.get('/sources/:id', (req, res) => {
-            res.json(this.sources);
+            let foundSource = this.sources.find( currSource => currSource.id === req.params.id );
+            if( foundSource ){ res.json( foundSource )}
+            else{ res.sendStatus( 404 )}
         });
 
         // List flows
@@ -150,8 +156,10 @@ export class NodeApi {
     /**
      * addSource
      */
-    public addSource( newSource: ISourceModel ) {
+    public addSource( sourceConfig: ISourceModelConfig ) {
         // Message someone?
+
+        let newSource = new SourceModel( this.appService, sourceConfig );
         this.sources.push( newSource );
     }
 
@@ -165,8 +173,12 @@ export class NodeApi {
     /**
      * addDevice
      */
-    public addDevice( newDevice: IDeviceModel ) {
+    public addDevice( deviceConfig: IDeviceModelConfig ): string {
+        // lame factory?
+        let newDevice = new DeviceModel( this.appService, deviceConfig );
+        newDevice.node_id = this.self.id;
         this.devices.push( newDevice );
+        return newDevice.id;
     }
 
     /**
@@ -182,5 +194,8 @@ export class NodeApi {
     public addReceiver( newReceiver: IReceiverModel ) {
         this.receiver.push( newReceiver );
     }
+
+
+    public getId(){ return this.self.id }
 
 }

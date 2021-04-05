@@ -1,5 +1,5 @@
 import { IAppService } from "../services/i-app-service";
-import { INodeModel } from "./i-node-model";
+import { INodeModel } from "./interfaces/i-node-model";
 
 class NodeModel implements INodeModel{
     id: string;
