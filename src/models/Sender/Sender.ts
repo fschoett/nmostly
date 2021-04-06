@@ -26,6 +26,15 @@ export class Sender{
     public get id(){ return this._id }
 
     public getModel(): SenderModel {
-        return new SenderModel();
+        return {
+            id: this._id,
+            version: this._version,
+            label: this._label,
+            description: this._description,
+            flow_id: this._flow_id,
+            transport: this._transport,
+            device_id: this._device_id,
+            manifest_href: this._manifest_href
+        }
     }
 }

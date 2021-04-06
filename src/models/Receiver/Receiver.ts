@@ -30,7 +30,18 @@ export class Receiver{
     public get id(){ return this._id }
 
     public getModel() : ReceiverModel {
-        return new ReceiverModel();
+        return {
+            id: this._id,
+            version: this._version,
+            label: this._label,
+            description: this._description,
+            format: this._format,
+            caps: this._caps,
+            tags: this._tags,
+            device_id: this._device_id,
+            transport: this._transport,
+            subscription: this._subscription
+        };
     }
 
 }

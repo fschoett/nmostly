@@ -36,7 +36,7 @@ const newSender: SenderConfig = {
     label: "/home/sender/1",
     flow_id: flowId
 };
-nodeApi.addSender( newSender, flowId );
+// nodeApi.addSender( newSender, flowId );
 
 // nodeApi.addSender( newDeviceId, newSender );
 

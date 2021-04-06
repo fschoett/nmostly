@@ -28,6 +28,12 @@ export class Source{
         this._parents = [];
         this._tags = {};
         this._clock_name = null;
+
+        this._flow = new Flow( appService, {
+            description: "First Flow",
+            label: "First label",
+            source_id: "ID MISSING",
+        });
     }
 
     public get id(){ return this._id }

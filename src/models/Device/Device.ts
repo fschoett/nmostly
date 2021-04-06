@@ -22,9 +22,9 @@ export class Device {
     private _label: string;
     private _node_id: string;
 
-    private receiverList: Receiver[];
-    private senderList: Sender[];
-    private sourceList: Source[];
+    private receiverList: Receiver[] = [];
+    private senderList: Sender[] = [];
+    private sourceList: Source[] = [];
 
     constructor(
         private appService: IAppService,

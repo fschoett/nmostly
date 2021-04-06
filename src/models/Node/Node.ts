@@ -26,6 +26,8 @@ export class Node{
         this.hostname = "";
         this.caps = {};
         this.services = [{}];
+
+        this.deviceList = [];
     }
 
     addDevice( newDevice: Device ){

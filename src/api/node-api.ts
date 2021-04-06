@@ -177,7 +177,7 @@ export class NodeApi {
             const foundReceiver = receiverList
                 .find(sender => sender.id === req.params.id);
 
-            if (foundReceiver) { res.json(foundReceiver) }
+            if (foundReceiver) { res.json(foundReceiver.getModel()) }
             else { res.sendStatus(404) }
         });
 
