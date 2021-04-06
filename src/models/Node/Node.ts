@@ -1,8 +1,8 @@
 import { IAppService } from "../../services/i-app-service";
-import { Device } from "../Device/Device";
+import { Device } from "../device/device";
 
-import { NodeConfig } from "./NodeConfig";
-import { NodeModel } from "./NodeModel";
+import { NodeConfig } from "./node-config";
+import { NodeModel } from "./node-model";
 
 
 export class Node{

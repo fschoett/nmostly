@@ -9,7 +9,7 @@ import { IMdnsClientService } from "../services/i-mdns-client-service";
 
 import express from "express";
 import { NodeModel } from "../models/node-model";
-import { DeviceModel } from "../models/device-model";
+import { DeviceModel } from "../models/_old/device-model";
 import { IAppService } from "../services/i-app-service";
 import { SourceModel } from "../models/source-model";
 import { FlowModel } from "../models/flow-model";

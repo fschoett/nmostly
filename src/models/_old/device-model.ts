@@ -1,4 +1,4 @@
-import { IAppService } from "../services/i-app-service";
+import { IAppService } from "../../services/i-app-service";
 import { FormatEnum } from "./format-enums";
 import { IDeviceModel, IDeviceModelConfig } from "./Interfaces/i-device-model";
 import { IReceiverModel } from "./Interfaces/i-receiver-model";
