@@ -1,15 +1,12 @@
 // service imports
 import { IAppService } from "../../services/i-app-service";
-import { FlowModel } from "../flow/flow-model";
+import { FlowModel   } from "../flow";
+import { FormatEnum  } from "../../enums/format-enums";
 
 // other models import
-import { Receiver } from "../receiver/receiver";
-import { ReceiverModel } from "../receiver/receiver-model";
-import { Sender } from "../sender/sender";
-import { SenderModel } from "../sender/sender-model";
-import { Source } from "../source/source";
-import { SourceModel } from "../source/source-model";
-import { FormatEnum } from "../../enums/format-enums";
+import { Receiver, ReceiverModel } from "../receiver";
+import { Sender,   SenderModel   } from "../sender";
+import { Source,   SourceModel   } from "../source";
 
 // same dir level imports
 import { DeviceConfig } from "./device-config";
@@ -57,23 +54,23 @@ export class Device {
         this.receiverList.push(newReceiver);
     }
 
-    public addSource( newSource: Source ){
-        this.sourceList.push( newSource );
+    public addSource(newSource: Source) {
+        this.sourceList.push(newSource);
     }
 
-    public getSender( senderId: string ): Sender{
+    public getSender(senderId: string): Sender {
         return this.senderList
-            .find( currSender => currSender.id === senderId );
+            .find(currSender => currSender.id === senderId);
     }
 
-    public getReceiver( receiverId: string ): Receiver{
+    public getReceiver(receiverId: string): Receiver {
         return this.receiverList
-            .find( currReceiver => currReceiver.id === receiverId );
+            .find(currReceiver => currReceiver.id === receiverId);
     }
 
-    public getSource( sourceId: string ):Source {
+    public getSource(sourceId: string): Source {
         return this.sourceList
-            .find(  currSource => currSource.id === sourceId  );
+            .find(currSource => currSource.id === sourceId);
     }
 
     public getSenderList(): Sender[] {
@@ -88,7 +85,7 @@ export class Device {
         return this.sourceList;
     }
 
-    public getModel() :DeviceModel  {
+    public getModel(): DeviceModel {
         let deviceModel: DeviceModel = {
             id: this.id,
             version: this.version,
@@ -101,19 +98,19 @@ export class Device {
         return deviceModel;
     }
 
-    public getReceiverModels() : ReceiverModel[] {
-        return this.receiverList.map( currReceiver => currReceiver.getModel() );
+    public getReceiverModels(): ReceiverModel[] {
+        return this.receiverList.map(currReceiver => currReceiver.getModel());
     }
 
     public getSenderModels(): SenderModel[] {
-        return this.senderList.map( currSender => currSender.getModel() );
+        return this.senderList.map(currSender => currSender.getModel());
     }
 
     public getSourceModels(): SourceModel[] {
-        return this.sourceList.map( currSource => currSource.getModel() );
+        return this.sourceList.map(currSource => currSource.getModel());
     }
 
     public getFlowModels(): FlowModel[] {
-        return this.sourceList.map( currSource => currSource.flow.getModel() )
+        return this.sourceList.map(currSource => currSource.flow.getModel())
     }
 }
