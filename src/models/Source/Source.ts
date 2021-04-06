@@ -1,6 +1,6 @@
 import { IAppService } from "../../services/i-app-service";
 import { Flow } from "../flow/Flow";
-import { FormatEnum } from "../_old/format-enums";
+import { FormatEnum } from "../../enums/format-enums";
 import { SourceConfig } from "./source-config";
 import { SourceModel } from "./source-model";
 
@@ -35,7 +35,18 @@ export class Source{
     public get flow(){ return this._flow; }
 
     public getModel() : SourceModel{
-        return new SourceModel();
+        return {
+            id: this._id,
+            version: this._version,
+            label: this._label,
+            description: this._description,
+            format: this._format,
+            caps: this._caps,
+            tags: this._tags,
+            device_id: this._device_id,
+            parents: this._parents,
+            clock_name: this._clock_name
+        }
     }
 
 }

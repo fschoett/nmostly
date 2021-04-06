@@ -9,7 +9,7 @@ import { Sender } from "../sender/sender";
 import { SenderModel } from "../sender/sender-model";
 import { Source } from "../source/source";
 import { SourceModel } from "../source/source-model";
-import { FormatEnum } from "../_old/format-enums";
+import { FormatEnum } from "../../enums/format-enums";
 
 // same dir level imports
 import { DeviceConfig } from "./device-config";

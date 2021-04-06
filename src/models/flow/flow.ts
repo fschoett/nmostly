@@ -1,5 +1,5 @@
 import { IAppService } from "../../services/i-app-service";
-import { FormatEnum } from "../_old/format-enums";
+import { FormatEnum } from "../../enums/format-enums";
 import { FlowConfig } from "./flow-config";
 import { FlowModel } from "./flow-model";
 
