@@ -9,6 +9,7 @@ import { Sender } from "../sender/sender";
 import { SenderModel } from "../sender/sender-model";
 import { Source } from "../source/source";
 import { SourceModel } from "../source/source-model";
+import { FormatEnum } from "../_old/format-enums";
 
 // same dir level imports
 import { DeviceConfig } from "./device-config";
@@ -94,7 +95,8 @@ export class Device {
             label: this.label,
             node_id: this.node_id,
             senders: this.senders,
-            receivers: this.receivers
+            receivers: this.receivers,
+            type: FormatEnum.data
         }
         return deviceModel;
     }

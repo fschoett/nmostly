@@ -4,4 +4,7 @@ export class FlowModel{
     label: string;
     description: string;
     format: string;
+    tags: string[];
+    source_id: string;
+    parents: string[];
 }

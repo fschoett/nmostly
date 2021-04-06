@@ -5,4 +5,5 @@ export class DeviceModel{
     node_id: string;
     senders: string[];
     receivers: string[];
+    type: string;
 }
