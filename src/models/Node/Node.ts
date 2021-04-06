@@ -42,6 +42,16 @@ export class Node{
         return removedDevice;
     }
 
+    public getId(){ return this.id }
+
+    public getDeviceList(): Device[]{
+        return this.deviceList;
+    }
+
+    public getDevice( deviceId: string ): Device{
+        return this.deviceList.find( currDevice => currDevice.id === deviceId );
+    }
+
     getModel(){
         const tmpModel: NodeModel = {
             id: this.id,

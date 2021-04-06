@@ -1,10 +1,14 @@
 // service imports
 import { IAppService } from "../../services/i-app-service";
+import { FlowModel } from "../flow/flow-model";
 
 // other models import
 import { Receiver } from "../receiver/receiver";
+import { ReceiverModel } from "../receiver/receiver-model";
 import { Sender } from "../sender/sender";
+import { SenderModel } from "../sender/sender-model";
 import { Source } from "../source/source";
+import { SourceModel } from "../source/source-model";
 
 // same dir level imports
 import { DeviceConfig } from "./device-config";
@@ -56,22 +60,34 @@ export class Device {
         this.sourceList.push( newSource );
     }
 
-    public getSender( senderId: string ){
+    public getSender( senderId: string ): Sender{
         return this.senderList
             .find( currSender => currSender.id === senderId );
     }
 
-    public getReceiver( receiverId: string ){
+    public getReceiver( receiverId: string ): Receiver{
         return this.receiverList
             .find( currReceiver => currReceiver.id === receiverId );
     }
 
-    public getSource( sourceId: string ){
+    public getSource( sourceId: string ):Source {
         return this.sourceList
             .find(  currSource => currSource.id === sourceId  );
     }
 
-    public getModel() {
+    public getSenderList(): Sender[] {
+        return this.senderList;
+    }
+
+    public getReceiverList(): Receiver[] {
+        return this.receiverList;
+    }
+
+    public getSourceList(): Source[] {
+        return this.sourceList;
+    }
+
+    public getModel() :DeviceModel  {
         let deviceModel: DeviceModel = {
             id: this.id,
             version: this.version,
@@ -81,5 +97,21 @@ export class Device {
             receivers: this.receivers
         }
         return deviceModel;
+    }
+
+    public getReceiverModels() : ReceiverModel[] {
+        return this.receiverList.map( currReceiver => currReceiver.getModel() );
+    }
+
+    public getSenderModels(): SenderModel[] {
+        return this.senderList.map( currSender => currSender.getModel() );
+    }
+
+    public getSourceModels(): SourceModel[] {
+        return this.sourceList.map( currSource => currSource.getModel() );
+    }
+
+    public getFlowModels(): FlowModel[] {
+        return this.sourceList.map( currSource => currSource.flow.getModel() )
     }
 }

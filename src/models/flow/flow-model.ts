@@ -4,5 +4,4 @@ export class FlowModel{
     label: string;
     description: string;
     format: string;
-    
 }

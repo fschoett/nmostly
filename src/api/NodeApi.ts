@@ -1,18 +1,23 @@
-import { IDeviceModel, IDeviceModelConfig } from "../models/Interfaces/i-device-model";
-import { IFlowModel, IFlowModelConfig } from "../models/Interfaces/i-flow-model";
-import { INodeModel } from "../models/Interfaces/i-node-model";
-import { IReceiverModel } from "../models/Interfaces/i-receiver-model";
-import { ISenderModel } from "../models/Interfaces/i-sender-model";
-import { ISourceModel, ISourceModelConfig } from "../models/Interfaces/i-source-model";
 import { AppService } from "../services/app-service";
 import { IMdnsClientService } from "../services/i-mdns-client-service";
 
 import express from "express";
-import { NodeModel } from "../models/node-model";
-import { DeviceModel } from "../models/_old/device-model";
 import { IAppService } from "../services/i-app-service";
-import { SourceModel } from "../models/source-model";
-import { FlowModel } from "../models/flow-model";
+import { Node } from "../models/node/Node";
+import { NodeConfig } from "../models/node/node-config";
+import { SourceModel } from "../models/source/source-model";
+// import { FlowModel } from "../models/flow/flow-model";
+// import { Flow } from "../models/flow/Flow";
+import { Sender } from "../models/sender/sender";
+import { Receiver } from "../models/receiver/receiver";
+import { SourceConfig } from "../models/source/source-config";
+import { Source } from "../models/source/source";
+import { SenderConfig } from "../models/sender/sender-config";
+import { DeviceConfig } from "../models/device/device-config";
+import { Device } from "../models/device/device";
+import { ReceiverConfig } from "../models/receiver/receiver-config";
+
+import {Flow, FlowModel } from "../models/flow";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -30,27 +35,15 @@ export class NodeApi {
     private mdnsClient: IMdnsClientService;
 
 
-    private self: INodeModel;
-    private sources: ISourceModel[];
-    private flows: IFlowModel[];
-    private devices: IDeviceModel[];
-    private senders: ISenderModel[];
-    private receiver: IReceiverModel[];
-
+    private self: Node;
     private appService: IAppService;
 
     constructor(config: INodeApiConfig) {
         this.config = config;
-
         this.appService = new AppService();
-        this.self = new NodeModel( this.appService, "some label", "href");
-        this.sources = [];
-        this.flows = [];
-        this.devices = [];
-        this.senders = [];
-        this.receiver = [];
-        this.mdnsClient = this.appService.mdnsService;
+        this.self = new Node(this.appService, new NodeConfig())
 
+        this.mdnsClient = this.appService.mdnsService;
     }
 
     public async start(): Promise<boolean> {
@@ -94,121 +87,168 @@ export class NodeApi {
 
 
         nodeApiRouter.get('/self/', (req, res) => {
-            res.json(this.self);
+            res.json(this.self.getModel());
         });
 
         // List devices
         nodeApiRouter.get('/devices/', (req, res) => {
-            res.json(this.devices);
+            res.json(this.self
+                .getDeviceList()
+                .map(currDevice => currDevice.getModel())
+            );
         });
 
         // Get a single device
         nodeApiRouter.get('/devices/:id', (req, res) => {
-            res.json(this.devices);
+            res.json(this.self
+                .getDevice(req.params.id)
+                .getModel()
+            );
         });
 
         // List sources
         nodeApiRouter.get('/sources/', (req, res) => {
-            res.json(this.sources);
+            let sourceModels: SourceModel[] = this.self
+                .getDeviceList()
+                .map(currDevice => currDevice.getSourceModels())
+                .reduce((acc, curr) => acc.concat(curr));
+
+            res.json(sourceModels);
         });
 
         // Get a single source
         nodeApiRouter.get('/sources/:id', (req, res) => {
-            let foundSource = this.sources.find( currSource => currSource.id === req.params.id );
-            if( foundSource ){ res.json( foundSource )}
-            else{ res.sendStatus( 404 )}
+            let foundSource: SourceModel;
+            let deviceList = this.self.getDeviceList();
+            deviceList.every(device => {
+                foundSource = device
+                    .getSourceList()
+                    .find(source => source.id === req.params.id);
+
+                if (foundSource)
+                    return false
+                else
+                    return true;
+            });
+
+            if (foundSource) { res.json(foundSource) }
+            else { res.sendStatus(404) }
         });
 
         // List flows
         nodeApiRouter.get('/flows/', (req, res) => {
-            res.json(this.flows);
+            let foundFlows: FlowModel[] = this.self
+                .getDeviceList()
+                .map(device => device.getFlowModels())
+                .reduce((acc, curr) => acc.concat(curr));
+
+            res.json(foundFlows);
         });
 
         // Get a single flow
         nodeApiRouter.get('/flows/:id', (req, res) => {
-            res.json(this.flows);
+            let flowList: Flow[] = this.self
+                .getDeviceList()
+                .map(device => device.getSourceList().map(source => source.flow))
+                .reduce((acc, curr) => acc.concat(curr));
+
+            let foundFlow: Flow = flowList.find(flow => flow.id === req.params.id);
+
+            if (foundFlow) { res.json(foundFlow) }
+            else { res.sendStatus(404) }
         });
 
         // List senders
         nodeApiRouter.get('/senders/', (req, res) => {
-            res.json(this.senders);
+            res.json(this.self.getDeviceList()
+                .map(device => device.getSenderModels())
+                .reduce((acc, curr) => acc.concat(curr))
+            );
         });
 
         // Get a single sender
         nodeApiRouter.get('/senders/:id', (req, res) => {
-            res.json(this.senders);
+            const senderList: Sender[] = this.self.getDeviceList()
+                .map(device => device.getSenderList())
+                .reduce((acc, curr) => acc.concat(curr));
+
+            const foundSender = senderList
+                .find(sender => sender.id === req.params.id);
+
+            if (foundSender) { res.json(foundSender) }
+            else { res.sendStatus(404) }
         });
 
         // List receivers
         nodeApiRouter.get('/receivers/', (req, res) => {
-            res.json(this.receiver);
+            res.json(this.self.getDeviceList()
+                .map(device => device.getReceiverModels())
+                .reduce((acc, curr) => acc.concat(curr))
+            );
         });
 
         // Get a single receiver
         nodeApiRouter.get('/receivers/:id', (req, res) => {
-            res.json(this.receiver);
+            const receiverList: Receiver[] = this.self.getDeviceList()
+                .map(device => device.getReceiverList())
+                .reduce((acc, curr) => acc.concat(curr));
+
+            const foundReceiver = receiverList
+                .find(sender => sender.id === req.params.id);
+
+            if (foundReceiver) { res.json(foundReceiver) }
+            else { res.sendStatus(404) }
         });
 
         app.listen(5432, () => {
-            console.log("Started second expresss server. what will happen??");
-
+            console.log("Started NMOS Server");
         });
+
         return false;
     }
 
-    /**
-     * addSource
-     */
-    public addSource( sourceConfig: ISourceModelConfig ): string {
-        // Message someone?
 
-        let newSource = new SourceModel( this.appService, sourceConfig );
-        this.sources.push( newSource );
-        return newSource.id;
-    }
-
-    /**
-     * addFlow
-     */
-    public addFlow( newFlowConfig: IFlowModelConfig ) {
-        const newFlow = new FlowModel( this.appService, newFlowConfig );
-        const sourceId = newFlowConfig.source_id;
-        /*
-        const deviceId = this.self.getDeviceList().find( currDevice => {
-            currDevice.sourceList.find( currSource => {
-                currSource.id === sourceId;
-            })
-        });
-        */
-        this.flows.push(  newFlow );
-    }
-
-    /**
-     * addDevice
-     */
-    public addDevice( deviceConfig: IDeviceModelConfig ): string {
-        // lame factory?
-        let newDevice = new DeviceModel( this.appService, deviceConfig );
-        newDevice.node_id = this.self.id;
-        this.devices.push( newDevice );
+    // PUBLIC API
+    public addDevice( config :DeviceConfig ): string {
+        let newDevice = new Device(this.appService, config, this.self.getId() );
+        this.self.addDevice( newDevice );
         return newDevice.id;
     }
 
-    /**
-     * addSender
-     */
-    public addSender( newSender: ISenderModel ) {
-        this.senders.push( newSender );
+    public addSource(sourceConfig: SourceConfig, deviceId: string): string {
+        const newSource = new Source(this.appService, sourceConfig);
+
+        this.self.getDeviceList()
+            .find(device => device.id === deviceId)
+            .addSource(newSource);
+
+        return newSource.id;
     }
 
-    /**
-     * addReceiver
-     */
-    public addReceiver( newReceiver: IReceiverModel ) {
-        this.receiver.push( newReceiver );
+    public addSender(config: SenderConfig, flowId: string): string{
+        let flowList: Flow[] = this.self
+            .getDeviceList()
+            .map(device => device.getSourceList().map(source => source.flow))
+            .reduce((acc, curr) => acc.concat(curr));
+
+        let foundFlow: Flow = flowList.find(flow => flow.id === flowId );
+
+        if( foundFlow ){
+            // create new sender
+            // add flow to sender
+            const newSender = new Sender( this.appService, config);
+            this.self.getDevice( foundFlow.device_id ).addSender( newSender );
+            return newSender.id;
+        }
     }
 
+    public addReceiver( config: ReceiverConfig, deviceId: string) {
+        const newReceiver = new Receiver( this.appService, config );
 
-    public getId(){ return this.self.id }
+        const foundDevice = this.self.getDevice( deviceId )
+        if( foundDevice ){
+            foundDevice.addReceiver( newReceiver );
+        }
+    }
 
 }
