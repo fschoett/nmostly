@@ -1,23 +1,15 @@
-import { AppService } from "../services/app-service";
-import { IMdnsClientService } from "../services/i-mdns-client-service";
-
 import express from "express";
-import { IAppService } from "../services/i-app-service";
-import { Node } from "../models/node/Node";
-import { NodeConfig } from "../models/node/node-config";
-import { SourceModel } from "../models/source/source-model";
-// import { FlowModel } from "../models/flow/flow-model";
-// import { Flow } from "../models/flow/Flow";
-import { Sender } from "../models/sender/sender";
-import { Receiver } from "../models/receiver/receiver";
-import { SourceConfig } from "../models/source/source-config";
-import { Source } from "../models/source/source";
-import { SenderConfig } from "../models/sender/sender-config";
-import { DeviceConfig } from "../models/device/device-config";
-import { Device } from "../models/device/device";
-import { ReceiverConfig } from "../models/receiver/receiver-config";
 
-import {Flow, FlowModel } from "../models/flow";
+import { IMdnsClientService } from "../services/i-mdns-client-service";
+import { IAppService } from "../services/i-app-service";
+import { AppService } from "../services/app-service";
+
+import { Node, NodeModel, NodeConfig} from "../models/node";
+import { Device, DeviceModel,  DeviceConfig} from "../models/device";
+import { Sender, SenderModel, SenderConfig } from "../models/sender";
+import { Receiver, ReceiverModel,  ReceiverConfig} from "../models/receiver";
+import { Source, SourceModel, SourceConfig } from "../models/source";
+import { Flow,   FlowModel,   FlowConfig   } from "../models/flow";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -118,20 +110,9 @@ export class NodeApi {
 
         // Get a single source
         nodeApiRouter.get('/sources/:id', (req, res) => {
-            let foundSource: SourceModel;
-            let deviceList = this.self.getDeviceList();
-            deviceList.every(device => {
-                foundSource = device
-                    .getSourceList()
-                    .find(source => source.id === req.params.id);
+            const foundSource = this.findSource(req.params.id);
 
-                if (foundSource)
-                    return false
-                else
-                    return true;
-            });
-
-            if (foundSource) { res.json(foundSource) }
+            if (foundSource) { res.json(foundSource.getModel()) }
             else { res.sendStatus(404) }
         });
 
@@ -209,9 +190,9 @@ export class NodeApi {
 
 
     // PUBLIC API
-    public addDevice( config :DeviceConfig ): string {
-        let newDevice = new Device(this.appService, config, this.self.getId() );
-        this.self.addDevice( newDevice );
+    public addDevice(config: DeviceConfig): string {
+        let newDevice = new Device(this.appService, config, this.self.getId());
+        this.self.addDevice(newDevice);
         return newDevice.id;
     }
 
@@ -225,30 +206,47 @@ export class NodeApi {
         return newSource.id;
     }
 
-    public addSender(config: SenderConfig, flowId: string): string{
+    public addSender(config: SenderConfig, flowId: string): string {
         let flowList: Flow[] = this.self
             .getDeviceList()
             .map(device => device.getSourceList().map(source => source.flow))
             .reduce((acc, curr) => acc.concat(curr));
 
-        let foundFlow: Flow = flowList.find(flow => flow.id === flowId );
+        let foundFlow: Flow = flowList.find(flow => flow.id === flowId);
 
-        if( foundFlow ){
+        if (foundFlow) {
             // create new sender
             // add flow to sender
-            const newSender = new Sender( this.appService, config);
-            this.self.getDevice( foundFlow.device_id ).addSender( newSender );
+            const newSender = new Sender(this.appService, config);
+            this.self.getDevice(foundFlow.device_id).addSender(newSender);
             return newSender.id;
         }
     }
 
-    public addReceiver( config: ReceiverConfig, deviceId: string) {
-        const newReceiver = new Receiver( this.appService, config );
+    public addReceiver(config: ReceiverConfig, deviceId: string) {
+        const newReceiver = new Receiver(this.appService, config);
 
-        const foundDevice = this.self.getDevice( deviceId )
-        if( foundDevice ){
-            foundDevice.addReceiver( newReceiver );
+        const foundDevice = this.self.getDevice(deviceId)
+        if (foundDevice) {
+            foundDevice.addReceiver(newReceiver);
         }
+    }
+
+
+    public findSource(sourceId: string): Source {
+        let foundSource: Source;
+        let deviceList = this.self.getDeviceList();
+        deviceList.every(device => {
+            foundSource = device
+                .getSourceList()
+                .find(source => source.id === sourceId);
+
+            if (foundSource)
+                return false
+            else
+                return true;
+        });
+        return foundSource;
     }
 
 }
