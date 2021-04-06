@@ -1,9 +1,9 @@
 import { IAppService } from "../services/i-app-service";
 import { FormatEnum } from "./format-enums";
-import { IDeviceModel, IDeviceModelConfig } from "./interfaces/i-device-model";
-import { IReceiverModel } from "./interfaces/i-receiver-model";
-import { ISenderModel } from "./interfaces/i-sender-model";
-import { ISourceModel } from "./interfaces/i-source-model";
+import { IDeviceModel, IDeviceModelConfig } from "./Interfaces/i-device-model";
+import { IReceiverModel } from "./Interfaces/i-receiver-model";
+import { ISenderModel } from "./Interfaces/i-sender-model";
+import { ISourceModel } from "./Interfaces/i-source-model";
 
 export class DeviceModel implements IDeviceModel {
     id: string;

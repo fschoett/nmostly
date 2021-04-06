@@ -1,6 +1,6 @@
 import { IAppService } from "../services/i-app-service";
 import { FormatEnum } from "./format-enums";
-import { IFlowModel, IFlowModelConfig } from "./interfaces/i-flow-model";
+import { IFlowModel, IFlowModelConfig } from "./Interfaces/i-flow-model";
 
 export class FlowModel implements IFlowModel{
     id: string;

@@ -1,8 +1,8 @@
 import { IAppService } from "../services/i-app-service";
-import { IDeviceModel, IDeviceModelConfig } from "./interfaces/i-device-model";
-import { INodeModel } from "./interfaces/i-node-model";
+import { IDeviceModel, IDeviceModelConfig } from "./Interfaces/i-device-model";
+import { INodeModel } from "./Interfaces/i-node-model";
 
-class NodeModel implements INodeModel{
+class NodeModelOld implements INodeModel{
     id: string;
     version: string;
     label: string;
@@ -49,5 +49,5 @@ class NodeModel implements INodeModel{
 
 
 export {
-    NodeModel
+    NodeModelOld
 };

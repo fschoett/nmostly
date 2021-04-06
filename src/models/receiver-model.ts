@@ -1,5 +1,5 @@
 import { IAppService } from "../services/i-app-service";
-import { IReceiverModel } from "./interfaces/i-receiver-model";
+import { IReceiverModel } from "./Interfaces/i-receiver-model";
 
 export class ReceiverModel implements IReceiverModel{
     id: string;

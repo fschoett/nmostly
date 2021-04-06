@@ -1,8 +1,8 @@
 import { NodeApi } from './api/NodeApi';
-import { IDeviceModelConfig } from './models/interfaces/i-device-model';
-import { IFlowModelConfig } from './models/interfaces/i-flow-model';
-import { ISenderModelConfig } from './models/interfaces/i-sender-model';
-import { ISourceModel, ISourceModelConfig } from './models/interfaces/i-source-model';
+import { IDeviceModelConfig } from './models/Interfaces/i-device-model';
+import { IFlowModelConfig } from './models/Interfaces/i-flow-model';
+import { ISenderModelConfig } from './models/Interfaces/i-sender-model';
+import { ISourceModel, ISourceModelConfig } from './models/Interfaces/i-source-model';
 
 
 class Tmp{ 

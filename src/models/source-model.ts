@@ -1,7 +1,7 @@
 import { IAppService } from "../services/i-app-service";
 import { FormatEnum } from "./format-enums";
-import { IFlowModel } from "./interfaces/i-flow-model";
-import { ISourceModel, ISourceModelConfig } from "./interfaces/i-source-model";
+import { IFlowModel } from "./Interfaces/i-flow-model";
+import { ISourceModel, ISourceModelConfig } from "./Interfaces/i-source-model";
 
 export class SourceModel implements ISourceModel {
     id: string;

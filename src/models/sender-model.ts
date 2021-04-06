@@ -1,5 +1,5 @@
 import { IAppService } from "../services/i-app-service";
-import { ISenderModel, ISenderModelConfig } from "./interfaces/i-sender-model";
+import { ISenderModel, ISenderModelConfig } from "./Interfaces/i-sender-model";
 
 export class SenderModel implements ISenderModel{
     id: string;

@@ -1,9 +1,9 @@
-import { IDeviceModel, IDeviceModelConfig } from "../models/interfaces/i-device-model";
-import { IFlowModel, IFlowModelConfig } from "../models/interfaces/i-flow-model";
-import { INodeModel } from "../models/interfaces/i-node-model";
-import { IReceiverModel } from "../models/interfaces/i-receiver-model";
-import { ISenderModel } from "../models/interfaces/i-sender-model";
-import { ISourceModel, ISourceModelConfig } from "../models/interfaces/i-source-model";
+import { IDeviceModel, IDeviceModelConfig } from "../models/Interfaces/i-device-model";
+import { IFlowModel, IFlowModelConfig } from "../models/Interfaces/i-flow-model";
+import { INodeModel } from "../models/Interfaces/i-node-model";
+import { IReceiverModel } from "../models/Interfaces/i-receiver-model";
+import { ISenderModel } from "../models/Interfaces/i-sender-model";
+import { ISourceModel, ISourceModelConfig } from "../models/Interfaces/i-source-model";
 import { AppService } from "../services/app-service";
 import { IMdnsClientService } from "../services/i-mdns-client-service";
 
