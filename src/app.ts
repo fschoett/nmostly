@@ -1,5 +1,6 @@
 import { NodeApi } from './api/NodeApi';
 import { IDeviceModelConfig } from './models/interfaces/i-device-model';
+import { IFlowModelConfig } from './models/interfaces/i-flow-model';
 import { ISenderModelConfig } from './models/interfaces/i-sender-model';
 import { ISourceModel, ISourceModelConfig } from './models/interfaces/i-source-model';
 
@@ -40,12 +41,23 @@ const newSource: ISourceModelConfig = {
 }
 
 
+
+
 // const newSender: ISenderModelConfig = {
     //description: "This is a nice sender! Lets see whats going on in here!",
     //label : "NewSenderLabel"
 //};
 
-nodeApi.addSource( newSource );
+const newSourceId = nodeApi.addSource( newSource );
+
+const newFlow : IFlowModelConfig ={
+    description: "New Flow For new source",
+    label: "flow/1",
+    source_id: newSourceId
+
+}
+
+
 
 // nodeApi.addSender( newDeviceId, newSender );
 

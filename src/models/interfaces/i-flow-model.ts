@@ -8,3 +8,12 @@ export interface IFlowModel{
     source_id: string;
     parents: string[];
 }
+
+
+export interface IFlowModelConfig{
+    label: string;
+    description: string;
+    source_id: string;
+    tags? : string [];
+    format? : string;
+}

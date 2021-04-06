@@ -1,3 +1,4 @@
+import { IDeviceModel } from "./i-device-model";
 
 interface INodeModel{
     id: string;
@@ -8,6 +9,8 @@ interface INodeModel{
     caps: object;
     services: object[];
     // services: IServicesModel[]
+
+    getDeviceList(): IDeviceModel [];
 }
 
 export { INodeModel }

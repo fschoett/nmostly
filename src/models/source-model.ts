@@ -1,5 +1,6 @@
 import { IAppService } from "../services/i-app-service";
 import { FormatEnum } from "./format-enums";
+import { IFlowModel } from "./interfaces/i-flow-model";
 import { ISourceModel, ISourceModelConfig } from "./interfaces/i-source-model";
 
 export class SourceModel implements ISourceModel {
@@ -13,6 +14,8 @@ export class SourceModel implements ISourceModel {
     device_id: string;
     parents: string[];
     clock_name: string;
+
+    private flowList: IFlowModel [] = [];
 
 
     constructor(
@@ -28,6 +31,11 @@ export class SourceModel implements ISourceModel {
         this.parents = [];
         this.tags = {};
         this.clock_name = null;
+    }
+
+
+    public addFlow( newFlow: IFlowModel ){
+        this.flowList.push( newFlow );
     }
 
 }

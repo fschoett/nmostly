@@ -1,5 +1,5 @@
 import { IDeviceModel, IDeviceModelConfig } from "../models/interfaces/i-device-model";
-import { IFlowModel } from "../models/interfaces/i-flow-model";
+import { IFlowModel, IFlowModelConfig } from "../models/interfaces/i-flow-model";
 import { INodeModel } from "../models/interfaces/i-node-model";
 import { IReceiverModel } from "../models/interfaces/i-receiver-model";
 import { ISenderModel } from "../models/interfaces/i-sender-model";
@@ -12,6 +12,7 @@ import { NodeModel } from "../models/node-model";
 import { DeviceModel } from "../models/device-model";
 import { IAppService } from "../services/i-app-service";
 import { SourceModel } from "../models/source-model";
+import { FlowModel } from "../models/flow-model";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -27,6 +28,7 @@ export class NodeApi {
     private config;
     private logger;
     private mdnsClient: IMdnsClientService;
+
 
     private self: INodeModel;
     private sources: ISourceModel[];
@@ -48,6 +50,7 @@ export class NodeApi {
         this.senders = [];
         this.receiver = [];
         this.mdnsClient = this.appService.mdnsService;
+
     }
 
     public async start(): Promise<boolean> {
@@ -156,17 +159,27 @@ export class NodeApi {
     /**
      * addSource
      */
-    public addSource( sourceConfig: ISourceModelConfig ) {
+    public addSource( sourceConfig: ISourceModelConfig ): string {
         // Message someone?
 
         let newSource = new SourceModel( this.appService, sourceConfig );
         this.sources.push( newSource );
+        return newSource.id;
     }
 
     /**
      * addFlow
      */
-    public addFlow( newFlow: IFlowModel ) {
+    public addFlow( newFlowConfig: IFlowModelConfig ) {
+        const newFlow = new FlowModel( this.appService, newFlowConfig );
+        const sourceId = newFlowConfig.source_id;
+        /*
+        const deviceId = this.self.getDeviceList().find( currDevice => {
+            currDevice.sourceList.find( currSource => {
+                currSource.id === sourceId;
+            })
+        });
+        */
         this.flows.push(  newFlow );
     }
 

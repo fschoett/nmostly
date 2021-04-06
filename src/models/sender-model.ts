@@ -11,7 +11,6 @@ export class SenderModel implements ISenderModel{
     device_id: string;
     manifest_href: string;
 
-
     constructor( appService: IAppService, config: ISenderModelConfig){ 
         this.id = appService.utilsService.generateUuid();
         this.version = appService.utilsService.generateVersion();
@@ -22,5 +21,11 @@ export class SenderModel implements ISenderModel{
         this.device_id = config.device_id;
         this.manifest_href = "";
     }
+
+    public publishFlow( flow_id : string ){
+        this.flow_id = flow_id ;
+    }
+
+    public removeFlow(){ this.flow_id = undefined }
 
 }
