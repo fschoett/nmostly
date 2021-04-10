@@ -87,6 +87,8 @@ export class NodeApi {
 
 
         nodeApiRouter.get('/self/', (req, res) => {
+            console.log( this.self.getModel() );
+            
             res.json(this.self.getModel());
         });
 

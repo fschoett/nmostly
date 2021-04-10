@@ -1,3 +1,3 @@
 export * from "./node"
-export * from "./node-config"
-export * from "./node-model"
+export * from "./i-node-config"
+export * from "./i-node-model"
