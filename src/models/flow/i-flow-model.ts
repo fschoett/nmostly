@@ -1,4 +1,4 @@
-import { IResourceCoreModel } from "../resource-config";
+import { IResourceCoreModel } from "../resource-core";
 
 export interface IFlowModel extends IResourceCoreModel{
     source_id: string;
