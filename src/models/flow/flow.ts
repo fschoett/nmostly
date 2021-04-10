@@ -2,7 +2,7 @@ import { IAppService } from "../../services/i-app-service";
 import { FormatEnum } from "../../enums/format-enums";
 import { IFlowConfig } from "./i-flow-config";
 import { IFlowModel } from "./i-flow-model";
-import { ResourceCore } from "../resource-config";
+import { ResourceCore } from "../resource-core";
 
 export class Flow extends ResourceCore{
 

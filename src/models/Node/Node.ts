@@ -1,6 +1,6 @@
 import { IAppService } from "../../services/i-app-service";
 import { Device } from "../device/device";
-import { ResourceCore } from "../resource-config/resource-core";
+import { ResourceCore } from "../resource-core/resource-core";
 
 import { INodeConfig } from "./node-config";
 import { INodeModel } from "./node-model";

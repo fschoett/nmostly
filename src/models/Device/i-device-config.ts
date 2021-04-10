@@ -1,4 +1,4 @@
-import { IResourceCoreConfig } from "../resource-config";
+import { IResourceCoreConfig } from "../resource-core";
 
 export interface IDeviceConfig extends IResourceCoreConfig{
     node_id?: string;

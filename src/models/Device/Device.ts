@@ -9,7 +9,7 @@ import { Source,   SourceModel   } from "../source";
 import { IFlowModel } from "../flow";
 
 // same dir level imports
-import { ResourceCore } from "../resource-config";
+import { ResourceCore } from "../resource-core";
 import { IDeviceConfig } from "./i-device-config";
 import { IDeviceModel } from "./i-device-model";
 

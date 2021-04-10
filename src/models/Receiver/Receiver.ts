@@ -1,5 +1,5 @@
 import { AppService } from "../../services/app-service";
-import { ResourceCore } from "../resource-config";
+import { ResourceCore } from "../resource-core";
 import { IReceiverConfig } from "./i-receiver-config";
 import { IReceiverModel } from "./i-receiver-model";
 
