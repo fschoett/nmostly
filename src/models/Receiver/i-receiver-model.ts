@@ -1,8 +1,6 @@
-export class ReceiverModel {
-    id: string;
-    version: string;
-    label: string;
-    description: string;
+import { IResourceCoreModel } from "../resource-config";
+
+export interface IReceiverModel extends IResourceCoreModel {
     format: string;
     caps: string[];
     tags: string[];

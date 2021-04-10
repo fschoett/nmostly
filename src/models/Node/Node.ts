@@ -1,15 +1,13 @@
 import { IAppService } from "../../services/i-app-service";
 import { Device } from "../device/device";
+import { ResourceCore } from "../resource-config/resource-core";
 
-import { NodeConfig } from "./node-config";
-import { NodeModel } from "./node-model";
+import { INodeConfig } from "./node-config";
+import { INodeModel } from "./node-model";
 
 
-export class Node{
+export class Node extends ResourceCore{
 
-    private id: string;
-    private version: string;
-    private label: string;
     private href: string;
     private hostname: string;
     private caps: object;
@@ -17,14 +15,14 @@ export class Node{
 
     private deviceList: Device[];
 
-    constructor( private appService: IAppService, config: NodeConfig ){
-        this.id = this.appService.utilsService.generateUuid();
-        this.version = this.appService.utilsService.generateVersion();
-        this.label = config.label;
+    constructor( appService: IAppService, config: INodeConfig ){
+        super( appService, config );
+
         this.href = config.href;
 
         this.hostname = "";
         this.caps = {};
+
         this.services = [{}];
 
         this.deviceList = [];
@@ -55,10 +53,12 @@ export class Node{
     }
 
     getModel(){
-        const tmpModel: NodeModel = {
+        const tmpModel: INodeModel = {
             id: this.id,
             version: this.version,
+            description: this.description,
             label: this.label,
+            tags: {},
             href: this.href,
             caps : this.caps,
             hostname: this.hostname,

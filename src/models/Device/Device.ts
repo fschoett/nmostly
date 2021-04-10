@@ -1,22 +1,22 @@
 // service imports
 import { IAppService } from "../../services/i-app-service";
-import { FlowModel   } from "../flow";
 import { FormatEnum  } from "../../enums/format-enums";
 
 // other models import
-import { Receiver, ReceiverModel } from "../receiver";
+import { Receiver, IReceiverModel } from "../receiver";
 import { Sender,   SenderModel   } from "../sender";
 import { Source,   SourceModel   } from "../source";
+import { IFlowModel } from "../flow";
 
 // same dir level imports
-import { DeviceConfig } from "./device-config";
-import { DeviceModel } from "./device-model";
+import { ResourceCore } from "../resource-config";
+import { IDeviceConfig } from "./i-device-config";
+import { IDeviceModel } from "./i-device-model";
 
-export class Device {
 
-    private _id: string;
-    private _version: string;
-    private _label: string;
+
+export class Device extends ResourceCore{
+
     private _node_id: string;
 
     private receiverList: Receiver[] = [];
@@ -24,19 +24,15 @@ export class Device {
     private sourceList: Source[] = [];
 
     constructor(
-        private appService: IAppService,
-        private config: DeviceConfig,
+        appService: IAppService,
+        config: IDeviceConfig,
         node_id: string
     ) {
-        this._id = appService.utilsService.generateUuid();
-        this._version = appService.utilsService.generateVersion();
-        this._label = config.label;
+        super( appService, config );
         this._node_id = node_id;
     }
 
-    public get id() { return this._id }
-    public get version() { return this._version }
-    public get label() { return this._label }
+    
     public get node_id() { return this._node_id }
 
     public get senders() {
@@ -85,20 +81,23 @@ export class Device {
         return this.sourceList;
     }
 
-    public getModel(): DeviceModel {
-        let deviceModel: DeviceModel = {
+    public getModel(): IDeviceModel {
+        let deviceModel: IDeviceModel = {
             id: this.id,
             version: this.version,
-            label: this.label,
+            type: "urn:x-nmos:device:generic",
+            controls: [],
+            description: this.description,
             node_id: this.node_id,
+            tags: this.tags,
+            label: this.label,
             senders: this.senders,
-            receivers: this.receivers,
-            type: FormatEnum.data
+            receivers: this.receivers
         }
         return deviceModel;
     }
 
-    public getReceiverModels(): ReceiverModel[] {
+    public getReceiverModels(): IReceiverModel[] {
         return this.receiverList.map(currReceiver => currReceiver.getModel());
     }
 
@@ -110,7 +109,7 @@ export class Device {
         return this.sourceList.map(currSource => currSource.getModel());
     }
 
-    public getFlowModels(): FlowModel[] {
+    public getFlowModels(): IFlowModel[] {
         return this.sourceList.map(currSource => currSource.flow.getModel())
     }
 }

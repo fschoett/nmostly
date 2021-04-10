@@ -1,23 +1,25 @@
 import { NodeApi } from './api/node-api';
-import { DeviceConfig } from './models/device/device-config';
-import { ReceiverConfig } from './models/receiver/receiver-config';
+import { IDeviceConfig } from './models/device/i-device-config';
+import { IReceiverConfig } from './models/receiver/i-receiver-config';
 import { SenderConfig } from './models/sender/sender-config';
 import { SourceConfig } from './models/source/source-config';
 
 
 const nodeApi = new NodeApi( { memeber1: "1234"});
 
-const newDevice:  DeviceConfig = {
-    label : "New Label"
+const newDevice:  IDeviceConfig = {
+    description: "Description",
+    label: "first/device",
+    tags: {}
 };
 const newDeviceId = nodeApi.addDevice( newDevice );
 
-const firstReceiver: ReceiverConfig = {
-    description: "First Receiver Description",
+const firstReceiver: IReceiverConfig = {
+    description: "Receiver Description",
     deviceId: newDeviceId,
-    format: "123",
-    label: "/home/receiver/1"
-
+    format: "Format",
+    label: "reciever/1",
+    tags: {}
 };
 const newReceiverId = nodeApi.addReceiver( firstReceiver, newDeviceId );
 

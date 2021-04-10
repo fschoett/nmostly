@@ -1,4 +1,4 @@
-export * from "./device-config";
-export * from "./device-model";
+export * from "./i-device-config";
+export * from "./i-device-model";
 export * from "./device";
 

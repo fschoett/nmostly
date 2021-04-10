@@ -1,7 +1,6 @@
-export class NodeModel {
-    id: string;
-    version: string;
-    label: string;
+import { IResourceCoreModel } from "../resource-config";
+
+export interface INodeModel extends IResourceCoreModel{
     href: string;
     hostname: string;
     caps: object;

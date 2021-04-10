@@ -1,3 +1,3 @@
-export * from "./flow-model";
-export * from "./flow-config";
+export * from "./i-flow-model";
+export * from "./i-flow-config";
 export * from "./flow";

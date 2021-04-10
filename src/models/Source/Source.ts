@@ -32,7 +32,9 @@ export class Source{
         this._flow = new Flow( appService, {
             description: "First Flow",
             label: "First label",
-            source_id: "ID MISSING",
+            source_id: this._id,
+            device_id: this._device_id,
+            tags: {}
         });
     }
 

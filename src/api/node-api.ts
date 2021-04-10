@@ -4,12 +4,12 @@ import { IMdnsClientService } from "../services/i-mdns-client-service";
 import { IAppService } from "../services/i-app-service";
 import { AppService } from "../services/app-service";
 
-import { Node, NodeModel, NodeConfig} from "../models/node";
-import { Device, DeviceModel,  DeviceConfig} from "../models/device";
+import { Node,   INodeModel,   INodeConfig} from "../models/node";
+import { Device, IDeviceModel, IDeviceConfig} from "../models/device";
 import { Sender, SenderModel, SenderConfig } from "../models/sender";
-import { Receiver, ReceiverModel,  ReceiverConfig} from "../models/receiver";
+import { Receiver, IReceiverModel,  IReceiverConfig} from "../models/receiver";
 import { Source, SourceModel, SourceConfig } from "../models/source";
-import { Flow,   FlowModel,   FlowConfig   } from "../models/flow";
+import { Flow,   IFlowModel,   IFlowConfig   } from "../models/flow";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -33,8 +33,16 @@ export class NodeApi {
     constructor(config: INodeApiConfig) {
         this.config = config;
         this.appService = new AppService();
-        this.self = new Node(this.appService, new NodeConfig())
+        
+        const nodeConfig: INodeConfig = {
+            description : "Node",
+            hostname: "Hostname",
+            href: "HREF",
+            label: "NodeName",
+            tags: {}
+        }
 
+        this.self = new Node(this.appService, nodeConfig );
         this.mdnsClient = this.appService.mdnsService;
     }
 
@@ -118,7 +126,7 @@ export class NodeApi {
 
         // List flows
         nodeApiRouter.get('/flows/', (req, res) => {
-            let foundFlows: FlowModel[] = this.self
+            let foundFlows: IFlowModel[] = this.self
                 .getDeviceList()
                 .map(device => device.getFlowModels())
                 .reduce((acc, curr) => acc.concat(curr));
@@ -135,7 +143,7 @@ export class NodeApi {
 
             let foundFlow: Flow = flowList.find(flow => flow.id === req.params.id);
 
-            if (foundFlow) { res.json(foundFlow) }
+            if (foundFlow) { res.json(foundFlow.getModel()) }
             else { res.sendStatus(404) }
         });
 
@@ -190,7 +198,7 @@ export class NodeApi {
 
 
     // PUBLIC API
-    public addDevice(config: DeviceConfig): string {
+    public addDevice(config: IDeviceConfig): string {
         let newDevice = new Device(this.appService, config, this.self.getId());
         this.self.addDevice(newDevice);
         return newDevice.id;
@@ -223,7 +231,7 @@ export class NodeApi {
         }
     }
 
-    public addReceiver(config: ReceiverConfig, deviceId: string) {
+    public addReceiver(config: IReceiverConfig, deviceId: string) {
         const newReceiver = new Receiver(this.appService, config);
 
         const foundDevice = this.self.getDevice(deviceId)
