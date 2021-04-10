@@ -1,5 +1,6 @@
 import { IAppService } from "../../services/i-app-service";
 import { IResourceCoreConfig } from "./i-resource-core-config";
+import { IResourceCoreModel } from "./i-resource-core-model";
 
 export class ResourceCore{
     id: string;
@@ -17,6 +18,18 @@ export class ResourceCore{
         this.label = config.label;
         this.description = config.description;
         this.tags = config.tags;
+    }
+
+
+    public getModel(): IResourceCoreModel{
+        const resourceModel: IResourceCoreModel = {
+            description: this.description,
+            id: this.id,
+            version: this.version,
+            label: this.label,
+            tags: this.tags
+        }
+        return resourceModel;
     }
 
 }

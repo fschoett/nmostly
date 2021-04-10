@@ -5,20 +5,20 @@ import { IReceiverModel } from "./i-receiver-model";
 
 export class Receiver extends ResourceCore{
 
-    private _format: string;
-    private _caps: string[];
-    private _tags: string[];
-    private _device_id: string;
-    private _transport: string;
-    private _subscription: string;
+    // TODO: add subscription class
 
+    device_id: string;
+    transport: string;
+    interface_bindings: string [] = [];
+    subscription: {
+        sender_id: string,
+        active: boolean
+    }
 
     constructor( appService: AppService, config: IReceiverConfig ){
         super( appService, config );
-        this._format = config.format;
-        this._caps = [];
-        this._tags = [];
-        this._device_id = config.deviceId;
+
+        this.device_id = config.device_id;
     }
 
 
@@ -28,12 +28,11 @@ export class Receiver extends ResourceCore{
             version: this.version,
             label: this.label,
             description: this.description,
-            format: this._format,
-            caps: this._caps,
-            tags: this._tags,
-            device_id: this._device_id,
-            transport: this._transport,
-            subscription: this._subscription
+            transport: "urn:x-nmos:transport:",
+            device_id: this.device_id,
+            subscription: this.subscription,
+            interface_bindings: this.interface_bindings,
+            tags: this.tags
         };
     }
 

@@ -7,7 +7,7 @@ import { AppService } from "../services/app-service";
 import { Node,   INodeModel,   INodeConfig} from "../models/node";
 import { Device, IDeviceModel, IDeviceConfig} from "../models/device";
 import { Sender, SenderModel, SenderConfig } from "../models/sender";
-import { Receiver, IReceiverModel,  IReceiverConfig} from "../models/receiver";
+import { Receiver, IReceiverModel,  IReceiverConfig, IReceiverAudioConfig, ReceiverAudio} from "../models/receiver";
 import { Source, SourceModel, SourceConfig } from "../models/source";
 import { Flow,   IFlowModel,   IFlowConfig   } from "../models/flow";
 
@@ -185,6 +185,8 @@ export class NodeApi {
             const foundReceiver = receiverList
                 .find(sender => sender.id === req.params.id);
 
+            console.log( receiverList[0].getModel() );
+
             if (foundReceiver) { res.json(foundReceiver.getModel()) }
             else { res.sendStatus(404) }
         });
@@ -235,6 +237,14 @@ export class NodeApi {
         const newReceiver = new Receiver(this.appService, config);
 
         const foundDevice = this.self.getDevice(deviceId)
+        if (foundDevice) {
+            foundDevice.addReceiver(newReceiver);
+        }
+    }
+
+    public addReceiverAudio( config: IReceiverAudioConfig, deivce_id: string ){
+        const newReceiver = new ReceiverAudio(this.appService, config);
+        const foundDevice = this.self.getDevice( deivce_id)
         if (foundDevice) {
             foundDevice.addReceiver(newReceiver);
         }

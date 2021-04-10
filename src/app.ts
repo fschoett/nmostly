@@ -1,5 +1,6 @@
 import { NodeApi } from './api/node-api';
 import { IDeviceConfig } from './models/device/i-device-config';
+import { IReceiverAudioConfig } from './models/receiver';
 import { IReceiverConfig } from './models/receiver/i-receiver-config';
 import { SenderConfig } from './models/sender/sender-config';
 import { SourceConfig } from './models/source/source-config';
@@ -14,14 +15,14 @@ const newDevice:  IDeviceConfig = {
 };
 const newDeviceId = nodeApi.addDevice( newDevice );
 
-const firstReceiver: IReceiverConfig = {
-    description: "Receiver Description",
-    deviceId: newDeviceId,
-    format: "Format",
+const firstReceiver:  IReceiverAudioConfig= {
     label: "reciever/1",
-    tags: {}
+    description: "Receiver Description",
+    device_id: newDeviceId,
+    tags: {},
+    caps: {}
 };
-const newReceiverId = nodeApi.addReceiver( firstReceiver, newDeviceId );
+const newReceiverId = nodeApi.addReceiverAudio( firstReceiver, newDeviceId );
 
 const firstSource: SourceConfig = {
     description: "First Source Description",
