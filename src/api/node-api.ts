@@ -10,6 +10,7 @@ import { Receiver,  IReceiverConfig, IReceiverAudioConfig, ReceiverAudio} from "
 import { Flow,   IFlowModel   } from "../models/flow";
 import { ISourceConfig, ISourceModel, Source } from "../models/source";
 import { ISenderConfig, Sender } from "../models/sender";
+import { NmosError } from "../models/error";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -51,6 +52,7 @@ export class NodeApi {
         // Start express server!
         const app = express();
 
+
         app.use((req, res, next) => {
             // TODO enhance this to better supports CORS
             res.header("Access-Control-Allow-Origin", "*");
@@ -80,6 +82,14 @@ export class NodeApi {
         const nodeApiRouter = express();
 
         app.use("/x-nmos/node/v1.3/", nodeApiRouter);
+
+        app.use( (req, res ) => {
+            res.status( 404 ).send( new NmosError({
+                code: 404,
+                debug: "",
+                error: "Not Found!"
+            }));
+        });
 
         nodeApiRouter.get("/", (req, res) => {
             res.json(["self/", "sources/", "flows/", "devices/", "senders/", "receivers/"]);
