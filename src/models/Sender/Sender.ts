@@ -10,10 +10,19 @@ export class Sender extends ResourceCore implements ISenderModel{
     device_id: string;
     manifest_href: string;
     interface_bindings: string[];
-    subscriptions: { receiver_id: string; active: boolean; };
+    subscription: { receiver_id: string; active: boolean; };
 
     constructor( appService: IAppService, config: ISenderConfig){
         super( appService, config );
+        this.flow_id = config.flow_id;
+        this.transport = "urn:x-nmos:transport:";
+        this.device_id = config.device_id;
+        this.manifest_href = null;
+        this.interface_bindings = [];
+        this.subscription = {
+            receiver_id: null,
+            active: false
+        };
     }
 
 
@@ -30,7 +39,7 @@ export class Sender extends ResourceCore implements ISenderModel{
             device_id: this.device_id,
             manifest_href: this.manifest_href,
             interface_bindings: this.interface_bindings,
-            subscriptions: this.subscriptions
+            subscription: this.subscription
         }
     }
 }

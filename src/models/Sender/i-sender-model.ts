@@ -6,7 +6,7 @@ export interface ISenderModel extends IResourceCoreModel{
     device_id: string;
     manifest_href: string;
     interface_bindings: string[];
-    subscriptions: {
+    subscription: {
         receiver_id: string;
         active: boolean;
     };

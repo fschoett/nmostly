@@ -44,7 +44,7 @@ const newSender: ISenderConfig = {
     device_id: newDeviceId,
     flow_id: flowId
 };
-// nodeApi.addSender( newSender, flowId );
+nodeApi.addSender( newSender, flowId );
 
 // nodeApi.addSender( newDeviceId, newSender );
 
