@@ -1,40 +1,36 @@
 import { IAppService } from "../../services/i-app-service";
-import { SenderConfig } from "./sender-config";
-import { SenderModel } from "./sender-model";
+import { ResourceCore } from "../resource-core";
+import { ISenderConfig } from "./i-sender-config";
+import { ISenderModel } from "./i-sender-model";
 
-export class Sender{
-    private _id: string;
-    private _version: string;
-    private _label: string;
-    private _description: string;
-    private _flow_id: string;
-    private _transport: string;
-    private _device_id: string;
-    private _manifest_href: string;
+export class Sender extends ResourceCore implements ISenderModel{
 
-    constructor( private appService: IAppService, config: SenderConfig){
-        this._id = appService.utilsService.generateUuid();
-        this._version = appService.utilsService.generateVersion();
-        this._label = config.label;
-        this._description = config.label;
-        this._flow_id = config.flow_id;
-        this._transport = "";
-        this._device_id = config.device_id;
-        this._manifest_href = "";
+    flow_id: string;
+    transport: string;
+    device_id: string;
+    manifest_href: string;
+    interface_bindings: string[];
+    subscriptions: { receiver_id: string; active: boolean; };
+
+    constructor( appService: IAppService, config: ISenderConfig){
+        super( appService, config );
     }
 
-    public get id(){ return this._id }
 
-    public getModel(): SenderModel {
+    public getModel(): ISenderModel {
         return {
-            id: this._id,
-            version: this._version,
-            label: this._label,
-            description: this._description,
-            flow_id: this._flow_id,
-            transport: this._transport,
-            device_id: this._device_id,
-            manifest_href: this._manifest_href
+            id: this.id,
+            version: this.version,
+            label: this.label,
+            description: this.description,
+            tags: this.tags,
+
+            flow_id: this.flow_id,
+            transport: this.transport,
+            device_id: this.device_id,
+            manifest_href: this.manifest_href,
+            interface_bindings: this.interface_bindings,
+            subscriptions: this.subscriptions
         }
     }
 }

@@ -4,8 +4,8 @@ import { FormatEnum  } from "../../enums/format-enums";
 
 // other models import
 import { Receiver, IReceiverModel } from "../receiver";
-import { Sender,   SenderModel   } from "../sender";
-import { Source,   SourceModel   } from "../source";
+import { Sender,   ISenderModel   } from "../sender";
+import { Source,   ISourceModel   } from "../source";
 import { IFlowModel } from "../flow";
 
 // same dir level imports
@@ -101,11 +101,11 @@ export class Device extends ResourceCore{
         return this.receiverList.map(currReceiver => currReceiver.getModel());
     }
 
-    public getSenderModels(): SenderModel[] {
+    public getSenderModels(): ISenderModel[] {
         return this.senderList.map(currSender => currSender.getModel());
     }
 
-    public getSourceModels(): SourceModel[] {
+    public getSourceModels(): ISourceModel[] {
         return this.sourceList.map(currSource => currSource.getModel());
     }
 

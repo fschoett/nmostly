@@ -1,59 +1,53 @@
 import { IAppService } from "../../services/i-app-service";
 import { Flow } from "../flow/Flow";
-import { FormatEnum } from "../../enums/format-enums";
-import { SourceConfig } from "./source-config";
-import { SourceModel } from "./source-model";
+import { ResourceCore } from "../resource-core";
+import { ISourceConfig } from "./i-source-config";
+import { ISourceModel } from "./i-source-model";
 
-export class Source{
-    private _id: string;
-    private _version: string;
-    private _label: string;
-    private _description: string;
-    private _format: string;
-    private _caps: string[];
-    private _tags: object;
-    private _device_id: string;
-    private _parents: string[];
-    private _clock_name: string;
+export class Source extends ResourceCore{
+
+    private format: string;
+    private caps: object = {};
+    private device_id: string;
+    private parents: string[] = [];
+    private clock_name: string;
 
     private _flow: Flow;
 
-    constructor( private appService: IAppService, private config: SourceConfig ){
-        this._id = appService.utilsService.generateUuid();
-        this._version = appService.utilsService.generateVersion();
-        this._label = config.label;
-        this._description = config.description;
-        this._format = config.format || FormatEnum.data;
-        this._device_id = config.device_id;
-        this._parents = [];
-        this._tags = {};
-        this._clock_name = null;
+    constructor( appService: IAppService, config: ISourceConfig ){
+        super( appService, config );
+
+        this.format = "urn:x-nmos:format:video";
+        this.caps = {};
+        this.device_id = config.device_id;
+        this.parents = config.parents;
+        this.clock_name = config.clock_name;
 
         this._flow = new Flow( appService, {
             description: "First Flow",
             label: "First label",
-            source_id: this._id,
-            device_id: this._device_id,
+            source_id: this.id,
+            device_id: this.device_id,
             tags: {}
         });
     }
 
-    public get id(){ return this._id }
 
     public get flow(){ return this._flow; }
 
-    public getModel() : SourceModel{
+    public getModel() : ISourceModel{
         return {
-            id: this._id,
-            version: this._version,
-            label: this._label,
-            description: this._description,
-            format: this._format,
-            caps: this._caps,
-            tags: this._tags,
-            device_id: this._device_id,
-            parents: this._parents,
-            clock_name: this._clock_name
+            id: this.id,
+            version: this.version,
+            label: this.label,
+            description: this.description,
+            tags: this.tags,
+
+            format: this.format,
+            caps: this.caps,
+            device_id: this.device_id,
+            parents: this.parents,
+            clock_name: this.clock_name
         }
     }
 

@@ -4,12 +4,12 @@ import { IMdnsClientService } from "../services/i-mdns-client-service";
 import { IAppService } from "../services/i-app-service";
 import { AppService } from "../services/app-service";
 
-import { Node,   INodeModel,   INodeConfig} from "../models/node";
-import { Device, IDeviceModel, IDeviceConfig} from "../models/device";
-import { Sender, SenderModel, SenderConfig } from "../models/sender";
-import { Receiver, IReceiverModel,  IReceiverConfig, IReceiverAudioConfig, ReceiverAudio} from "../models/receiver";
-import { Source, SourceModel, SourceConfig } from "../models/source";
-import { Flow,   IFlowModel,   IFlowConfig   } from "../models/flow";
+import { Node,   INodeConfig} from "../models/node";
+import { Device, IDeviceConfig} from "../models/device";
+import { Receiver,  IReceiverConfig, IReceiverAudioConfig, ReceiverAudio} from "../models/receiver";
+import { Flow,   IFlowModel   } from "../models/flow";
+import { ISourceConfig, ISourceModel, Source } from "../models/source";
+import { ISenderConfig, Sender } from "../models/sender";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -110,7 +110,7 @@ export class NodeApi {
 
         // List sources
         nodeApiRouter.get('/sources/', (req, res) => {
-            let sourceModels: SourceModel[] = this.self
+            let sourceModels: ISourceModel[] = this.self
                 .getDeviceList()
                 .map(currDevice => currDevice.getSourceModels())
                 .reduce((acc, curr) => acc.concat(curr));
@@ -208,7 +208,7 @@ export class NodeApi {
         return newDevice.id;
     }
 
-    public addSource(sourceConfig: SourceConfig, deviceId: string): string {
+    public addSource(sourceConfig: ISourceConfig, deviceId: string): string {
         const newSource = new Source(this.appService, sourceConfig);
 
         this.self.getDeviceList()
@@ -218,7 +218,7 @@ export class NodeApi {
         return newSource.id;
     }
 
-    public addSender(config: SenderConfig, flowId: string): string {
+    public addSender(config: ISenderConfig, flowId: string): string {
         let flowList: Flow[] = this.self
             .getDeviceList()
             .map(device => device.getSourceList().map(source => source.flow))

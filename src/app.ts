@@ -1,9 +1,8 @@
 import { NodeApi } from './api/node-api';
 import { IDeviceConfig } from './models/device/i-device-config';
 import { IReceiverAudioConfig } from './models/receiver';
-import { IReceiverConfig } from './models/receiver/i-receiver-config';
-import { SenderConfig } from './models/sender/sender-config';
-import { SourceConfig } from './models/source/source-config';
+import { ISenderConfig } from './models/sender';
+import { ISourceConfig } from './models/source';
 
 
 const nodeApi = new NodeApi( { memeber1: "1234"});
@@ -24,19 +23,25 @@ const firstReceiver:  IReceiverAudioConfig= {
 };
 const newReceiverId = nodeApi.addReceiverAudio( firstReceiver, newDeviceId );
 
-const firstSource: SourceConfig = {
+const firstSource: ISourceConfig = {
+    label: "/home/source/1",
     description: "First Source Description",
+    tags: {},
+
     device_id: newDeviceId,
-    label: "/home/source/1"
+    parents: [],
+    clock_name: null,
 };
 const newSourceId = nodeApi.addSource( firstSource, newDeviceId );
 
 let flowId = nodeApi.findSource( newSourceId ).flow.id
 
-const newSender: SenderConfig = {
-    description: "First Sender Description",
-    device_id: newDeviceId,
+const newSender: ISenderConfig = {
     label: "/home/sender/1",
+    description: "First Sender Description",
+    tags: {},
+
+    device_id: newDeviceId,
     flow_id: flowId
 };
 // nodeApi.addSender( newSender, flowId );
