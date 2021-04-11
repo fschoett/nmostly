@@ -6,7 +6,7 @@ import { FormatEnum  } from "../../enums/format-enums";
 import { Receiver, IReceiverModel } from "../receiver";
 import { Sender,   ISenderModel   } from "../sender";
 import { Source,   ISourceModel   } from "../source";
-import { IFlowModel } from "../flow";
+import { Flow, IFlowModel } from "../flow";
 
 // same dir level imports
 import { ResourceCore } from "../resource-core";
@@ -79,6 +79,11 @@ export class Device extends ResourceCore{
 
     public getSourceList(): Source[] {
         return this.sourceList;
+    }
+
+    public getAllFlows(): Flow[]{
+        return this.sourceList
+            .map(currSource => currSource.flow)
     }
 
     public getModel(): IDeviceModel {

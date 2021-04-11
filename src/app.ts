@@ -34,7 +34,7 @@ const firstSource: ISourceConfig = {
 };
 const newSourceId = nodeApi.addSource( firstSource, newDeviceId );
 
-let flowId = nodeApi.findSource( newSourceId ).flow.id
+let flowId = nodeApi.node.getSource( newSourceId ).flow.id
 
 const newSender: ISenderConfig = {
     label: "/home/sender/1",

@@ -1,12 +1,17 @@
 import { IAppService } from "../../services/i-app-service";
+import { IDeviceModel } from "../device";
 import { Device } from "../device/device";
+import { Flow, IFlowModel } from "../flow";
+import { IReceiverModel, Receiver } from "../receiver";
 import { ResourceCore } from "../resource-core/resource-core";
+import { ISenderModel, Sender } from "../sender";
+import { ISourceModel, Source } from "../source";
 
 import { INodeConfig } from "./i-node-config";
 import { INodeModel } from "./i-node-model";
 
 
-export class Node extends ResourceCore{
+export class Node extends ResourceCore {
 
     private href: string;
     private caps: object;
@@ -17,7 +22,7 @@ export class Node extends ResourceCore{
     hostname: string;
 
     api = {
-        versions : [
+        versions: [
             "v1.3"
         ],
         endpoints: [
@@ -42,8 +47,8 @@ export class Node extends ResourceCore{
         }
     ];
 
-    constructor( appService: IAppService, config: INodeConfig ){
-        super( appService, config );
+    constructor(appService: IAppService, config: INodeConfig) {
+        super(appService, config);
 
         // this.href = config.href;
         this.href = "http://localhost:80/"
@@ -53,31 +58,116 @@ export class Node extends ResourceCore{
         this.hostname = "nmos-virtnode.local";
     }
 
-    addDevice( newDevice: Device ){
-        this.deviceList.push( newDevice );
+    addDevice(newDevice: Device) {
+        this.deviceList.push(newDevice);
     }
 
-    removeDevice( deviceId: string ){
+    removeDevice(deviceId: string) {
         let foundIndex = this.deviceList
-            .findIndex( currDevice => currDevice.id === deviceId );
+            .findIndex(currDevice => currDevice.id === deviceId);
 
-        if( foundIndex === -1 ) return false;
-        
-        let removedDevice = this.deviceList.splice( foundIndex, 1 );
+        if (foundIndex === -1) return false;
+
+        let removedDevice = this.deviceList.splice(foundIndex, 1);
         return removedDevice;
     }
 
-    public getId(){ return this.id }
+    public getId() { return this.id }
 
-    public getDeviceList(): Device[]{
+    public getDeviceList(): Device[] {
         return this.deviceList;
     }
 
-    public getDevice( deviceId: string ): Device{
-        return this.deviceList.find( currDevice => currDevice.id === deviceId );
+    public getDevice(deviceId: string): Device {
+        return this.deviceList.find(currDevice => currDevice.id === deviceId);
     }
 
-    getModel(){
+    public getAllDeviceModels(): IDeviceModel[] {
+        return this.deviceList.map(currDevice => currDevice.getModel());
+    }
+
+    // receivers
+    public getReceiver(receiverId: string): Receiver {
+        const receiverList: Receiver[] = this.deviceList
+            .map(device => device.getReceiverList())
+            .reduce((acc, curr) => acc.concat(curr));
+
+        return receiverList
+            .find(sender => sender.id === receiverId);
+    }
+
+    public getAllReceivers(): Receiver[] {
+        return this.deviceList
+            .map(device => device.getReceiverList())
+            .reduce((acc, curr) => acc.concat(curr));
+    }
+
+    public getAllReceiverModels(): IReceiverModel[] {
+        return this.getAllReceivers()
+            .map(currReceiver => currReceiver.getModel());
+    }
+
+    // senders
+    public getSender(senderId: string): Sender {
+        return this.getAllSenders()
+            .find(sender => sender.id === senderId);
+    }
+
+    public getAllSenders(): Sender[] {
+        return this.deviceList
+            .map(device => device.getSenderList())
+            .reduce((acc, curr) => acc.concat(curr));
+    }
+
+    public getAllSenderModels(): ISenderModel[] {
+        return this.getAllSenders().map(currSender => currSender.getModel());
+    }
+
+    // flows
+    public getFlow(flowId: string): Flow {
+        return this.getAllFlows()
+            .find( currFlow => currFlow.id === flowId );
+    }
+
+    public getAllFlows(): Flow[] {
+        return this.deviceList
+            .map(device => device.getAllFlows())
+            .reduce((acc, curr) => acc.concat(curr));
+    }
+
+    public getAllFlowModels(): IFlowModel[]{
+        return this.getAllFlows()
+            .map( currFlow => currFlow.getModel() );
+    }
+
+    // sources
+    public getSource(sourceId: string) {
+        let foundSource: Source;
+        let deviceList = this.deviceList;
+        deviceList.every(device => {
+            foundSource = device
+                .getSourceList()
+                .find(source => source.id === sourceId);
+
+            if (foundSource)
+                return false
+            else
+                return true;
+        });
+        return foundSource;
+    }
+
+    public getAllSources(): Source[] {
+        return this.deviceList
+            .map(currDevice => currDevice.getSourceList())
+            .reduce((acc, curr) => acc.concat(curr));
+    }
+
+    public getAllSourceModels(): ISourceModel[] {
+        return this.getAllSources().map(currSource => currSource.getModel());
+    }
+
+    getModel() {
         const tmpModel: INodeModel = {
             id: this.id,
             version: this.version,

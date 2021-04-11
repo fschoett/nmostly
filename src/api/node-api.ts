@@ -4,16 +4,16 @@ import { IMdnsClientService } from "../services/i-mdns-client-service";
 import { IAppService } from "../services/i-app-service";
 import { AppService } from "../services/app-service";
 
-import { Node,   INodeConfig   } from "../models/node";
+import { Node, INodeConfig } from "../models/node";
 import { Device, IDeviceConfig } from "../models/device";
 
 import { Receiver, IReceiverConfig, IReceiverAudioConfig, ReceiverAudio } from "../models/receiver";
 
 import { ISourceConfig, ISourceModel, Source } from "../models/source";
-import { ISenderConfig, Sender       } from "../models/sender";
-import { Flow,          IFlowModel   } from "../models/flow";
+import { ISenderConfig, Sender } from "../models/sender";
+import { Flow, IFlowModel } from "../models/flow";
 
-import { NmosError } from "../models/error";
+import { NodeApiEndpoint } from "../endpoints/node-api-endpoints";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -37,180 +37,29 @@ export class NodeApi {
     constructor(config: INodeApiConfig) {
         this.config = config;
         this.appService = new AppService();
-        
+
         const nodeConfig: INodeConfig = {
-            description : "Node",
+            description: "Node",
             hostname: "Hostname",
             href: "HREF",
             label: "NodeName",
             tags: {}
         }
 
-        this.self = new Node(this.appService, nodeConfig );
+        this.self = new Node(this.appService, nodeConfig);
         this.mdnsClient = this.appService.mdnsService;
     }
+
+    public get node(){ return this.self }
 
     public async start(): Promise<boolean> {
         const registeredNode = await this.mdnsClient.registerNode();
         // Start express server!
-        const app = express();
 
+        const nodeApiEndpoint = new NodeApiEndpoint( this, 5432 );
+        nodeApiEndpoint.start();
 
-        app.use((req, res, next) => {
-            // TODO enhance this to better supports CORS
-            res.header("Access-Control-Allow-Origin", "*");
-            res.header("Access-Control-Allow-Methods", "GET, PUT, POST, HEAD, OPTIONS, DELETE");
-            res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
-            res.header("Access-Control-Max-Age", "3600");
-
-            if (req.method == 'OPTIONS') {
-                res.sendStatus(200);
-            } else {
-                next();
-            }
-        });
-
-        app.get("/", (req, res) => {
-            res.json(["x-nmos/"]);
-        });
-
-        app.get("/x-nmos/", (req, res) => {
-            res.json(["node/"]);
-        });
-
-        app.get("/x-nmos/node/", (req, res) => {
-            res.json(["v1.3/"]);
-        });
-
-        const nodeApiRouter = express();
-
-        app.use("/x-nmos/node/v1.3/", nodeApiRouter);
-
-        app.use( (req, res ) => {
-            res.status( 404 ).send( new NmosError({
-                code: 404,
-                debug: "",
-                error: "Not Found!"
-            }));
-        });
-
-        nodeApiRouter.get("/", (req, res) => {
-            res.json(["self/", "sources/", "flows/", "devices/", "senders/", "receivers/"]);
-        });
-
-
-        nodeApiRouter.get('/self/', (req, res) => {
-            console.log( this.self.getModel() );
-            
-            res.json(this.self.getModel());
-        });
-
-        // List devices
-        nodeApiRouter.get('/devices/', (req, res) => {
-            res.json(this.self
-                .getDeviceList()
-                .map(currDevice => currDevice.getModel())
-            );
-        });
-
-        // Get a single device
-        nodeApiRouter.get('/devices/:id', (req, res) => {
-            res.json(this.self
-                .getDevice(req.params.id)
-                .getModel()
-            );
-        });
-
-        // List sources
-        nodeApiRouter.get('/sources/', (req, res) => {
-            let sourceModels: ISourceModel[] = this.self
-                .getDeviceList()
-                .map(currDevice => currDevice.getSourceModels())
-                .reduce((acc, curr) => acc.concat(curr));
-
-            res.json(sourceModels);
-        });
-
-        // Get a single source
-        nodeApiRouter.get('/sources/:id', (req, res) => {
-            const foundSource = this.findSource(req.params.id);
-
-            if (foundSource) { res.json(foundSource.getModel()) }
-            else { res.sendStatus(404) }
-        });
-
-        // List flows
-        nodeApiRouter.get('/flows/', (req, res) => {
-            let foundFlows: IFlowModel[] = this.self
-                .getDeviceList()
-                .map(device => device.getFlowModels())
-                .reduce((acc, curr) => acc.concat(curr));
-
-            res.json(foundFlows);
-        });
-
-        // Get a single flow
-        nodeApiRouter.get('/flows/:id', (req, res) => {
-            let flowList: Flow[] = this.self
-                .getDeviceList()
-                .map(device => device.getSourceList().map(source => source.flow))
-                .reduce((acc, curr) => acc.concat(curr));
-
-            let foundFlow: Flow = flowList.find(flow => flow.id === req.params.id);
-
-            if (foundFlow) { res.json(foundFlow.getModel()) }
-            else { res.sendStatus(404) }
-        });
-
-        // List senders
-        nodeApiRouter.get('/senders/', (req, res) => {
-            res.json(this.self.getDeviceList()
-                .map(device => device.getSenderModels())
-                .reduce((acc, curr) => acc.concat(curr))
-            );
-        });
-
-        // Get a single sender
-        nodeApiRouter.get('/senders/:id', (req, res) => {
-            const senderList: Sender[] = this.self.getDeviceList()
-                .map(device => device.getSenderList())
-                .reduce((acc, curr) => acc.concat(curr));
-
-            const foundSender = senderList
-                .find(sender => sender.id === req.params.id);
-
-            if (foundSender) { res.json(foundSender) }
-            else { res.sendStatus(404) }
-        });
-
-        // List receivers
-        nodeApiRouter.get('/receivers/', (req, res) => {
-            res.json(this.self.getDeviceList()
-                .map(device => device.getReceiverModels())
-                .reduce((acc, curr) => acc.concat(curr))
-            );
-        });
-
-        // Get a single receiver
-        nodeApiRouter.get('/receivers/:id', (req, res) => {
-            const receiverList: Receiver[] = this.self.getDeviceList()
-                .map(device => device.getReceiverList())
-                .reduce((acc, curr) => acc.concat(curr));
-
-            const foundReceiver = receiverList
-                .find(sender => sender.id === req.params.id);
-
-            console.log( receiverList[0].getModel() );
-
-            if (foundReceiver) { res.json(foundReceiver.getModel()) }
-            else { res.sendStatus(404) }
-        });
-
-        app.listen(5432, () => {
-            console.log("Started NMOS Server");
-        });
-
-        return false;
+        return true;
     }
 
 
@@ -257,29 +106,20 @@ export class NodeApi {
         }
     }
 
-    public addReceiverAudio( config: IReceiverAudioConfig, deivce_id: string ){
+    public addReceiverAudio(config: IReceiverAudioConfig, deivce_id: string) {
         const newReceiver = new ReceiverAudio(this.appService, config);
-        const foundDevice = this.self.getDevice( deivce_id)
+        const foundDevice = this.self.getDevice(deivce_id)
         if (foundDevice) {
             foundDevice.addReceiver(newReceiver);
         }
     }
 
+    public getNodeRoot() {
+        return ["self/", "sources/", "flows/", "devices/", "senders/", "receivers/"];
+    }
 
-    public findSource(sourceId: string): Source {
-        let foundSource: Source;
-        let deviceList = this.self.getDeviceList();
-        deviceList.every(device => {
-            foundSource = device
-                .getSourceList()
-                .find(source => source.id === sourceId);
-
-            if (foundSource)
-                return false
-            else
-                return true;
-        });
-        return foundSource;
+    public getSelf() {
+        return this.self;
     }
 
 }
