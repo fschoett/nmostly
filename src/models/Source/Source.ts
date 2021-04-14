@@ -6,11 +6,11 @@ import { ISourceModel } from "./i-source-model";
 
 export class Source extends ResourceCore{
 
-    private format: string;
-    private caps: object = {};
-    private device_id: string;
-    private parents: string[] = [];
-    private clock_name: string;
+    format: string;
+    caps: object = {};
+    device_id: string;
+    parents: string[] = [];
+    clock_name: string;
 
     private _flow: Flow;
 
