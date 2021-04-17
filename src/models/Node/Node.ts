@@ -107,6 +107,11 @@ export class Node extends ResourceCore {
             .map(currReceiver => currReceiver.getModel());
     }
 
+    public getAllReceiverIds(): string[] {
+        return this.getAllReceivers().map(  currReceiver => currReceiver .id );
+    }
+
+
     // senders
     public getSender(senderId: string): Sender {
         return this.getAllSenders()
@@ -121,6 +126,10 @@ export class Node extends ResourceCore {
 
     public getAllSenderModels(): ISenderModel[] {
         return this.getAllSenders().map(currSender => currSender.getModel());
+    }
+
+    public getAllSenderIds(): string[] {
+        return this.getAllSenders().map( currSender => currSender.id );
     }
 
     // flows

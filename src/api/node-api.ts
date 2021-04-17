@@ -13,7 +13,7 @@ import { ISourceConfig, ISourceModel, Source } from "../models/source";
 import { ISenderConfig, Sender } from "../models/sender";
 import { Flow, IFlowModel } from "../models/flow";
 
-import { NodeApiEndpoint } from "../endpoints/node-api-endpoints";
+import { RouterNmosApi } from "../endpoints/router-nmos-api";
 
 interface INodeApiConfig {
     memeber1: string;
@@ -56,7 +56,7 @@ export class NodeApi {
         const registeredNode = await this.mdnsClient.registerNode();
         // Start express server!
 
-        const nodeApiEndpoint = new NodeApiEndpoint( this, 5432 );
+        const nodeApiEndpoint = new RouterNmosApi( this, 5432 );
         nodeApiEndpoint.start();
 
         return true;

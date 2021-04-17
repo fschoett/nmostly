@@ -35,21 +35,17 @@ export class MdnsService {
 
         const registryServiceType = '_nmos-register._tcp.local';
 
-        const query = {
-            questions: [{
-                name: registryServiceType,
-                type: 'PTR'
-            }]
-        };
-
         mdns.on('response', res => {
             const registryEntries: IMdnsAnswer[] = res.answers
                 .filter(el => el.name === registryServiceType);
+
+            
 
             if (registryEntries.length > 0) {
                 console.log("Found registry at: ", registryEntries[0].data);
 
                 const additionals: IMdnsAnswer[] = res.additionals;
+                console.log( registryEntries, additionals  );
                 const txtEntry = additionals.find(el => el.type === 'TXT');
                 const aEntry = additionals.find(el => el.type === 'A');
                 const srvEntry = additionals.find(el => el.type === 'SRV');
@@ -59,7 +55,11 @@ export class MdnsService {
                 console.log(aEntry);
                 console.log(srvEntry);
 
-                if (!(txtEntry && aEntry && srvEntry)) return;
+                if (!(txtEntry && aEntry && srvEntry)) {
+                    console.log( "Additionals are empty.. perform new mdns query");
+                    this.performMdnsQuery( mdns );
+                    return;
+                };
 
                 let srvData = {
                     priority: 0,
@@ -98,6 +98,20 @@ export class MdnsService {
 
             }
         });
+
+        this.performMdnsQuery( mdns );
+    }
+
+    private performMdnsQuery( mdns ){
+
+        const registryServiceType = '_nmos-register._tcp.local';
+
+        const query = {
+            questions: [{
+                name: registryServiceType,
+                type: 'PTR'
+            }]
+        };
 
         mdns.query(query);
     }
