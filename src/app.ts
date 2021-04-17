@@ -3,6 +3,7 @@ import { IDeviceConfig } from './models/device/i-device-config';
 import { IReceiverAudioConfig } from './models/receiver';
 import { ISenderConfig } from './models/sender';
 import { ISourceConfig } from './models/source';
+import { MdnsService } from './services/mdns-service';
 
 
 const nodeApi = new NodeApi( { memeber1: "1234"});
@@ -22,6 +23,8 @@ const firstReceiver:  IReceiverAudioConfig= {
     caps: {}
 };
 const newReceiverId = nodeApi.addReceiverAudio( firstReceiver, newDeviceId );
+
+
 
 const firstSource: ISourceConfig = {
     label: "/home/source/1",
@@ -51,6 +54,9 @@ nodeApi.addSender( newSender, flowId );
 async function startup(){
     await nodeApi.start();
     console.log( "Started Node!");
+
+    let mdnsService = new MdnsService();
+    mdnsService.registerAllResources( nodeApi.node )
 }
 
 startup();
