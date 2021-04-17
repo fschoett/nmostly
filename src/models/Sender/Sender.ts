@@ -1,5 +1,7 @@
 import { IAppService } from "../../services/i-app-service";
+import { ConstraintRtp } from "../constraint/constraint-rtp";
 import { ResourceCore } from "../resource-core";
+import { StageSender } from "../stage/stage-sender";
 import { ISenderConfig } from "./i-sender-config";
 import { ISenderModel } from "./i-sender-model";
 
@@ -12,6 +14,10 @@ export class Sender extends ResourceCore implements ISenderModel{
     interface_bindings: string[];
     subscription: { receiver_id: string; active: boolean; };
 
+    constraints: ConstraintRtp;
+    staged: StageSender;
+
+
     constructor( appService: IAppService, config: ISenderConfig){
         super( appService, config );
         this.flow_id = config.flow_id;
@@ -23,8 +29,17 @@ export class Sender extends ResourceCore implements ISenderModel{
             receiver_id: null,
             active: false
         };
+        this.constraints = new ConstraintRtp();
+        this.staged = new StageSender();
     }
 
+    public getConstraints(): ConstraintRtp{
+        return this.constraints;
+    }
+
+    public getStaged(): StageSender{
+        return this.staged;
+    }
 
     public getModel(): ISenderModel {
         return {
