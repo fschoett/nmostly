@@ -10,7 +10,8 @@ const multicastdns = require('multicast-dns');
 export class MdnsService {
 
     private REGISTER_RESOURCE_PATH = "/x-nmos/registration/v1.3/resource/";
-
+    private HEALTH_CHECK_PATH =  "/x-nmos/registration/v1.3/health/nodes/";
+    private HEARTBEAT_INTERVAL_IN_S: number = 5;
     private selectedRegistry: IMdnsRegistryModel;
     private nmosNode: Node;
 
@@ -54,19 +55,19 @@ export class MdnsService {
                 const srvEntry = additionals.find(el => el.type === 'SRV');
                 const nSec = additionals.filter(el => el.type === 'NSEC');
 
-                console.log( txtEntry );
-                console.log( aEntry );
-                console.log( srvEntry );
+                console.log(txtEntry);
+                console.log(aEntry);
+                console.log(srvEntry);
 
-                if( !( txtEntry && aEntry && srvEntry ) ) return;
+                if (!(txtEntry && aEntry && srvEntry)) return;
 
                 let srvData = {
                     priority: 0,
                     target: undefined,
                     port: 80,
-                    weight:0
+                    weight: 0
                 };
-                if( srvEntry ){
+                if (srvEntry) {
                     srvData = srvEntry.data;
                 }
 
@@ -111,9 +112,6 @@ export class MdnsService {
 
         // register the locally saved node to the registry
         this.postNodeToRegistry();
-
-        // start heartbeat!
-        this.startHeartbeat();
     }
 
     private postNodeToRegistry() {
@@ -127,18 +125,49 @@ export class MdnsService {
                 type: 'node',
                 data: this.nmosNode.getModel()
             })
-            .then(function (response) {
-                console.log(response);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+                .then( response => {
+                    this.startHeartbeat();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
         }
     }
 
     // implement on and emit functions accordingly?
 
-    private startHeartbeat() { }
+    private startHeartbeat() {
+        console.log("Starting Heartbeat!");
+        this.performHeartbeat();
+    }
 
-    private stopHeartbeat() { }
+    private performHeartbeat(){
+        const url: URL = new URL("http://" + this.selectedRegistry.ipv4);
+        url.pathname = this.HEALTH_CHECK_PATH + this.nmosNode.getId() ;
+
+        let requestStart: Date = new Date();
+        console.log( "Perform Heartbeat");
+        
+
+        axios.post(url.toString() 
+        )
+        .then((response) => {
+            console.log(response.status);
+            setTimeout( ()=> {
+                this.performHeartbeat();
+            }, this.HEARTBEAT_INTERVAL_IN_S * 1000 );
+        })
+        .catch((error) => {
+            console.log("Request Error!");
+            console.log( error );
+            console.log( this.nmosNode.getId() );
+            this.stopHeartbeat();
+        });
+
+    }
+
+    private stopHeartbeat() {
+        console.log("Stoping Heartbeat");
+        // do something?
+    }
 }
