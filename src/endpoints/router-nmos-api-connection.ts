@@ -34,10 +34,10 @@ export class RouterNmosApiConnection{
         });
 
         connectionApiRouter.get( "/single/senders/:id/constraints/", (req, res) => {
-            returnJson( res,  {});
+            returnJson( res,  this.nodeApi.node.getSender( req.params.id ).getConstraints().getModel() );
         });
         connectionApiRouter.get( "/single/senders/:id/staged/", (req, res) => {
-            returnJson( res,  {});
+            returnJson( res,  this.nodeApi.node.getSender( req.params.id ).getStaged() );
         });
         connectionApiRouter.get( "/single/senders/:id/active/", (req, res) => {
             returnJson( res,  {});
@@ -57,10 +57,10 @@ export class RouterNmosApiConnection{
             returnJson( res, ["constraints/", "staged/", "active/", "transporttype/"] );
         });
         connectionApiRouter.get( "/single/receivers/:id/constraints/", (req, res) => {
-            returnJson( res,  {});
+            returnJson( res,  this.nodeApi.node.getReceiver( req.params.id ).getConstraints().getModel() );
         });
         connectionApiRouter.get( "/single/receivers/:id/staged/", (req, res) => {
-            returnJson( res,  {});
+            returnJson( res,  this.nodeApi.node.getReceiver( req.params.id ).getStaged() );
         });
         connectionApiRouter.get( "/single/receivers/:id/active/", (req, res) => {
             returnJson( res,  {});
