@@ -1,12 +1,19 @@
-import { NodeApi } from './api/node-api';
+import { INodeApiConfig, NodeApi } from './api/node-api';
 import { IDeviceConfig } from './models/device/i-device-config';
 import { IReceiverAudioConfig } from './models/receiver';
 import { ISenderConfig } from './models/sender';
 import { ISourceConfig } from './models/source';
 import { MdnsService } from './services/mdns-service';
 
+const nodeConfig: INodeApiConfig = {
+    description: "Schoettlers first Node instance",
+    hostname: "fs-tower",
+    href: "http://localhost",
+    label: "FS-FIRST-NODE",
+    tags: []
+};
 
-const nodeApi = new NodeApi( { memeber1: "1234"});
+const nodeApi = new NodeApi( nodeConfig );
 
 const newDevice:  IDeviceConfig = {
     description: "Description",
@@ -23,8 +30,6 @@ const firstReceiver:  IReceiverAudioConfig= {
     caps: {}
 };
 const newReceiverId = nodeApi.addReceiverAudio( firstReceiver, newDeviceId );
-
-
 
 const firstSource: ISourceConfig = {
     label: "/home/source/1",

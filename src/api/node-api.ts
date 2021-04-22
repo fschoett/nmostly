@@ -15,14 +15,14 @@ import { Flow, IFlowModel } from "../models/flow";
 
 import { RouterNmosApi } from "../endpoints/router-nmos-api";
 
-interface INodeApiConfig {
-    memeber1: string;
+export interface INodeApiConfig {
+    description: string;
+    hostname: string;
+    href: string;
+    label: string;
+    tags: {};
 }
 
-export class NodeApiConfig implements INodeApiConfig {
-    memeber1: string;
-
-}
 
 export class NodeApi {
 
@@ -39,10 +39,10 @@ export class NodeApi {
         this.appService = new AppService();
 
         const nodeConfig: INodeConfig = {
-            description: "Node",
-            hostname: "Hostname",
-            href: "HREF",
-            label: "NodeName",
+            description: config.description,
+            hostname: config.hostname,
+            href: config.href,
+            label: config.label,
             tags: {}
         }
 
