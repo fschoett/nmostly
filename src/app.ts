@@ -4,6 +4,7 @@ import { IReceiverAudioConfig } from './models/receiver';
 import { ISenderConfig } from './models/sender';
 import { ISourceConfig } from './models/source';
 import { MdnsService } from './services/mdns-service';
+import { NmosRegistryHttpService } from './services/nmos-registry-http-service';
 
 const nodeConfig: INodeApiConfig = {
     description: "Schoettlers first Node instance",
@@ -60,8 +61,9 @@ async function startup(){
     await nodeApi.start();
     console.log( "Started Node!");
 
-    let mdnsService = new MdnsService();
-    mdnsService.registerAllResources( nodeApi.node )
+    let nmosHttpClient = new NmosRegistryHttpService();
+    let mdnsService = new MdnsService( nmosHttpClient );
+    mdnsService.registerAllResources( nodeApi.node  );
 }
 
 startup();

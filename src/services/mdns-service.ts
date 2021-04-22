@@ -4,6 +4,7 @@ import { IMdnsAnswer } from "./i-mdns-response-answer";
 import { Node } from "../models/node";
 
 import axios, { AxiosResponse } from "axios";
+import { NmosRegistryHttpService } from "./nmos-registry-http-service";
 
 const multicastdns = require('multicast-dns');
 
@@ -15,7 +16,11 @@ export class MdnsService {
     private selectedRegistry: IMdnsRegistryModel;
     private nmosNode: Node;
 
-    constructor() {
+    private nmosRegistryService: NmosRegistryHttpService;
+
+    constructor(nmosRegistryService: NmosRegistryHttpService) {
+
+        this.nmosRegistryService = nmosRegistryService;
 
         // start mdns service
         // query for nmos services and register callback
@@ -26,7 +31,9 @@ export class MdnsService {
         // save node as local instance!
         this.nmosNode = node;
 
-        this.postNodeToRegistry();
+        if (this.nmosRegistryService.registryHost) {
+            this.postNodeToRegistry();
+        }
     }
 
 
@@ -119,126 +126,79 @@ export class MdnsService {
     // is called internally if the mdns client got an dns answer matching a nmos registry
     private onFoundNewRegistry() {
         // stop "old" heartbeat
-        this.stopHeartbeat();
+        // this.stopHeartbeat();
 
         // emit message to all registered observers?
         // TODO
 
         // register the locally saved node to the registry
         // this.postNodeToRegistry();
+        this.nmosRegistryService.registryHost = this.selectedRegistry.ipv4;
+        console.log(this.nmosRegistryService.registryHost);
+
+        if (!this.nmosRegistryService.registryHost) {
+            console.error("Did not find suitable ipv4!");
+            return;
+        }
+
+
         this.postAllResourcesToRegistry();
     }
 
 
     private async postAllResourcesToRegistry() {
-        // Node
         await this.postNodeToRegistry();
-
-        // Devices
         await this.postDevicesToRegistry();
-
-        // Sources
         await this.postSourcesToRegistry();
-
-        // Flows??
         await this.postFlowsToRegistry();
-
-        // Senders
         await this.postSendersToRegistry();
-
-        // Receivers
-        this.postReceiversToRegistry();
+        await this.postReceiversToRegistry();
     }
 
-
-    // TODO: outsource/ refactor all this methods to registry http-client service
     private async postNodeToRegistry() {
-        // build registration URL
-        console.log("Registering: Node");
-        
-        if( this.nodeAndOrRegistryIsNull() ) return;
-
-        const onSuccess = ( response: AxiosResponse ) => {
-            this.startHeartbeat();
-            console.log( "Successfull Request!");
-        };
-        await this.postResourceToRegistry( "", { type: "node", data: this.nmosNode.getModel() } , onSuccess );
-        console.log("Registering: Node - success");
+        await this.nmosRegistryService.postResource(this.nmosNode.getModel(), "node");
+        this.startHeartbeat();
     }
 
-    private async postDevicesToRegistry(){
-        console.log("Registering: Devices");
-        if( this.nodeAndOrRegistryIsNull() ) return;
-
+    private async postDevicesToRegistry() {
         const deviceModels = this.nmosNode.getAllDeviceModels();
-        deviceModels.forEach( async device => {
-            await this.postResourceToRegistry( "", { type: "device", data: device} );
+        deviceModels.forEach(async device => {
+            await this.nmosRegistryService.postResource(device, "device")
         });
-        console.log("Registering: Devices - success");
     }
 
     private async postSourcesToRegistry() {
-        if( this.nodeAndOrRegistryIsNull() ) return;
-
         const sourceModels = this.nmosNode.getAllSourceModels();
-        sourceModels.forEach( async source => {
-            await this.postResourceToRegistry( "", { type: "source", data: source } );
+        sourceModels.forEach(async source => {
+            await this.nmosRegistryService.postResource(source, "source");
         });
     }
 
     private postReceiversToRegistry() {
-        if( this.nodeAndOrRegistryIsNull() ) return;
-
         const receiverModels = this.nmosNode.getAllReceiverModels();
-        receiverModels.forEach( async receiver=> {
-            await this.postResourceToRegistry( "", { type: "receiver", data: receiver} );
+        receiverModels.forEach(async receiver => {
+            await this.nmosRegistryService.postResource(receiver, "receiver");
         });
     }
 
     private postSendersToRegistry() {
-        if( this.nodeAndOrRegistryIsNull() ) return;
-
         const senderModels = this.nmosNode.getAllSenderModels();
-        senderModels.forEach( async sender => {
-            await this.postResourceToRegistry( "", { type: "sender", data: sender } );
+        senderModels.forEach(async sender => {
+            await this.nmosRegistryService.postResource(sender, "sender");
         });
     }
 
     private postFlowsToRegistry() {
-        if( this.nodeAndOrRegistryIsNull() ) return;
-
         const flowModels = this.nmosNode.getAllFlowModels();
-        flowModels.forEach( async flow=> {
-            await this.postResourceToRegistry( "", { type: "flow", data: flow} );
+        flowModels.forEach(async flow => {
+            await this.nmosRegistryService.postResource(flow, "flow");
         });
     }
 
     private nodeAndOrRegistryIsNull(): boolean {
         // TODO: Check if parantheses can be omitted!
-        return ( this.nmosNode == null || this.selectedRegistry == null );
+        return (this.nmosNode == null || this.selectedRegistry == null);
     }
-
-    private async postResourceToRegistry(resourcePath: string, requestBody: object, onSuccess?: (res: AxiosResponse) => void) {
-
-        // Configure On Success callback. If no callback was passed, use default callback
-        const localOnSuccess = onSuccess || ( ( res: AxiosResponse )=> { console.log( "Hi")} );
-
-        // Build request url
-        const url: URL = new URL("http://" + this.selectedRegistry.ipv4);
-        url.pathname = `${this.REGISTER_RESOURCE_PATH}/${resourcePath}`;
-        const urlString = url.toString();
-
-        // Perform the http request with the help of the axios api
-        try {
-            const response = await axios.post( urlString, requestBody);
-            localOnSuccess( response );
-        } catch (error) {
-            console.log( error );
-            this.stopHeartbeat();
-        }
-    }
-
-    // implement on and emit functions accordingly?
 
     private startHeartbeat() {
         console.log("Starting Heartbeat!");
