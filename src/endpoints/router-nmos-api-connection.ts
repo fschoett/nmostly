@@ -1,13 +1,26 @@
-import express from "express";
+import express, { Response } from "express";
 import { NodeApi } from "../api/node-api";
+import { IConnectionApiController } from "../controllers/i-connection-api-controller";
+import { BulkReceiverResource } from "../schemas/is-05-connection-api/bulk-receiver-post-schema";
+import { BulkActivationResponse } from "../schemas/is-05-connection-api/bulk-response-schema";
+import { BulkSenderResource, SenderResource } from "../schemas/is-05-connection-api/bulk-sender-post-schema";
+import { ConnectionAPIBaseResource } from "../schemas/is-05-connection-api/connectionapi-base";
+import { ConnectionAPIBulkBaseResource } from "../schemas/is-05-connection-api/connectionapi-bulk";
+import { ConnectionAPISingleReceiversReceiverIdBaseResource } from "../schemas/is-05-connection-api/connectionapi-receiver";
+import { ConnectionAPISingleSendersSenderIdBaseResource } from "../schemas/is-05-connection-api/connectionapi-sender";
+import { ConnectionAPISingleBaseResource } from "../schemas/is-05-connection-api/connectionapi-single";
+import { Constraints } from "../schemas/is-05-connection-api/constraints-schema";
+import { ReceiverResource } from "../schemas/is-05-connection-api/receiver-stage-schema";
+import { ConnectionAPISenderReceiverBaseResource } from "../schemas/is-05-connection-api/sender-receiver-base";
+import { TransportType } from "../schemas/is-05-connection-api/transporttype-response-schema";
 import { returnJson } from "../utils/return-nmos-json";
 
 
-export class RouterNmosApiConnection{
+export class RouterNmosApiConnection {
 
     private _router;
 
-    constructor( private nodeApi: NodeApi ){
+    constructor(private nodeApi: NodeApi, private connApiController: IConnectionApiController) {
         this._router = express();
         this.registerEndpoints();
     }
@@ -15,58 +28,160 @@ export class RouterNmosApiConnection{
     get router() { return this._router }
 
 
-    private registerEndpoints(){
+    private registerEndpoints() {
         const connectionApiRouter = this.router;
-        connectionApiRouter.get( "/", (req, res) => {
-            returnJson( res, ["bulk/", "single/"]);
+        const cntrlr = this.connApiController;
+
+        connectionApiRouter.get("/", (req, res) => {
+            const returnVal: ConnectionAPIBaseResource = ["bulk/", "single/"];
+            returnJson(res, returnVal);
         });
 
-        connectionApiRouter.get( "/single/", (req, res) => {
-            returnJson( res, ["senders/", "receivers/"]);
+        connectionApiRouter.get("/bulk/", (req, res) => {
+            const bulkResponse: ConnectionAPIBulkBaseResource = ["receivers/", "senders/"];
+            returnJson(res, bulkResponse);
         });
 
-        connectionApiRouter.get( "/single/senders/", (req, res) => {
-            returnJson( res, this.nodeApi.node.getAllSenderIds().map( el => el + "/"))
+        connectionApiRouter.get("/bulk/senders", (req, res: Response) => {
+            res.sendStatus(405);
         });
 
-        connectionApiRouter.get( "/single/senders/:id", (req, res) => {
-            returnJson( res, ["constraints/", "staged/", "active/", "transportfile/", "transporttype/"] );
+        connectionApiRouter.options("/bulk/senders", (req, res) => {
+            res.sendStatus(200);
         });
 
-        connectionApiRouter.get( "/single/senders/:id/constraints/", (req, res) => {
-            returnJson( res,  this.nodeApi.node.getSender( req.params.id ).getConstraints().getModel() );
-        });
-        connectionApiRouter.get( "/single/senders/:id/staged/", (req, res) => {
-            returnJson( res,  this.nodeApi.node.getSender( req.params.id ).getStaged() );
-        });
-        connectionApiRouter.get( "/single/senders/:id/active/", (req, res) => {
-            returnJson( res,  {});
-        });
-        connectionApiRouter.get( "/single/senders/:id/transportfile/", (req, res) => {
-            returnJson( res,  {});
-        });
-        connectionApiRouter.get( "/single/senders/:id/transporttype/", (req, res) => {
-            returnJson( res,  {});
+        connectionApiRouter.post("/bulk/senders", (req, res) => {
+            const bulkSenderResource: BulkSenderResource = req.body;
+
+            let response: BulkActivationResponse[] = cntrlr.onPostBulkSenders(bulkSenderResource);
+
+            returnJson(res, response);
         });
 
-        connectionApiRouter.get( "/single/receivers/", (req, res) => {
-            returnJson( res, this.nodeApi.node.getAllReceiverIds().map( el => el + "/"))
+        connectionApiRouter.get("/bulk/receivers", (req, res) => {
+            res.sendStatus(405);
         });
 
-        connectionApiRouter.get( "/single/receivers/:id", (req, res) => {
-            returnJson( res, ["constraints/", "staged/", "active/", "transporttype/"] );
+        connectionApiRouter.options("/bulk/receivers", (req, res) => {
+            res.sendStatus(200);
         });
-        connectionApiRouter.get( "/single/receivers/:id/constraints/", (req, res) => {
-            returnJson( res,  this.nodeApi.node.getReceiver( req.params.id ).getConstraints().getModel() );
+
+        connectionApiRouter.post("/bulk/receivers", (req, res) => {
+            const bulkReceiverResource: BulkReceiverResource = req.body;
+            let response: BulkActivationResponse[] = cntrlr.onPostBulkReceivers(bulkReceiverResource);
+            returnJson(res, response);
         });
-        connectionApiRouter.get( "/single/receivers/:id/staged/", (req, res) => {
-            returnJson( res,  this.nodeApi.node.getReceiver( req.params.id ).getStaged() );
+
+        connectionApiRouter.get("/single/", (req, res) => {
+            const response: ConnectionAPISingleBaseResource = ["senders/", "receivers/"];
+            returnJson(res, response);
         });
-        connectionApiRouter.get( "/single/receivers/:id/active/", (req, res) => {
-            returnJson( res,  {});
+
+        connectionApiRouter.get("/single/senders/", (req, res) => {
+            //const response: ConnectionAPISenderReceiverBaseResource = this.nodeApi.node.getAllSenderIds().map( el => el + "/");
+            const response: ConnectionAPISenderReceiverBaseResource = cntrlr.onGetSenders();
+            returnJson(res, response);
         });
-        connectionApiRouter.get( "/single/receivers/:id/transporttype/", (req, res) => {
-            returnJson( res,  {});
+
+        connectionApiRouter.get("/single/senders/:id", (req, res) => {
+            const response: ConnectionAPISingleSendersSenderIdBaseResource =
+                ["constraints/", "staged/", "active/", "transportfile/", "transporttype/"];
+
+            returnJson(res, response);
+        });
+
+        connectionApiRouter.get("/single/senders/:id/constraints/", (req, res) => {
+            const senderId = req.params.id;
+            let response: Constraints = cntrlr.onGetSenderConstraints(senderId);
+            returnJson(res, this.nodeApi.node.getSender(req.params.id).getConstraints().getModel());
+        });
+
+        connectionApiRouter.get("/single/senders/:id/staged/", (req, res) => {
+            const senderId = req.params.id;
+            let response: SenderResource = cntrlr.onGetSenderStaged(senderId);
+            returnJson(res, this.nodeApi.node.getSender(req.params.id).getStaged());
+        });
+
+        connectionApiRouter.options("/single/senders/:id/staged/", (req, res) => {
+            returnJson(res, this.nodeApi.node.getSender(req.params.id).getStaged());
+        });
+
+        connectionApiRouter.patch("/single/senders/:id/staged/", (req, res) => {
+            const senderId = req.params.id;
+            const updatedSender = req.body;
+            const response: SenderResource = cntrlr.onPatchSenderStaged(senderId, updatedSender );
+            // returnJson( res,  this.nodeApi.node.getSender( req.params.id ).getStaged() );
+            returnJson(res, response);
+        });
+
+        connectionApiRouter.get("/single/senders/:id/active/", (req, res) => {
+            const senderId = req.params.id;
+            const response: SenderResource = cntrlr.onGetSenderActive(senderId);
+            returnJson(res, {});
+        });
+
+        connectionApiRouter.get("/single/senders/:id/transportfile/", (req, res) => {
+            const senderId = req.params.id;
+            const response: SenderResource = cntrlr.onGetSenderTransportfile(senderId);
+            res.send(response);
+        });
+
+        connectionApiRouter.get("/single/senders/:id/transporttype/", (req, res) => {
+            const senderId = req.params.id;
+            const response: TransportType = cntrlr.onGetSenderTransporttype(senderId);
+            returnJson(res, response);
+        });
+
+        connectionApiRouter.get("/single/receivers/", (req, res) => {
+            const response: ConnectionAPISenderReceiverBaseResource = cntrlr.onGetReceivers();
+            returnJson(res, response);
+            // returnJson( res, this.nodeApi.node.getAllReceiverIds().map( el => el + "/"))
+        });
+
+        connectionApiRouter.get("/single/receivers/:id", (req, res) => {
+            const receiverId = req.params.id;
+            const response: ConnectionAPISingleReceiversReceiverIdBaseResource =
+                ["constraints/", "staged/", "active/", "transporttype/"];
+
+            returnJson(res, response );
+        });
+
+        connectionApiRouter.get("/single/receivers/:id/constraints/", (req, res) => {
+            const receiverId = req.params.id;
+            const response: Constraints = cntrlr.onGetReceiverConstraints( receiverId );
+            returnJson( res, response );
+            // returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getConstraints().getModel());
+        });
+
+        connectionApiRouter.get("/single/receivers/:id/staged/", (req, res) => {
+            const receiverId = req.params.id;
+            const response: ReceiverResource = cntrlr.onGetReceiverStaged( receiverId );
+            returnJson( res, response );
+            // returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getStaged());
+        });
+
+        connectionApiRouter.options("/single/receivers/:id/staged/", (req, res) => {
+            res.sendStatus( 200 );
+        });
+
+        connectionApiRouter.patch("/single/receivers/:id/staged/", (req, res) => {
+            const receiverId = req.params.id;
+            const updatedReceiver = req.body;
+            const response: ReceiverResource = cntrlr.onPatchReceiverStaged( receiverId, updatedReceiver );
+            returnJson( res, response );
+            //returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getStaged());
+        });
+
+        connectionApiRouter.get("/single/receivers/:id/active/", (req, res) => {
+            const receiverId = req.params.id;
+            const response: ReceiverResource = cntrlr.onGetReceiverActive( receiverId );
+            returnJson(res, response );
+        });
+
+        connectionApiRouter.get("/single/receivers/:id/transporttype/", (req, res) => {
+            const receiverId = req.params.id;
+            const response: TransportType = cntrlr.onGetReceiverTransporttype( receiverId );
+            returnJson(res, {});
         });
     }
 }

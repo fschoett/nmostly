@@ -21,7 +21,7 @@ export class RouterNmosApi {
         const app = this.router;
 
         const nodeApiRouter = new RouterNmosApiNode( this.nodeApi ).router;
-        const connectionApiRouter = new RouterNmosApiConnection( this.nodeApi ).router;
+        const connectionApiRouter = new RouterNmosApiConnection( this.nodeApi, this.nodeApi ).router;
 
         app.use(this.nmosMiddlewareCors);
 
