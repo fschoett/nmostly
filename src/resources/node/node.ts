@@ -1,3 +1,4 @@
+import { NodeResource } from "../../schemas/is-04-discovery-api/node";
 import { IAppService } from "../../services/i-app-service";
 import { IDeviceModel } from "../device";
 import { Device } from "../device/device";
@@ -14,32 +15,39 @@ import { INodeModel } from "./i-node-model";
 export class Node extends ResourceCore {
 
     private href: string;
-    private caps: object;
-    private services: object[];
+    private caps;
+    private services: NodeResource["services"];
 
     private deviceList: Device[];
 
     hostname: string;
 
-    api = {
+    tmp : NodeResource["api"]["endpoints"] = [
+        {
+            port: 4000,
+            protocol: "http",
+            host: "1234"
+        }
+    ]
+    api: NodeResource["api"] = {
         versions: [
             "v1.3"
         ],
         endpoints: [
             {
-                host: "192.168.178.102",
+                host : "192.168.178.102",
                 port: 5432,
                 protocol: "http"
             }
         ]
     };
-    clocks: object[] = [
+    clocks: NodeResource["clocks"] = [
         {
             name: "clk0",
             ref_type: "internal"
         }
     ];
-    interfaces: object[] = [
+    interfaces = [
         {
             chassis_id: "null",
             name: "eth0",
@@ -176,8 +184,8 @@ export class Node extends ResourceCore {
         return this.getAllSources().map(currSource => currSource.getModel());
     }
 
-    getModel() {
-        const tmpModel: INodeModel = {
+    getModel(): NodeResource {
+        const tmpModel: NodeResource = {
             id: this.id,
             version: this.version,
             label: this.label,

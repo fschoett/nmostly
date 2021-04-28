@@ -1,3 +1,4 @@
+import { BaseResource } from "../../schemas/is-04-discovery-api/node";
 import { IAppService } from "../../services/i-app-service";
 import { IResourceCoreConfig } from "./i-resource-core-config";
 import { IResourceCoreModel } from "./i-resource-core-model";
@@ -7,7 +8,7 @@ export class ResourceCore{
     version: string;
     label: string;
     description: string;
-    tags: object;
+    tags: BaseResource["tags"];
 
     appService: IAppService;
 
@@ -21,8 +22,8 @@ export class ResourceCore{
     }
 
 
-    public getModel(): IResourceCoreModel{
-        const resourceModel: IResourceCoreModel = {
+    public getModel(): BaseResource{
+        const resourceModel: BaseResource= {
             description: this.description,
             id: this.id,
             version: this.version,

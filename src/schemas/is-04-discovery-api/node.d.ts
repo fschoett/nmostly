@@ -32,18 +32,7 @@ export type NodeResource = BaseResource & {
       /**
        * IP address or hostname which the Node API is running on
        */
-      host: (
-        | {
-            [k: string]: unknown;
-          }
-        | {
-            [k: string]: unknown;
-          }
-        | {
-            [k: string]: unknown;
-          }
-      ) &
-        string;
+      host: string;
       /**
        * Port number which the Node API is running on
        */
