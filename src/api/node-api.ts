@@ -19,10 +19,23 @@ import { BulkReceiverResource } from "../schemas/is-05-connection-api/bulk-recei
 import { BulkActivationResponse } from "../schemas/is-05-connection-api/bulk-response-schema";
 import { BulkSenderResource } from "../schemas/is-05-connection-api/bulk-sender-post-schema";
 import { Constraints } from "../schemas/is-05-connection-api/constraints-schema";
-import { ReceiverResource } from "../schemas/is-05-connection-api/receiver-stage-schema";
+import { ReceiverResource as StageReceiverResource } from "../schemas/is-05-connection-api/receiver-stage-schema";
 import { ConnectionAPISenderReceiverBaseResource } from "../schemas/is-05-connection-api/sender-receiver-base";
-import { SenderResource } from "../schemas/is-05-connection-api/sender-stage-schema";
+import { SenderResource as StageSenderResource } from "../schemas/is-05-connection-api/sender-stage-schema";
 import { TransportType } from "../schemas/is-05-connection-api/transporttype-response-schema";
+import { IDiscoveryApiController } from "../controllers/i-discovery-api-controller";
+import { DeviceResource } from "../schemas/is-04-discovery-api/device";
+import { CollectionOfDevices } from "../schemas/is-04-discovery-api/devices";
+import { FlowResource } from "../schemas/is-04-discovery-api/flow";
+import { CollectionOfFlows } from "../schemas/is-04-discovery-api/flows";
+import { NodeResource } from "../schemas/is-04-discovery-api/node";
+import { NodeAPIBaseResource } from "../schemas/is-04-discovery-api/nodeapi-base";
+import { CollectionOfReceivers } from "../schemas/is-04-discovery-api/receivers";
+import { ReceiverResource } from "../schemas/is-04-discovery-api/receiver";
+import { SenderResource } from "../schemas/is-04-discovery-api/sender";
+import { CollectionOfSenders } from "../schemas/is-04-discovery-api/senders";
+import { CollectionOfSources } from "../schemas/is-04-discovery-api/sources";
+import { SourceResource } from "../schemas/is-04-discovery-api/source_generic";
 
 export interface INodeApiConfig {
     description: string;
@@ -33,7 +46,7 @@ export interface INodeApiConfig {
 }
 
 
-export class NodeApi implements IConnectionApiController {
+export class NodeApi implements IConnectionApiController, IDiscoveryApiController {
 
     private config;
     private logger;
@@ -58,6 +71,42 @@ export class NodeApi implements IConnectionApiController {
         this.self = new Node(this.appService, nodeConfig);
         this.mdnsClient = this.appService.mdnsService;
     }
+    onGetRoot(): NodeAPIBaseResource {
+        throw new Error("Method not implemented.");
+    }
+    onGetSelf(): NodeResource {
+        throw new Error("Method not implemented.");
+    }
+    onGetDeviceList(): CollectionOfDevices {
+        throw new Error("Method not implemented.");
+    }
+    onGetDevice(deviceId: string): DeviceResource {
+        throw new Error("Method not implemented.");
+    }
+    onGetReceiverList(): CollectionOfReceivers {
+        throw new Error("Method not implemented.");
+    }
+    onGetReceiver(receiverId: string): ReceiverResource {
+        throw new Error("Method not implemented.");
+    }
+    onGetSenderList(): CollectionOfSenders {
+        throw new Error("Method not implemented.");
+    }
+    onGetSender(senderId: string): SenderResource {
+        throw new Error("Method not implemented.");
+    }
+    onGetSourceList(): CollectionOfSources {
+        throw new Error("Method not implemented.");
+    }
+    onGetSource(sourceId: string): SourceResource {
+        throw new Error("Method not implemented.");
+    }
+    onGetFlowList(): CollectionOfFlows {
+        throw new Error("Method not implemented.");
+    }
+    onGetFlow(flowId: string): FlowResource {
+        throw new Error("Method not implemented.");
+    }
     onPostBulkSenders(senders: BulkSenderResource): BulkActivationResponse[] {
         throw new Error("Method not implemented.");
     }
@@ -70,13 +119,13 @@ export class NodeApi implements IConnectionApiController {
     onGetSenderConstraints(senderId: string): Constraints {
         throw new Error("Method not implemented.");
     }
-    onGetSenderStaged(senderId: string): SenderResource {
+    onGetSenderStaged(senderId: string): StageSenderResource {
         throw new Error("Method not implemented.");
     }
-    onPatchSenderStaged(senderId: string, updatedSender: SenderResource): SenderResource {
+    onPatchSenderStaged(senderId: string, updatedSender: StageSenderResource): StageSenderResource {
         throw new Error("Method not implemented.");
     }
-    onGetSenderActive(senderId: string): SenderResource {
+    onGetSenderActive(senderId: string): StageSenderResource {
         throw new Error("Method not implemented.");
     }
     onGetSenderTransportfile(senderId: string): unknown {
@@ -91,13 +140,13 @@ export class NodeApi implements IConnectionApiController {
     onGetReceiverConstraints(receiverId: string): Constraints {
         throw new Error("Method not implemented.");
     }
-    onGetReceiverStaged(receiverId: string): ReceiverResource {
+    onGetReceiverStaged(receiverId: string): StageReceiverResource {
         throw new Error("Method not implemented.");
     }
-    onPatchReceiverStaged(receiverId: string, updatedReceiver: ReceiverResource): ReceiverResource {
+    onPatchReceiverStaged(receiverId: string, updatedReceiver: StageReceiverResource): StageReceiverResource {
         throw new Error("Method not implemented.");
     }
-    onGetReceiverActive(receiverId: string): ReceiverResource {
+    onGetReceiverActive(receiverId: string): StageReceiverResource {
         throw new Error("Method not implemented.");
     }
     onGetReceiverTransporttype(receiverId: string): TransportType {
