@@ -13,7 +13,7 @@ import { ISourceConfig, ISourceModel, Source } from "../models/source";
 import { ISenderConfig, Sender } from "../models/sender";
 import { Flow, IFlowModel } from "../models/flow";
 
-import { RouterNmosApi } from "../endpoints/router-nmos-api";
+import { BaseApiController } from "../endpoints/base-api-router";
 import { IConnectionApiController } from "../controllers/i-connection-api-controller";
 import { BulkReceiverResource } from "../schemas/is-05-connection-api/bulk-receiver-post-schema";
 import { BulkActivationResponse } from "../schemas/is-05-connection-api/bulk-response-schema";
@@ -110,7 +110,7 @@ export class NodeApi implements IConnectionApiController {
         const registeredNode = await this.mdnsClient.registerNode();
         // Start express server!
 
-        const nodeApiEndpoint = new RouterNmosApi( this, 5432 );
+        const nodeApiEndpoint = new BaseApiController( this, 5432 );
         nodeApiEndpoint.start();
 
         return true;

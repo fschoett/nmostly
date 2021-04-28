@@ -2,11 +2,11 @@ import express from "express";
 import { NodeApi } from "../api/node-api";
 import { NmosError } from "../models/error";
 import { returnJson } from "../utils/return-nmos-json";
-import { RouterNmosApiConnection} from "./router-nmos-api-connection";
-import { RouterNmosApiNode } from "./router-nmos-api-node";
+import { RouterNmosApiConnection} from "./connection-api-router";
+import { RouterNmosApiNode } from "./discovery-api-router";
 
 
-export class RouterNmosApi {
+export class BaseApiController{
 
     private _router;
 
