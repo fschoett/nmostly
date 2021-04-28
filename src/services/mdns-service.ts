@@ -1,7 +1,7 @@
 import { IMdnsRegistryModel } from "./i-mdns-registry-model";
 import { IMdnsAnswer } from "./i-mdns-response-answer";
 
-import { Node } from "../models/node";
+import { Node } from "../resources/node";
 
 import axios, { AxiosResponse } from "axios";
 import { NmosRegistryHttpService } from "./nmos-registry-http-service";

@@ -1,6 +1,6 @@
 import express from "express";
 import { NodeApi } from "../api/node-api";
-import { NmosError } from "../models/error";
+import { NmosError } from "../resources/error";
 import { returnJson } from "../utils/return-nmos-json";
 import { RouterNmosApiConnection} from "./connection-api-router";
 import { RouterNmosApiNode } from "./discovery-api-router";

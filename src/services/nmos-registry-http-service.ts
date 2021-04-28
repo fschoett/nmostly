@@ -1,11 +1,11 @@
 import axios, { AxiosAdapter, AxiosResponse } from "axios";
-import { IDeviceModel } from "../models/device";
-import { Flow, IFlowModel } from "../models/flow";
-import { INodeModel } from "../models/node";
-import { IReceiverModel } from "../models/receiver";
-import { IResourceCoreModel } from "../models/resource-core";
-import { ISenderModel } from "../models/sender";
-import { ISourceModel } from "../models/source";
+import { IDeviceModel } from "../resources/device";
+import { Flow, IFlowModel } from "../resources/flow";
+import { INodeModel } from "../resources/node";
+import { IReceiverModel } from "../resources/receiver";
+import { IResourceCoreModel } from "../resources/resource-core";
+import { ISenderModel } from "../resources/sender";
+import { ISourceModel } from "../resources/source";
 
 
 const REGISTER_RESOURCE_PATH: string = "/x-nmos/registration/v1.3/resource";

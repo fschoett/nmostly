@@ -1,8 +1,8 @@
 import { INodeApiConfig, NodeApi } from './api/node-api';
-import { IDeviceConfig } from './models/device/i-device-config';
-import { IReceiverAudioConfig } from './models/receiver';
-import { ISenderConfig } from './models/sender';
-import { ISourceConfig } from './models/source';
+import { IDeviceConfig } from './resources/device/i-device-config';
+import { IReceiverAudioConfig } from './resources/receiver';
+import { ISenderConfig } from './resources/sender';
+import { ISourceConfig } from './resources/source';
 import { MdnsService } from './services/mdns-service';
 import { NmosRegistryHttpService } from './services/nmos-registry-http-service';
 
