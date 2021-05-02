@@ -1,17 +1,17 @@
+import { FlowResource } from "../../schemas/is-04-discovery-api/flow";
 import { NodeResource } from "../../schemas/is-04-discovery-api/node";
 import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
 import { SourceResource } from "../../schemas/is-04-discovery-api/source";
 import { IAppService } from "../../services/i-app-service";
 import { IDeviceModel } from "../device";
 import { Device } from "../device/device";
-import { Flow, IFlowModel } from "../flow";
+import { IFlow } from "../flow/i-flow";
 import { Receiver } from "../receiver";
 import { ResourceCore } from "../resource-core/resource-core";
 import { ISenderModel, Sender } from "../sender";
 import { ISource } from "../source/i-source";
 
 import { INodeConfig } from "./i-node-config";
-import { INodeModel } from "./i-node-model";
 
 
 export class Node extends ResourceCore {
@@ -143,18 +143,18 @@ export class Node extends ResourceCore {
     }
 
     // flows
-    public getFlow(flowId: string): Flow {
+    public getFlow(flowId: string): IFlow {
         return this.getAllFlows()
             .find( currFlow => currFlow.id === flowId );
     }
 
-    public getAllFlows(): Flow[] {
+    public getAllFlows(): IFlow[] {
         return this.deviceList
             .map(device => device.getAllFlows())
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllFlowModels(): IFlowModel[]{
+    public getAllFlowModels(): FlowResource[]{
         return this.getAllFlows()
             .map( currFlow => currFlow.getModel() );
     }

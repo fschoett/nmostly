@@ -2,6 +2,8 @@ import { SourceResource1 } from "../../schemas/is-04-discovery-api/source";
 import { AudioSourceResource, Component, SourceResource } from "../../schemas/is-04-discovery-api/sources";
 import { IAppService } from "../../services/i-app-service";
 import { Flow } from "../flow";
+import { FlowRawAudio } from "../flow/flow-raw-audio";
+import { IFlow } from "../flow/i-flow";
 // import { Flow } from "../flow/Flow";
 import { ResourceCore } from "../resource-core";
 import { ISource } from "./i-source";
@@ -14,7 +16,7 @@ export class Source extends ResourceCore implements ISource{
     private parents: string[] = [];
     private clock_name: string;
 
-    private _flow: Flow;
+    private _flow: IFlow;
 
     constructor( appService: IAppService, config: ISourceConfig ){
         super( appService, config );
@@ -23,18 +25,20 @@ export class Source extends ResourceCore implements ISource{
         this.parents = config.parents;
         this.clock_name = config.clock_name;
 
-        this._flow = new Flow( appService, {
+        this._flow = new FlowRawAudio( appService, {
             description: "First Flow",
             label: "First label",
             source_id: this.id,
             device_id: this.device_id,
-            tags: {}
+            tags: {},
+            sample_rate: 48000,
+            bit_depth: 16
         });
     }
 
 
     // public get flow(){ return this._flow; }
-    public getFlow(){ return this._flow }
+    public getFlow(): IFlow { return this._flow }
 
     public getBaseSourceModel(): SourceResource1 {
         return {

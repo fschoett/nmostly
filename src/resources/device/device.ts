@@ -15,6 +15,8 @@ import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
 import { Source } from "../source";
 import { SourceResource } from "../../schemas/is-04-discovery-api/source";
 import { ISource } from "../source/i-source";
+import { FlowResource } from "../../schemas/is-04-discovery-api/flow";
+import { IFlow } from "../flow/i-flow";
 
 
 
@@ -84,7 +86,7 @@ export class Device extends ResourceCore{
         return this.sourceList;
     }
 
-    public getAllFlows(): Flow[]{
+    public getAllFlows(): IFlow[]{
         return this.sourceList
             .map(currSource => currSource.getFlow())
     }
@@ -118,7 +120,7 @@ export class Device extends ResourceCore{
         return this.sourceList.map(currSource => currSource.getModel());
     }
 
-    public getFlowModels(): IFlowModel[] {
+    public getFlowModels(): FlowResource[] {
         return this.sourceList.map(currSource => currSource.getFlow().getModel())
     }
 }
