@@ -1,24 +1,24 @@
+import { SourceResource1 } from "../../schemas/is-04-discovery-api/source";
+import { AudioSourceResource, Component, SourceResource } from "../../schemas/is-04-discovery-api/sources";
 import { IAppService } from "../../services/i-app-service";
-import { Flow } from "../flow/Flow";
+import { Flow } from "../flow";
+// import { Flow } from "../flow/Flow";
 import { ResourceCore } from "../resource-core";
+import { ISource } from "./i-source";
 import { ISourceConfig } from "./i-source-config";
-import { ISourceModel } from "./i-source-model";
 
-export class Source extends ResourceCore{
+export class Source extends ResourceCore implements ISource{
 
-    format: string;
-    caps: object = {};
-    device_id: string;
-    parents: string[] = [];
-    clock_name: string;
+    private caps: SourceResource["caps"];
+    private device_id: string;
+    private parents: string[] = [];
+    private clock_name: string;
 
     private _flow: Flow;
 
     constructor( appService: IAppService, config: ISourceConfig ){
         super( appService, config );
 
-        this.format = "urn:x-nmos:format:video";
-        this.caps = {};
         this.device_id = config.device_id;
         this.parents = config.parents;
         this.clock_name = config.clock_name;
@@ -33,22 +33,18 @@ export class Source extends ResourceCore{
     }
 
 
-    public get flow(){ return this._flow; }
+    // public get flow(){ return this._flow; }
+    public getFlow(){ return this._flow }
 
-    public getModel() : ISourceModel{
+    public getBaseSourceModel(): SourceResource1 {
         return {
-            id: this.id,
-            version: this.version,
-            label: this.label,
-            description: this.description,
-            tags: this.tags,
+            ...this.getBaseResource(),
 
-            format: this.format,
             caps: this.caps,
             device_id: this.device_id,
             parents: this.parents,
             clock_name: this.clock_name
-        }
+        };
     }
 
 }

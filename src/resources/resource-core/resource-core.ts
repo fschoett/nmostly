@@ -21,9 +21,9 @@ export class ResourceCore{
         this.tags = config.tags;
     }
 
+    public getBaseResource(): BaseResource {
 
-    public getModel(): BaseResource{
-        const resourceModel: BaseResource= {
+        const resourceModel:BaseResource = {
             description: this.description,
             id: this.id,
             version: this.version,

@@ -9,7 +9,7 @@ import { Device, IDeviceConfig } from "../resources/device";
 
 import { Receiver, IReceiverConfig, IReceiverAudioConfig, ReceiverAudio } from "../resources/receiver";
 
-import { ISourceConfig, ISourceModel, Source } from "../resources/source";
+import Source, { ISourceConfig, ISourceModel } from "../resources/source";
 import { ISenderConfig, Sender } from "../resources/sender";
 import { Flow, IFlowModel } from "../resources/flow";
 

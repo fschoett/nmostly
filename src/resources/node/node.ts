@@ -1,5 +1,6 @@
 import { NodeResource } from "../../schemas/is-04-discovery-api/node";
 import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
+import { SourceResource } from "../../schemas/is-04-discovery-api/source";
 import { IAppService } from "../../services/i-app-service";
 import { IDeviceModel } from "../device";
 import { Device } from "../device/device";
@@ -7,7 +8,7 @@ import { Flow, IFlowModel } from "../flow";
 import { Receiver } from "../receiver";
 import { ResourceCore } from "../resource-core/resource-core";
 import { ISenderModel, Sender } from "../sender";
-import { ISourceModel, Source } from "../source";
+import { ISource } from "../source/i-source";
 
 import { INodeConfig } from "./i-node-config";
 import { INodeModel } from "./i-node-model";
@@ -160,7 +161,7 @@ export class Node extends ResourceCore {
 
     // sources
     public getSource(sourceId: string) {
-        let foundSource: Source;
+        let foundSource: ISource;
         let deviceList = this.deviceList;
         deviceList.every(device => {
             foundSource = device
@@ -175,13 +176,13 @@ export class Node extends ResourceCore {
         return foundSource;
     }
 
-    public getAllSources(): Source[] {
+    public getAllSources(): ISource[] {
         return this.deviceList
             .map(currDevice => currDevice.getSourceList())
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllSourceModels(): ISourceModel[] {
+    public getAllSourceModels(): SourceResource[] {
         return this.getAllSources().map(currSource => currSource.getModel());
     }
 

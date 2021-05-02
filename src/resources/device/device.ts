@@ -5,7 +5,6 @@ import { FormatEnum  } from "../../enums/format-enums";
 // other models import
 import { Receiver } from "../receiver";
 import { Sender,   ISenderModel   } from "../sender";
-import { Source,   ISourceModel   } from "../source";
 import { Flow, IFlowModel } from "../flow";
 
 // same dir level imports
@@ -13,6 +12,9 @@ import { ResourceCore } from "../resource-core";
 import { IDeviceConfig } from "./i-device-config";
 import { DeviceResource } from "../../schemas/is-04-discovery-api/device";
 import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
+import { Source } from "../source";
+import { SourceResource } from "../../schemas/is-04-discovery-api/source";
+import { ISource } from "../source/i-source";
 
 
 
@@ -22,7 +24,7 @@ export class Device extends ResourceCore{
 
     private receiverList: Receiver[] = [];
     private senderList: Sender[] = [];
-    private sourceList: Source[] = [];
+    private sourceList: ISource[] = [];
 
     constructor(
         appService: IAppService,
@@ -65,7 +67,7 @@ export class Device extends ResourceCore{
             .find(currReceiver => currReceiver.id === receiverId);
     }
 
-    public getSource(sourceId: string): Source {
+    public getSource(sourceId: string): ISource {
         return this.sourceList
             .find(currSource => currSource.id === sourceId);
     }
@@ -78,13 +80,13 @@ export class Device extends ResourceCore{
         return this.receiverList;
     }
 
-    public getSourceList(): Source[] {
+    public getSourceList(): ISource[] {
         return this.sourceList;
     }
 
     public getAllFlows(): Flow[]{
         return this.sourceList
-            .map(currSource => currSource.flow)
+            .map(currSource => currSource.getFlow())
     }
 
     public getModel(): DeviceResource {
@@ -112,11 +114,11 @@ export class Device extends ResourceCore{
         return this.senderList.map(currSender => currSender.getModel());
     }
 
-    public getSourceModels(): ISourceModel[] {
+    public getSourceModels(): SourceResource[] {
         return this.sourceList.map(currSource => currSource.getModel());
     }
 
     public getFlowModels(): IFlowModel[] {
-        return this.sourceList.map(currSource => currSource.flow.getModel())
+        return this.sourceList.map(currSource => currSource.getFlow().getModel())
     }
 }
