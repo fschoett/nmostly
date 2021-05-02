@@ -4,9 +4,8 @@ import { ConstraintRtp } from "../constraint/constraint-rtp";
 import { ResourceCore } from "../resource-core";
 import { StageSender } from "../stage/stage-sender";
 import { ISenderConfig } from "./i-sender-config";
-import { ISenderModel } from "./i-sender-model";
 
-export class Sender extends ResourceCore implements ISenderModel{
+export class Sender extends ResourceCore {
 
     flow_id: string;
     transport: string;

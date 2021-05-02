@@ -1,7 +1,6 @@
 import { BaseResource } from "../../schemas/is-04-discovery-api/node";
 import { IAppService } from "../../services/i-app-service";
 import { IResourceCoreConfig } from "./i-resource-core-config";
-import { IResourceCoreModel } from "./i-resource-core-model";
 
 export class ResourceCore{
     id: string;

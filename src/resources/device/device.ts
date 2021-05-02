@@ -1,11 +1,11 @@
 // service imports
 import { IAppService } from "../../services/i-app-service";
-import { FormatEnum  } from "../../enums/format-enums";
+import { FormatEnum } from "../../enums/format-enums";
 
 // other models import
 import { Receiver } from "../receiver";
-import { Sender,   ISenderModel   } from "../sender";
-import { Flow, IFlowModel } from "../flow";
+import { Sender } from "../sender";
+import { Flow } from "../flow";
 
 // same dir level imports
 import { ResourceCore } from "../resource-core";
@@ -17,10 +17,11 @@ import { SourceResource } from "../../schemas/is-04-discovery-api/source";
 import { ISource } from "../source/i-source";
 import { FlowResource } from "../../schemas/is-04-discovery-api/flow";
 import { IFlow } from "../flow/i-flow";
+import { SenderResource } from "../../schemas/is-04-discovery-api/sender";
 
 
 
-export class Device extends ResourceCore{
+export class Device extends ResourceCore {
 
     private _node_id: string;
 
@@ -33,11 +34,11 @@ export class Device extends ResourceCore{
         config: IDeviceConfig,
         node_id: string
     ) {
-        super( appService, config );
+        super(appService, config);
         this._node_id = node_id;
     }
 
-    
+
     public get node_id() { return this._node_id }
 
     public get senders() {
@@ -86,7 +87,7 @@ export class Device extends ResourceCore{
         return this.sourceList;
     }
 
-    public getAllFlows(): IFlow[]{
+    public getAllFlows(): IFlow[] {
         return this.sourceList
             .map(currSource => currSource.getFlow())
     }
@@ -112,7 +113,7 @@ export class Device extends ResourceCore{
         return this.receiverList.map(currReceiver => currReceiver.getModel());
     }
 
-    public getSenderModels(): ISenderModel[] {
+    public getSenderModels(): SenderResource[] {
         return this.senderList.map(currSender => currSender.getModel());
     }
 

@@ -1,14 +1,15 @@
+import { DeviceResource } from "../../schemas/is-04-discovery-api/device";
 import { FlowResource } from "../../schemas/is-04-discovery-api/flow";
 import { NodeResource } from "../../schemas/is-04-discovery-api/node";
 import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
+import { SenderResource } from "../../schemas/is-04-discovery-api/sender";
 import { SourceResource } from "../../schemas/is-04-discovery-api/source";
 import { IAppService } from "../../services/i-app-service";
-import { IDeviceModel } from "../device";
 import { Device } from "../device/device";
 import { IFlow } from "../flow/i-flow";
 import { Receiver } from "../receiver";
 import { ResourceCore } from "../resource-core/resource-core";
-import { ISenderModel, Sender } from "../sender";
+import { Sender } from "../sender";
 import { ISource } from "../source/i-source";
 
 import { INodeConfig } from "./i-node-config";
@@ -92,7 +93,7 @@ export class Node extends ResourceCore {
         return this.deviceList.find(currDevice => currDevice.id === deviceId);
     }
 
-    public getAllDeviceModels(): IDeviceModel[] {
+    public getAllDeviceModels():DeviceResource [] {
         return this.deviceList.map(currDevice => currDevice.getModel());
     }
 
@@ -134,7 +135,7 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllSenderModels(): ISenderModel[] {
+    public getAllSenderModels(): SenderResource [] {
         return this.getAllSenders().map(currSender => currSender.getModel());
     }
 
