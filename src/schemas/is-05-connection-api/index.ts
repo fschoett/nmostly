@@ -39,3 +39,5 @@ export {
 
  // Transporttype
  export { TransportType } from "./generated/transporttype-response-schema"
+
+ export { ConnectionAPISenderReceiverBaseResource } from "./generated/sender-receiver-base"

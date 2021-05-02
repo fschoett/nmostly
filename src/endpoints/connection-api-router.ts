@@ -1,18 +1,28 @@
 import express, { Response } from "express";
 import { NodeApi } from "../api/node-api";
 import { IConnectionApiController } from "../controllers/i-connection-api-controller";
-import { BulkReceiverResource } from "../schemas/is-05-connection-api/bulk-receiver-post-schema";
-import { BulkActivationResponse } from "../schemas/is-05-connection-api/bulk-response-schema";
-import { BulkSenderResource, SenderResource } from "../schemas/is-05-connection-api/bulk-sender-post-schema";
-import { ConnectionAPIBaseResource } from "../schemas/is-05-connection-api/connectionapi-base";
-import { ConnectionAPIBulkBaseResource } from "../schemas/is-05-connection-api/connectionapi-bulk";
-import { ConnectionAPISingleReceiversReceiverIdBaseResource } from "../schemas/is-05-connection-api/connectionapi-receiver";
-import { ConnectionAPISingleSendersSenderIdBaseResource } from "../schemas/is-05-connection-api/connectionapi-sender";
-import { ConnectionAPISingleBaseResource } from "../schemas/is-05-connection-api/connectionapi-single";
-import { Constraints } from "../schemas/is-05-connection-api/constraints-schema";
-import { ReceiverResource } from "../schemas/is-05-connection-api/receiver-stage-schema";
-import { ConnectionAPISenderReceiverBaseResource } from "../schemas/is-05-connection-api/sender-receiver-base";
-import { TransportType } from "../schemas/is-05-connection-api/transporttype-response-schema";
+
+import {
+    BulkSenderResource,
+    BulkActivationResponse,
+    BulkReceiverResource,
+    SenderResource,
+    ReceiverResource,
+
+    ConnectionAPIBaseResource,
+    ConnectionAPISenderReceiverBaseResource,
+
+    ConnectionAPIBulkBaseResource,
+
+    ConnectionAPISingleBaseResource,
+    ConnectionAPISingleSendersSenderIdBaseResource,
+    ConnectionAPISingleReceiversReceiverIdBaseResource,
+
+    Constraints,
+    TransportType,
+    TransportFile
+} from "../schemas";
+
 import { returnJson } from "../utils/return-nmos-json";
 
 
@@ -122,7 +132,7 @@ export class RouterNmosApiConnection {
 
         connectionApiRouter.get("/single/senders/:id/transportfile/", (req, res) => {
             const senderId = req.params.id;
-            const response: SenderResource = cntrlr.onGetSenderTransportfile(senderId);
+            const response: TransportFile = cntrlr.onGetSenderTransportfile(senderId);
             res.send(response);
         });
 
