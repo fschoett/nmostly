@@ -12,9 +12,8 @@ export type DeviceResource = BaseResource & {
   /**
    * Device type URN
    */
-  type: {
-    [k: string]: unknown;
-  } & string;
+  type: string;
+
   /**
    * Globally unique identifier for the Node which initially created the Device. This attribute is used to ensure referential integrity by registry implementations.
    */

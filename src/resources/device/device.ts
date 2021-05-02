@@ -3,7 +3,7 @@ import { IAppService } from "../../services/i-app-service";
 import { FormatEnum  } from "../../enums/format-enums";
 
 // other models import
-import { Receiver, IReceiverModel } from "../receiver";
+import { Receiver } from "../receiver";
 import { Sender,   ISenderModel   } from "../sender";
 import { Source,   ISourceModel   } from "../source";
 import { Flow, IFlowModel } from "../flow";
@@ -11,7 +11,8 @@ import { Flow, IFlowModel } from "../flow";
 // same dir level imports
 import { ResourceCore } from "../resource-core";
 import { IDeviceConfig } from "./i-device-config";
-import { IDeviceModel } from "./i-device-model";
+import { DeviceResource } from "../../schemas/is-04-discovery-api/device";
+import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
 
 
 
@@ -86,23 +87,24 @@ export class Device extends ResourceCore{
             .map(currSource => currSource.flow)
     }
 
-    public getModel(): IDeviceModel {
-        let deviceModel: IDeviceModel = {
+    public getModel(): DeviceResource {
+        let deviceModel: DeviceResource = {
             id: this.id,
             version: this.version,
+            label: this.label,
+            description: this.description,
+            tags: this.tags,
+
             type: "urn:x-nmos:device:generic",
             controls: [],
-            description: this.description,
             node_id: this.node_id,
-            tags: this.tags,
-            label: this.label,
             senders: this.senders,
             receivers: this.receivers
         }
         return deviceModel;
     }
 
-    public getReceiverModels(): IReceiverModel[] {
+    public getReceiverModels(): ReceiverResource[] {
         return this.receiverList.map(currReceiver => currReceiver.getModel());
     }
 
