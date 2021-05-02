@@ -1,9 +1,12 @@
-import { DeviceResource } from "../../schemas/is-04-discovery-api/device";
-import { FlowResource } from "../../schemas/is-04-discovery-api/flow";
-import { NodeResource } from "../../schemas/is-04-discovery-api/node";
-import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
-import { SenderResource } from "../../schemas/is-04-discovery-api/sender";
-import { SourceResource } from "../../schemas/is-04-discovery-api/source";
+import { 
+    NodeResource, 
+    DeviceResource, 
+    ReceiverResource, 
+    SenderResource, 
+    FlowResource, 
+    SourceResource 
+} from "../../schemas/is-04-discovery-api";
+
 import { IAppService } from "../../services/i-app-service";
 import { Device } from "../device/device";
 import { IFlow } from "../flow/i-flow";
