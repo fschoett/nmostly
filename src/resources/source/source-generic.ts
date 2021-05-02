@@ -1,7 +1,6 @@
-import { Source } from ".";
-import { GenericSourceResource } from "../../schemas/is-04-discovery-api/source";
+import { GenericSourceResource } from "../../schemas";
 import { IAppService } from "../../services/i-app-service";
-import { ISourceConfig } from "./i-source-config";
+import { Source, ISourceConfig } from ".";
 
 export class SourceGeneric extends Source {
 

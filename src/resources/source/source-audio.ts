@@ -1,8 +1,6 @@
-import { Source } from ".";
-import { AudioSourceResource, Component } from "../../schemas/is-04-discovery-api/source";
+import { AudioSourceResource } from "../../schemas";
 import { IAppService } from "../../services/i-app-service";
-import { ISourceConfig } from "./i-source-config";
-
+import { Source, ISourceConfig } from ".";
 
 export class SourceAudio extends Source {
 

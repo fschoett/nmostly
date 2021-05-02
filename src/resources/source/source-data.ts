@@ -1,8 +1,6 @@
-import { Source } from ".";
-import { DataSourceResource } from "../../schemas/is-04-discovery-api/source";
+import { DataSourceResource } from "../../schemas";
 import { IAppService } from "../../services/i-app-service";
-import { ISourceConfig } from "./i-source-config";
-
+import { Source, ISourceConfig } from ".";
 
 export class SourceData extends Source{
 
