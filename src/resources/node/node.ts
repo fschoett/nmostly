@@ -1,9 +1,10 @@
 import { NodeResource } from "../../schemas/is-04-discovery-api/node";
+import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
 import { IAppService } from "../../services/i-app-service";
 import { IDeviceModel } from "../device";
 import { Device } from "../device/device";
 import { Flow, IFlowModel } from "../flow";
-import { IReceiverModel, Receiver } from "../receiver";
+import { Receiver } from "../receiver";
 import { ResourceCore } from "../resource-core/resource-core";
 import { ISenderModel, Sender } from "../sender";
 import { ISourceModel, Source } from "../source";
@@ -110,7 +111,7 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllReceiverModels(): IReceiverModel[] {
+    public getAllReceiverModels(): ReceiverResource [] {
         return this.getAllReceivers()
             .map(currReceiver => currReceiver.getModel());
     }

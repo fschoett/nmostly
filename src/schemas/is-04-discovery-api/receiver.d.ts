@@ -59,9 +59,7 @@ export type ReceiverResource1 = BaseResource & {
   /**
    * Transport type accepted by the Receiver in URN format
    */
-  transport: {
-    [k: string]: unknown;
-  } & string;
+  transport: string;
   /**
    * Binding of Receiver ingress ports to interfaces on the parent Node.
    */
