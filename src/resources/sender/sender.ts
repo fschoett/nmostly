@@ -1,3 +1,4 @@
+import { SenderResource } from "../../schemas/is-04-discovery-api/sender";
 import { IAppService } from "../../services/i-app-service";
 import { ConstraintRtp } from "../constraint/constraint-rtp";
 import { ResourceCore } from "../resource-core";
@@ -41,8 +42,8 @@ export class Sender extends ResourceCore implements ISenderModel{
         return this.staged;
     }
 
-    public getModel(): ISenderModel {
-        return {
+    public getModel(): SenderResource {
+        const senderModel: SenderResource = {
             id: this.id,
             version: this.version,
             label: this.label,
@@ -55,6 +56,7 @@ export class Sender extends ResourceCore implements ISenderModel{
             manifest_href: this.manifest_href,
             interface_bindings: this.interface_bindings,
             subscription: this.subscription
-        }
+        };
+        return senderModel;
     }
 }

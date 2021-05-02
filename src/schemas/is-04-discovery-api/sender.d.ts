@@ -22,9 +22,7 @@ export type SenderResource = BaseResource & {
   /**
    * Transport type used by the Sender in URN format
    */
-  transport: {
-    [k: string]: unknown;
-  } & string;
+  transport: string;
   /**
    * Device ID which this Sender forms part of. This attribute is used to ensure referential integrity by registry implementations.
    */
