@@ -1,3 +1,6 @@
+import { IAppService } from "../../services/i-app-service";
+import { INodeConfig } from ".";
+
 import { 
     NodeResource, 
     DeviceResource, 
@@ -7,15 +10,13 @@ import {
     SourceResource 
 } from "../../schemas/is-04-discovery-api";
 
-import { IAppService } from "../../services/i-app-service";
-import { Device } from "../device/device";
-import { IFlow } from "../flow/i-flow";
+import { ResourceCore } from "../resource-core";
+import { Device   } from "../device";
 import { Receiver } from "../receiver";
-import { ResourceCore } from "../resource-core/resource-core";
-import { Sender } from "../sender";
-import { ISource } from "../source/i-source";
+import { Sender   } from "../sender";
+import { ISource  } from "../source";
+import { IFlow    } from "../flow";
 
-import { INodeConfig } from "./i-node-config";
 
 
 export class Node extends ResourceCore {

@@ -1,7 +1,6 @@
-import { RawAudioFlowResource } from "../../schemas/is-04-discovery-api/flow";
+import { RawAudioFlowResource } from "../../schemas";
 import { IAppService } from "../../services/i-app-service";
-import { Flow } from "./flow";
-import { IFlowConfig } from "./i-flow-config";
+import { Flow, IFlowConfig } from ".";
 
 export class FlowRawAudio extends Flow{
 

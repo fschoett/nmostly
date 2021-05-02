@@ -1,4 +1,4 @@
-import { IResourceCoreConfig } from "../resource-core/i-resource-core-config";
+import { IResourceCoreConfig } from "../resource-core";
 
 export interface INodeConfig extends IResourceCoreConfig {
     href: string;

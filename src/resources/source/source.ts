@@ -1,13 +1,9 @@
-import { SourceResource1 } from "../../schemas/is-04-discovery-api/source";
-import { AudioSourceResource, Component, SourceResource } from "../../schemas/is-04-discovery-api/sources";
 import { IAppService } from "../../services/i-app-service";
-import { Flow } from "../flow";
-import { FlowRawAudio } from "../flow/flow-raw-audio";
-import { IFlow } from "../flow/i-flow";
-// import { Flow } from "../flow/Flow";
+import { SourceResource, SourceResource1 } from "../../schemas";
+
 import { ResourceCore } from "../resource-core";
-import { ISource } from "./i-source";
-import { ISourceConfig } from "./i-source-config";
+import { IFlow, FlowRawAudio } from "../flow";
+import { ISource, ISourceConfig } from ".";
 
 export class Source extends ResourceCore implements ISource{
 

@@ -32,6 +32,7 @@ export { CollectionOfReceivers } from "./generated/receivers"
 // Sources
 export {
     SourceResource,
+    SourceResource1,
     AudioSourceResource,
     DataSourceResource,
     GenericSourceResource,
@@ -42,6 +43,7 @@ export { CollectionOfSources } from "./generated/sources"
 // Flows
 export {
     FlowResource,
+    FlowResource1,
     RawVideoFlowResource,
     CodedVideoFlowResource,
     RawAudioFlowResource,

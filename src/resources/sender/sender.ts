@@ -1,9 +1,11 @@
-import { SenderResource } from "../../schemas/is-04-discovery-api/sender";
-import { IAppService } from "../../services/i-app-service";
+import { SenderResource } from "../../schemas";
+
+import { IAppService    } from "../../services/i-app-service";
+
+import { ResourceCore  } from "../resource-core";
 import { ConstraintRtp } from "../constraint/constraint-rtp";
-import { ResourceCore } from "../resource-core";
-import { StageSender } from "../stage/stage-sender";
-import { ISenderConfig } from "./i-sender-config";
+import { StageSender   } from "../stage/stage-sender";
+import { ISenderConfig } from ".";
 
 export class Sender extends ResourceCore {
 
@@ -18,8 +20,8 @@ export class Sender extends ResourceCore {
     staged: StageSender;
 
 
-    constructor( appService: IAppService, config: ISenderConfig){
-        super( appService, config );
+    constructor(appService: IAppService, config: ISenderConfig) {
+        super(appService, config);
         this.flow_id = config.flow_id;
         this.transport = "urn:x-nmos:transport:";
         this.device_id = config.device_id;
@@ -33,11 +35,11 @@ export class Sender extends ResourceCore {
         this.staged = new StageSender();
     }
 
-    public getConstraints(): ConstraintRtp{
+    public getConstraints(): ConstraintRtp {
         return this.constraints;
     }
 
-    public getStaged(): StageSender{
+    public getStaged(): StageSender {
         return this.staged;
     }
 

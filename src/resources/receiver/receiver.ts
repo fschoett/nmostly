@@ -1,14 +1,14 @@
-import {
-    AudioReceiverResource,
+import { 
+    AudioReceiverResource, 
     ReceiverResource
-} from "../../schemas/is-04-discovery-api";
+} from "../../schemas";
 
 import { AppService } from "../../services/app-service";
-import { ConstraintRtp } from "../constraint/constraint-rtp";
-import { ResourceCore } from "../resource-core";
-import { StageReceiver } from "../stage/stage-receiver";
-import { IReceiverConfig } from "./i-receiver-config";
-// import { IReceiverModel } from "./i-receiver-model";
+
+import { ResourceCore    } from "../resource-core";
+import { ConstraintRtp   } from "../constraint/constraint-rtp";
+import { StageReceiver   } from "../stage/stage-receiver";
+import { IReceiverConfig } from ".";
 
 export class Receiver extends ResourceCore {
 

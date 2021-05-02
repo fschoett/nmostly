@@ -1,24 +1,19 @@
-// service imports
-import { IAppService } from "../../services/i-app-service";
-import { FormatEnum } from "../../enums/format-enums";
+import { IAppService   } from "../../services/i-app-service";
+import { IDeviceConfig } from ".";
 
-// other models import
-import { Receiver } from "../receiver";
-import { Sender } from "../sender";
-import { Flow } from "../flow";
+import { 
+    DeviceResource, 
+    ReceiverResource, 
+    SenderResource,
+    SourceResource,
+    FlowResource
+} from "../../schemas";
 
-// same dir level imports
 import { ResourceCore } from "../resource-core";
-import { IDeviceConfig } from "./i-device-config";
-import { DeviceResource } from "../../schemas/is-04-discovery-api/device";
-import { ReceiverResource } from "../../schemas/is-04-discovery-api/receiver";
-import { Source } from "../source";
-import { SourceResource } from "../../schemas/is-04-discovery-api/source";
-import { ISource } from "../source/i-source";
-import { FlowResource } from "../../schemas/is-04-discovery-api/flow";
-import { IFlow } from "../flow/i-flow";
-import { SenderResource } from "../../schemas/is-04-discovery-api/sender";
-
+import { Receiver     } from "../receiver";
+import { Sender       } from "../sender";
+import { IFlow        } from "../flow";
+import { ISource, Source } from "../source";
 
 
 export class Device extends ResourceCore {
