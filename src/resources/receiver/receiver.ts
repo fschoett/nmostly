@@ -1,6 +1,7 @@
 import { 
     AudioReceiverResource, 
-    ReceiverResource
+    ReceiverResource,
+    ReceiverResource1
 } from "../../schemas";
 
 import { AppService } from "../../services/app-service";
@@ -9,8 +10,9 @@ import { ResourceCore    } from "../resource-core";
 import { ConstraintRtp   } from "../constraint/constraint-rtp";
 import { StageReceiver   } from "../stage/stage-receiver";
 import { IReceiverConfig } from ".";
+import { IReceiver } from "./i-receiver";
 
-export class Receiver extends ResourceCore {
+export class Receiver extends ResourceCore implements IReceiver {
 
 
     device_id: string;
@@ -23,11 +25,6 @@ export class Receiver extends ResourceCore {
 
     constraints: ConstraintRtp;
     staged: StageReceiver;
-    format: AudioReceiverResource["format"];
-
-    caps: AudioReceiverResource["caps"] = {
-        media_types: ["audio/L16"]
-    };
 
     constructor(appService: AppService, config: IReceiverConfig) {
         super(appService, config);
@@ -35,7 +32,6 @@ export class Receiver extends ResourceCore {
         this.device_id = config.device_id;
 
         this.constraints = new ConstraintRtp();
-        this.format = "urn:x-nmos:format:audio";
     }
 
     public getConstraints(): ConstraintRtp {
@@ -46,21 +42,14 @@ export class Receiver extends ResourceCore {
         return this.staged;
     }
 
-    public getModel(): ReceiverResource {
-        const receiver: AudioReceiverResource = {
-            id: this.id,
-            version: this.version,
-            label: this.label,
-            description: this.label,
-            tags: this.tags,
+    public getBaseReceiverModel(): ReceiverResource1{
+        return {
+            ...this.getBaseResource(),
 
             device_id: this.device_id,
             transport: this.transport,
             interface_bindings: this.interface_bindings,
-            subscription: this.subscription,
-            format: this.format,
-            caps: this.caps,
+            subscription: this.subscription
         };
-        return receiver;
     }
 }

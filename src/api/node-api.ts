@@ -7,8 +7,8 @@ import { AppService } from "../services/app-service";
 import { Node, INodeConfig } from "../resources/node";
 import { Device, IDeviceConfig } from "../resources/device";
 import { BaseApiController } from "../endpoints/base-api-router";
-import { Flow } from "../resources/flow";
-import { IReceiverConfig, Receiver } from "../resources/receiver";
+import { Flow, IFlow } from "../resources/flow";
+import { IReceiverAudioConfig, IReceiverConfig, Receiver, ReceiverAudio } from "../resources/receiver";
 import { ISenderConfig, Sender } from "../resources/sender";
 import { ISourceConfig, Source } from "../resources/source";
 
@@ -79,12 +79,12 @@ export class NodeApi {
     }
 
     public addSender(config: ISenderConfig, flowId: string): string {
-        let flowList: Flow[] = this.self
+        let flowList: IFlow[] = this.self
             .getDeviceList()
-            .map(device => device.getSourceList().map(source => source.flow))
+            .map(device => device.getSourceList().map(source => source.getFlow() ))
             .reduce((acc, curr) => acc.concat(curr));
 
-        let foundFlow: Flow = flowList.find(flow => flow.id === flowId);
+        let foundFlow: IFlow = flowList.find(flow => flow.id === flowId);
 
         if (foundFlow) {
             // create new sender
@@ -110,10 +110,6 @@ export class NodeApi {
         if (foundDevice) {
             foundDevice.addReceiver(newReceiver);
         }
-    }
-
-    public getNodeRoot() {
-        return ["self/", "sources/", "flows/", "devices/", "senders/", "receivers/"];
     }
 
     public getSelf() {

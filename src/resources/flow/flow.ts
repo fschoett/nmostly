@@ -1,4 +1,4 @@
-import { FlowResource1 } from "../../schemas";
+import { FlowResource, FlowResource1 } from "../../schemas";
 import { IAppService   } from "../../services/i-app-service";
 import { ResourceCore  } from "../resource-core";
 import { IFlow, IFlowConfig } from ".";

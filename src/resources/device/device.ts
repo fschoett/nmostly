@@ -10,7 +10,7 @@ import {
 } from "../../schemas";
 
 import { ResourceCore } from "../resource-core";
-import { Receiver     } from "../receiver";
+import { IReceiver, Receiver     } from "../receiver";
 import { Sender       } from "../sender";
 import { IFlow        } from "../flow";
 import { ISource, Source } from "../source";
@@ -20,7 +20,7 @@ export class Device extends ResourceCore {
 
     private _node_id: string;
 
-    private receiverList: Receiver[] = [];
+    private receiverList: IReceiver[] = [];
     private senderList: Sender[] = [];
     private sourceList: ISource[] = [];
 
@@ -60,7 +60,7 @@ export class Device extends ResourceCore {
             .find(currSender => currSender.id === senderId);
     }
 
-    public getReceiver(receiverId: string): Receiver {
+    public getReceiver(receiverId: string): IReceiver {
         return this.receiverList
             .find(currReceiver => currReceiver.id === receiverId);
     }
@@ -74,7 +74,7 @@ export class Device extends ResourceCore {
         return this.senderList;
     }
 
-    public getReceiverList(): Receiver[] {
+    public getReceiverList(): IReceiver[] {
         return this.receiverList;
     }
 

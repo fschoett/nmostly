@@ -22,6 +22,7 @@ export { CollectionOfSenders } from "./generated/senders"
 // Receivers
 export {
     ReceiverResource,
+    ReceiverResource1,
     VideoReceiverResource,
     AudioReceiverResource,
     DataReceiverResource,

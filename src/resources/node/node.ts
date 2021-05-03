@@ -17,7 +17,7 @@ import {
 
 import { ResourceCore } from "../resource-core";
 import { Device } from "../device";
-import { Receiver } from "../receiver";
+import { IReceiver, Receiver } from "../receiver";
 import { Sender } from "../sender";
 import { ISource } from "../source";
 import { IFlow } from "../flow";
@@ -109,8 +109,8 @@ export class Node extends ResourceCore {
     }
 
     // receivers
-    public getReceiver(receiverId: string): Receiver {
-        const receiverList: Receiver[] = this.deviceList
+    public getReceiver(receiverId: string): IReceiver {
+        const receiverList: IReceiver[] = this.deviceList
             .map(device => device.getReceiverList())
             .reduce((acc, curr) => acc.concat(curr));
 
@@ -118,7 +118,7 @@ export class Node extends ResourceCore {
             .find(sender => sender.id === receiverId);
     }
 
-    public getAllReceivers(): Receiver[] {
+    public getAllReceivers(): IReceiver[] {
         return this.deviceList
             .map(device => device.getReceiverList())
             .reduce((acc, curr) => acc.concat(curr));

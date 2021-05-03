@@ -13,4 +13,7 @@ export class NmosMediator implements INmosMediator {
         return this.node;
     }
 
+    // think about setting up a store to prevent calling 
+    // getNode().getResource().getModel()?
+
 }
