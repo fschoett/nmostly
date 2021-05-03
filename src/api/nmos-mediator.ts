@@ -1,12 +1,35 @@
+import { ConnectionApiController } from "../controllers/connection-api-controller";
+import { DiscoveryApiController } from "../controllers/discovery-api-controller";
+import { CoreRouter } from "../endpoints/core-router";
 import { Node } from "../resources/node";
 import { INmosMediator } from "./i-nmos-mediator";
 
 export class NmosMediator implements INmosMediator {
 
     private node: Node;
+    private coreRouter: CoreRouter ;
 
-    constructor( node: Node ){
+    constructor( private port: number, node: Node ){
         this.node = node;
+
+        this.setupEndpoints();
+    }
+
+    public startServer(){
+        if( this.coreRouter ){
+            this.coreRouter.startServer();
+        }
+    }
+
+    private setupEndpoints(){
+        const discoveryApiController  = new DiscoveryApiController(  this );
+        const connectionApiController = new ConnectionApiController( this );
+        
+        this.coreRouter = new CoreRouter( 
+            this.port,
+            connectionApiController,
+            discoveryApiController
+        );
     }
 
     getNode(): Node {

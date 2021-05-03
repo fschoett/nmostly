@@ -6,7 +6,7 @@ import { AppService } from "../services/app-service";
 
 import { Node, INodeConfig } from "../resources/node";
 import { Device, IDeviceConfig } from "../resources/device";
-import { BaseApiController } from "../endpoints/base-api-router";
+import { BaseApiController } from "../endpoints/nmos-base-router";
 import { Flow, IFlow } from "../resources/flow";
 import { IReceiverAudioConfig, IReceiverConfig, Receiver, ReceiverAudio } from "../resources/receiver";
 import { ISenderConfig, Sender } from "../resources/sender";
