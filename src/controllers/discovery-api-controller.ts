@@ -1,50 +1,105 @@
 import { INmosMediator } from "../api";
-import { NodeAPIBaseResource, NodeResource, CollectionOfDevices, DeviceResource, CollectionOfReceivers, ReceiverResource, CollectionOfSenders, SenderResource, CollectionOfSources, SourceResource, CollectionOfFlows, FlowResource } from "../schemas";
+
+import {
+    NodeAPIBaseResource,
+    NodeResource,
+    CollectionOfDevices,
+    DeviceResource,
+    CollectionOfReceivers,
+    ReceiverResource,
+    CollectionOfSenders,
+    SenderResource,
+    CollectionOfSources,
+    SourceResource,
+    CollectionOfFlows,
+    FlowResource
+} from "../schemas";
+
 import { IDiscoveryApiController } from "./i-discovery-api-controller";
+
+
 
 export class DiscoveryApiController implements IDiscoveryApiController {
 
     private nmosMediator: INmosMediator;
 
-    constructor( nmosMediator: INmosMediator ){
+    constructor(nmosMediator: INmosMediator) {
         this.nmosMediator = nmosMediator;
     }
 
     onGetRoot(): NodeAPIBaseResource {
-        throw new Error("Method not implemented.");
+        return ["self/", "sources/", "flows/", "devices/", "senders/", "receivers/"];
     }
+
     onGetSelf(): NodeResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getModel();
     }
+
     onGetDeviceList(): CollectionOfDevices {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllDeviceModels();
     }
+
     onGetDevice(deviceId: string): DeviceResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getDevice(deviceId)
+            .getModel();
     }
+
     onGetReceiverList(): CollectionOfReceivers {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllReceiverModels()
     }
+
     onGetReceiver(receiverId: string): ReceiverResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getReceiver(receiverId)
+            .getModel();
     }
+
     onGetSenderList(): CollectionOfSenders {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllSenderModels();
     }
+
     onGetSender(senderId: string): SenderResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getSender( senderId )
+            .getModel();
     }
+
     onGetSourceList(): CollectionOfSources {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllSourceModels();
     }
+
     onGetSource(sourceId: string): SourceResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getSource( sourceId )
+            .getModel();
     }
+
     onGetFlowList(): CollectionOfFlows {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllFlowModels()
     }
+
     onGetFlow(flowId: string): FlowResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getFlow( flowId )
+            .getModel();
     }
 
 }

@@ -1,21 +1,26 @@
 import { IAppService } from "../../services/i-app-service";
 import { INodeConfig } from ".";
 
-import { 
-    NodeResource, 
-    DeviceResource, 
-    ReceiverResource, 
-    SenderResource, 
-    FlowResource, 
-    SourceResource 
+import {
+    NodeResource,
+    DeviceResource,
+    ReceiverResource,
+    SenderResource,
+    FlowResource,
+    SourceResource,
+    CollectionOfDevices,
+    CollectionOfReceivers,
+    CollectionOfSenders,
+    CollectionOfSources,
+    CollectionOfFlows
 } from "../../schemas/is-04-discovery-api";
 
 import { ResourceCore } from "../resource-core";
-import { Device   } from "../device";
+import { Device } from "../device";
 import { Receiver } from "../receiver";
-import { Sender   } from "../sender";
-import { ISource  } from "../source";
-import { IFlow    } from "../flow";
+import { Sender } from "../sender";
+import { ISource } from "../source";
+import { IFlow } from "../flow";
 
 
 
@@ -29,7 +34,7 @@ export class Node extends ResourceCore {
 
     hostname: string;
 
-    tmp : NodeResource["api"]["endpoints"] = [
+    tmp: NodeResource["api"]["endpoints"] = [
         {
             port: 4000,
             protocol: "http",
@@ -42,7 +47,7 @@ export class Node extends ResourceCore {
         ],
         endpoints: [
             {
-                host : "192.168.178.102",
+                host: "192.168.178.102",
                 port: 5432,
                 protocol: "http"
             }
@@ -97,8 +102,10 @@ export class Node extends ResourceCore {
         return this.deviceList.find(currDevice => currDevice.id === deviceId);
     }
 
-    public getAllDeviceModels():DeviceResource [] {
-        return this.deviceList.map(currDevice => currDevice.getModel());
+    public getAllDeviceModels(): CollectionOfDevices {
+        return this
+            .deviceList
+            .map(currDevice => currDevice.getModel()) as CollectionOfDevices;
     }
 
     // receivers
@@ -117,13 +124,13 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllReceiverModels(): ReceiverResource [] {
+    public getAllReceiverModels(): CollectionOfReceivers {
         return this.getAllReceivers()
-            .map(currReceiver => currReceiver.getModel());
+            .map(currReceiver => currReceiver.getModel()) as CollectionOfReceivers;
     }
 
     public getAllReceiverIds(): string[] {
-        return this.getAllReceivers().map(  currReceiver => currReceiver .id );
+        return this.getAllReceivers().map(currReceiver => currReceiver.id);
     }
 
 
@@ -139,18 +146,19 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllSenderModels(): SenderResource [] {
-        return this.getAllSenders().map(currSender => currSender.getModel());
+    public getAllSenderModels(): CollectionOfSenders {
+        return this.getAllSenders()
+            .map(currSender => currSender.getModel()) as CollectionOfSenders;
     }
 
     public getAllSenderIds(): string[] {
-        return this.getAllSenders().map( currSender => currSender.id );
+        return this.getAllSenders().map(currSender => currSender.id);
     }
 
     // flows
     public getFlow(flowId: string): IFlow {
         return this.getAllFlows()
-            .find( currFlow => currFlow.id === flowId );
+            .find(currFlow => currFlow.id === flowId);
     }
 
     public getAllFlows(): IFlow[] {
@@ -159,9 +167,9 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllFlowModels(): FlowResource[]{
+    public getAllFlowModels(): CollectionOfFlows {
         return this.getAllFlows()
-            .map( currFlow => currFlow.getModel() );
+            .map(currFlow => currFlow.getModel()) as CollectionOfFlows
     }
 
     // sources
@@ -187,8 +195,10 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllSourceModels(): SourceResource[] {
-        return this.getAllSources().map(currSource => currSource.getModel());
+    public getAllSourceModels():CollectionOfSources {
+        return this
+            .getAllSources()
+            .map(currSource => currSource.getModel()) as CollectionOfSources
     }
 
     getModel(): NodeResource {
