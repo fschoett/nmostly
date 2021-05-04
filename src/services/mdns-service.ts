@@ -1,5 +1,5 @@
-import { IMdnsRegistryModel } from "./i-mdns-registry-model";
-import { IMdnsAnswer } from "./i-mdns-response-answer";
+import { IMdnsRegistryModel } from "./interfaces/i-mdns-registry-model";
+import { IMdnsAnswer } from "./interfaces/i-mdns-response-answer";
 
 import { Node } from "../resources/node";
 

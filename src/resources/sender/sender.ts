@@ -1,4 +1,4 @@
-import { SenderResource } from "../../schemas";
+import { SenderResource } fro../../services/interfaces/i-app-service
 
 import { IAppService    } from "../../services/i-app-service";
 

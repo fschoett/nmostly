@@ -1,13 +1,8 @@
-import { IAppService } from "../../services/i-app-service";
+import { IAppService } from "../../services/interfaces/i-app-service";
 import { INodeConfig } from ".";
 
 import {
     NodeResource,
-    DeviceResource,
-    ReceiverResource,
-    SenderResource,
-    FlowResource,
-    SourceResource,
     CollectionOfDevices,
     CollectionOfReceivers,
     CollectionOfSenders,
@@ -17,10 +12,10 @@ import {
 
 import { ResourceCore } from "../resource-core";
 import { Device } from "../device";
-import { IReceiver, Receiver } from "../receiver";
+import { IFlow } from "../flow/i-flow";
+import { IReceiver } from "../receiver/i-receiver";
 import { Sender } from "../sender";
-import { ISource } from "../source";
-import { IFlow } from "../flow";
+import { ISource } from "../source/i-source";
 
 
 

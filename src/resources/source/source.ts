@@ -1,4 +1,4 @@
-import { IAppService } from "../../services/i-app-service";
+import { IAppService } from "../../services/interfaces/i-app-service";
 import { SourceResource, SourceResource1 } from "../../schemas";
 
 import { ResourceCore } from "../resource-core";

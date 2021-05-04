@@ -1,13 +1,11 @@
 import express from "express";
 
-import { IMdnsClientService } from "../services/i-mdns-client-service";
-import { IAppService } from "../services/i-app-service";
+import { IMdnsClientService } from "../services/interfaces/i-mdns-client-service";
+import { IAppService } from "../services/interfaces/i-app-service";
 import { AppService } from "../services/app-service";
 
 import { Node, INodeConfig } from "../resources/node";
 import { Device, IDeviceConfig } from "../resources/device";
-import { BaseApiController } from "../endpoints/nmos-base-router";
-import { Flow, IFlow } from "../resources/flow";
 import { IReceiverAudioConfig, IReceiverConfig, Receiver, ReceiverAudio } from "../resources/receiver";
 import { ISenderConfig, Sender } from "../resources/sender";
 import { ISourceConfig, Source } from "../resources/source";

@@ -1,8 +1,5 @@
-import { IAppService } from "./i-app-service";
-import { ILogger } from "./i-logger";
-import { IMdnsClientService } from "./i-mdns-client-service";
-import { IUtilsService } from "./i-utils-service";
-import { MdnsClientService } from "./mdns-client-service";
+import { IAppService } from "./interfaces/i-app-service";
+import { IUtilsService } from "./interfaces/i-utils-service";
 import { UtilsService } from "./utils-service";
 
 export class AppService implements IAppService{
@@ -11,11 +8,9 @@ export class AppService implements IAppService{
         // throw new Error("Method not implemented.");
     }
     utilsService: IUtilsService;
-    mdnsService: IMdnsClientService;
 
     constructor(){
         this.utilsService = new UtilsService();
-        this.mdnsService = new MdnsClientService();
     }
 
 }

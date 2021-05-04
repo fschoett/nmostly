@@ -1,5 +1,6 @@
 import { BaseResource } from "../../schemas";
-import { IAppService  } from "../../services/i-app-service";
+import { IAppService } from "../../services/interfaces";
+
 import { IResourceCoreConfig } from ".";
 
 export class ResourceCore{

@@ -1,5 +1,5 @@
 import { AudioReceiverResource } from "../../schemas";
-import { IAppService } from "../../services/i-app-service";
+import { IAppService } from "../../services/interfaces/i-app-service";
 
 import { ISourceConfig } from "../source";
 import { IReceiverAudioConfig, IReceiverConfig } from "./i-receiver-config";

@@ -1,6 +1,7 @@
 import { INodeApiConfig, NodeApi } from './api/node-api';
 import { IDeviceConfig } from './resources/device/i-device-config';
-import { IReceiverAudioConfig } from './resources/receiver';
+import { IReceiverAudioConfig, ReceiverAudio } from './resources/receiver';
+// import { IReceiverAudioConfig } from './resources/receiver';
 import { ISenderConfig } from './resources/sender';
 import { ISourceConfig } from './resources/source';
 import { MdnsService } from './services/mdns-service';
@@ -23,12 +24,11 @@ const newDevice:  IDeviceConfig = {
 };
 const newDeviceId = nodeApi.addDevice( newDevice );
 
-const firstReceiver:  IReceiverAudioConfig= {
+const firstReceiver: IReceiverAudioConfig = {
     label: "reciever/1",
     description: "Receiver Description",
     device_id: newDeviceId,
     tags: {},
-    caps: {}
 };
 const newReceiverId = nodeApi.addReceiverAudio( firstReceiver, newDeviceId );
 

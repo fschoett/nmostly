@@ -1,5 +1,5 @@
 import { DataSourceResource } from "../../schemas";
-import { IAppService } from "../../services/i-app-service";
+import { IAppService } from "../../services/interfaces/i-app-service";
 import { Source, ISourceConfig } from ".";
 
 export class SourceData extends Source{
