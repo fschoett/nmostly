@@ -66,11 +66,11 @@ export class Node extends ResourceCore {
         super(appService, config);
 
         // this.href = config.href;
-        this.href = "http://localhost:80/"
+        this.href = config.href || "http://localhost:80/"
         this.caps = {};
         this.services = [];
         this.deviceList = [];
-        this.hostname = "nmos-virtnode.local";
+        this.hostname = config.hostname || "nmos-virtnode.local";
     }
 
     addDevice(newDevice: Device) {

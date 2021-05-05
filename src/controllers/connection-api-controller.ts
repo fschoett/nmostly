@@ -1,5 +1,5 @@
 import { INmosMediator } from "../api";
-import { BulkSenderResource, BulkActivationResponse, BulkReceiverResource, ConnectionAPISenderReceiverBaseResource, Constraints, SenderResource, TransportFile, TransportType, ReceiverResource } from "../schemas";
+import { BulkSenderResource, BulkActivationResponse, BulkReceiverResource, ConnectionAPISenderReceiverBaseResource, Constraints, SenderResource, TransportFile, TransportType, ReceiverResource, StagedSenderResource, StagedReceiverResource } from "../schemas";
 import { IConnectionApiController } from "./i-connection-api-controller";
 
 
@@ -26,9 +26,18 @@ export class ConnectionApiController implements IConnectionApiController{
     onGetSenderStaged(senderId: string): SenderResource {
         throw new Error("Method not implemented.");
     }
-    onPatchSenderStaged(senderId: string, updatedSender: SenderResource): SenderResource {
-        throw new Error("Method not implemented.");
+
+    onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): SenderResource {
+        const currSender = this.nmosMediator.getNode().getSender( senderId );
+
+        currSender.stage( updatedSender );
+
+        if( currSender.isActive() ){
+            currSender.activateStaged();
+        }
+        return currSender.getModel();
     }
+
     onGetSenderActive(senderId: string): SenderResource {
         throw new Error("Method not implemented.");
     }
@@ -47,8 +56,12 @@ export class ConnectionApiController implements IConnectionApiController{
     onGetReceiverStaged(receiverId: string): ReceiverResource {
         throw new Error("Method not implemented.");
     }
-    onPatchReceiverStaged(receiverId: string, updatedReceiver: ReceiverResource): ReceiverResource {
-        throw new Error("Method not implemented.");
+    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource ): ReceiverResource {
+        const currReceiver = this.nmosMediator.getNode().getReceiver( receiverId );
+
+        currReceiver.stage( updatedReceiver );
+
+        return currReceiver.getModel();
     }
     onGetReceiverActive(receiverId: string): ReceiverResource {
         throw new Error("Method not implemented.");

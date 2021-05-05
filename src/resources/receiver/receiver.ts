@@ -1,7 +1,8 @@
 import { 
     AudioReceiverResource, 
     ReceiverResource,
-    ReceiverResource1
+    ReceiverResource1,
+    StagedReceiverResource
 } from "../../schemas";
 
 import { AppService } from "../../services/app-service";
@@ -40,6 +41,11 @@ export class Receiver extends ResourceCore implements IReceiver {
 
     public getStaged(): StageReceiver {
         return this.staged;
+    }
+
+    public stage( stagedReceiver: StagedReceiverResource ){
+        console.log( "Stage the sender!", stagedReceiver );
+        
     }
 
     public getBaseReceiverModel(): ReceiverResource1{

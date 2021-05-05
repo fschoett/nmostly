@@ -7,7 +7,9 @@ import {
     TransportType,
     TransportFile,
     ReceiverResource,
-    SenderResource
+    SenderResource,
+    StagedSenderResource,
+    StagedReceiverResource
 } from "../schemas";
 
 export interface IConnectionApiController {
@@ -17,7 +19,7 @@ export interface IConnectionApiController {
     onGetSenders(): ConnectionAPISenderReceiverBaseResource;
     onGetSenderConstraints(senderId: string): Constraints;
     onGetSenderStaged(senderId: string): SenderResource;
-    onPatchSenderStaged(senderId: string, updatedSender: SenderResource): SenderResource;
+    onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): SenderResource;
     onGetSenderActive(senderId: string): SenderResource;
     onGetSenderTransportfile(senderId: string): TransportFile;
     onGetSenderTransporttype(senderId: string): TransportType;
@@ -25,7 +27,7 @@ export interface IConnectionApiController {
     onGetReceivers(): ConnectionAPISenderReceiverBaseResource;
     onGetReceiverConstraints(receiverId: string): Constraints;
     onGetReceiverStaged(receiverId: string): ReceiverResource;
-    onPatchReceiverStaged(receiverId: string, updatedReceiver: ReceiverResource): ReceiverResource;
+    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource;
     onGetReceiverActive(receiverId: string): ReceiverResource;
     onGetReceiverTransporttype(receiverId: string): TransportType;
 }

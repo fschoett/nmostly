@@ -25,6 +25,7 @@ export { ActivationResponseSchema } from "./generated/activation-response-schema
 // Receiver
 export { 
     ReceiverTransportParameters,
+    ReceiverResource as StagedReceiverResource,
     ExternalReceiverTransportParameters,
     ReceiverInput,
 } from "./generated/receiver-stage-schema"
@@ -33,6 +34,7 @@ export { TransportFile } from "./generated/receiver-transport-file"
 // Sender
 export { 
     SenderTransportParameters,
+    SenderResource as StagedSenderResource,
     ExternalSenderTransportParameters,
     SenderOutput
  } from "./generated/sender-stage-schema"

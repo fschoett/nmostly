@@ -1,11 +1,10 @@
-import { SenderResource } fro../../services/interfaces/i-app-service
-
-import { IAppService    } from "../../services/i-app-service";
-
 import { ResourceCore  } from "../resource-core";
 import { ConstraintRtp } from "../constraint/constraint-rtp";
 import { StageSender   } from "../stage/stage-sender";
 import { ISenderConfig } from ".";
+import { TransportFile } from "../../schemas/is-05-connection-api/generated/receiver-stage-schema";
+import { SenderResource, StagedSenderResource } from "../../schemas";
+import { IAppService } from "../../services";
 
 export class Sender extends ResourceCore {
 
@@ -19,6 +18,9 @@ export class Sender extends ResourceCore {
     constraints: ConstraintRtp;
     staged: StageSender;
 
+    staged_2: StagedSenderResource;
+    
+    activationStatus: boolean;
 
     constructor(appService: IAppService, config: ISenderConfig) {
         super(appService, config);
@@ -33,6 +35,28 @@ export class Sender extends ResourceCore {
         };
         this.constraints = new ConstraintRtp();
         this.staged = new StageSender();
+        // add callback as parameter if sender is staged and activated!
+    }
+
+    public updateResource( updatedSender: SenderResource )
+    {
+        this.version = this.appService.utilsService.generateVersion();
+        this.flow_id = updatedSender.flow_id;
+        this.staged.activation = updatedSender.activation;
+        // this.flow_id = updatedSender.jI
+    }
+
+    public stage( updatedSender: StagedSenderResource ){
+        this.staged_2 = updatedSender;
+    }
+
+    public activateStaged(){
+        this.version = this.appService.utilsService.generateVersion();
+        // get information from staged sender and update them
+    }
+
+    public isActive(): boolean {
+        return this.activationStatus;
     }
 
     public getConstraints(): ConstraintRtp {
@@ -41,6 +65,10 @@ export class Sender extends ResourceCore {
 
     public getStaged(): StageSender {
         return this.staged;
+    }
+
+    public getTransportFile() : TransportFile{
+        return null;
     }
 
     public getModel(): SenderResource {
