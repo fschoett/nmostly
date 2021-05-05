@@ -19,7 +19,7 @@ export interface IConnectionApiController {
     onGetSenders(): ConnectionAPISenderReceiverBaseResource;
     onGetSenderConstraints(senderId: string): Constraints;
     onGetSenderStaged(senderId: string): SenderResource;
-    onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): SenderResource;
+    onPatchSenderStaged(senderId: string, stagedSender: StagedSenderResource): SenderResource;
     onGetSenderActive(senderId: string): SenderResource;
     onGetSenderTransportfile(senderId: string): TransportFile;
     onGetSenderTransporttype(senderId: string): TransportType;

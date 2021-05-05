@@ -16,11 +16,9 @@ export class Sender extends ResourceCore {
     subscription: { receiver_id: string; active: boolean; };
 
     constraints: ConstraintRtp;
-    staged: StageSender;
 
-    staged_2: StagedSenderResource;
-    
-    activationStatus: boolean;
+    private staged: StagedSenderResource;
+    private onUpdateCallback;
 
     constructor(appService: IAppService, config: ISenderConfig) {
         super(appService, config);
@@ -34,36 +32,43 @@ export class Sender extends ResourceCore {
             active: false
         };
         this.constraints = new ConstraintRtp();
-        this.staged = new StageSender();
+
+        this.onUpdateCallback = config.onUpdateCallback;
         // add callback as parameter if sender is staged and activated!
     }
 
-    public updateResource( updatedSender: SenderResource )
-    {
+    private onUpdate( ){
         this.version = this.appService.utilsService.generateVersion();
-        this.flow_id = updatedSender.flow_id;
-        this.staged.activation = updatedSender.activation;
-        // this.flow_id = updatedSender.jI
+        this.onUpdateCallback( this );
     }
+
 
     public stage( updatedSender: StagedSenderResource ){
-        this.staged_2 = updatedSender;
-    }
+        // update staged entry
+        this.staged = updatedSender;
 
-    public activateStaged(){
-        this.version = this.appService.utilsService.generateVersion();
-        // get information from staged sender and update them
+        // if staging is now, execute it
+        if( this.staged.activation.mode == "activate_immediate" ){
+            // call callback
+            this.onUpdate();
+        }
     }
 
     public isActive(): boolean {
-        return this.activationStatus;
+        if( this.staged )
+        {
+            return this.staged.master_enable || false;
+        }
+        else{
+            return false;
+        }
     }
 
     public getConstraints(): ConstraintRtp {
         return this.constraints;
     }
 
-    public getStaged(): StageSender {
+    public getStaged(): StagedSenderResource{
         return this.staged;
     }
 

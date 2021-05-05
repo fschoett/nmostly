@@ -27,14 +27,15 @@ export class ConnectionApiController implements IConnectionApiController{
         throw new Error("Method not implemented.");
     }
 
+    // Find the sender according to the senderId and stage the "changed"
     onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): SenderResource {
-        const currSender = this.nmosMediator.getNode().getSender( senderId );
+        const currSender = this.nmosMediator
+            .getNode()
+            .getSender( senderId );
 
         currSender.stage( updatedSender );
 
-        if( currSender.isActive() ){
-            currSender.activateStaged();
-        }
+        // Return the new model of the sender
         return currSender.getModel();
     }
 
