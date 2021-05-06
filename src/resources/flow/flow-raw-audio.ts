@@ -1,6 +1,7 @@
-import { RawAudioFlowResource } from "../../schemas";
-import { IAppService } from "../../utils/interfaces/i-app-service";
+/*
 import { Flow, IFlowConfig } from ".";
+import { RawAudioFlowResource } from "../../schemas";
+import { IAppService } from "../../utils";
 
 export class FlowRawAudio extends Flow{
 
@@ -9,7 +10,7 @@ export class FlowRawAudio extends Flow{
     private media_type:  RawAudioFlowResource["media_type"] = "audio/L16";
     private bit_depth:   RawAudioFlowResource["bit_depth"];
 
-    constructor( appService: IAppService, config: IFlowConfig ){
+    constructor( appService: IAppService, config: IFlowConfig, test?: string ){
         super( appService, config );
 
         this.sample_rate.numerator = config.sample_rate;
@@ -27,3 +28,4 @@ export class FlowRawAudio extends Flow{
         }
     }
 }
+*/

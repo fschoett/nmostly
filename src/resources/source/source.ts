@@ -1,7 +1,7 @@
 import { SourceResource, SourceResource1 } from "../../schemas";
 
 import { ResourceCore } from "../resource-core";
-import { IFlow, FlowRawAudio } from "../flow";
+import { IFlow } from "../flow";
 import { ISource, ISourceConfig } from ".";
 import { IAppService } from "../../utils";
 
@@ -21,6 +21,7 @@ export class Source extends ResourceCore implements ISource{
         this.parents = config.parents;
         this.clock_name = config.clock_name;
 
+        /*
         this._flow = new FlowRawAudio( appService, {
             description: "First Flow",
             label: "First label",
@@ -30,6 +31,7 @@ export class Source extends ResourceCore implements ISource{
             sample_rate: 48000,
             bit_depth: 16
         });
+        */
     }
 
 

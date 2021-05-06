@@ -1,7 +1,7 @@
-import { ResourceCore  } from "../resource-core";
 import { IFlow, IFlowConfig } from ".";
 import { FlowResource1 } from "../../schemas";
 import { IAppService } from "../../utils";
+import { ResourceCore } from "../resource-core";
 
 export class Flow extends ResourceCore implements IFlow {
 
@@ -18,7 +18,7 @@ export class Flow extends ResourceCore implements IFlow {
 
     public getBaseFlowModel(): FlowResource1 {
         return {
-            ...this.getBaseResource(),
+            ...super.getBaseResource(),
             source_id: this.source_id,
             device_id: this.device_id,
             parents: this.parents
