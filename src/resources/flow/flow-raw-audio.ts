@@ -1,5 +1,5 @@
 import { RawAudioFlowResource } from "../../schemas";
-import { IAppService } from "../../services/interfaces/i-app-service";
+import { IAppService } from "../../utils/interfaces/i-app-service";
 import { Flow, IFlowConfig } from ".";
 
 export class FlowRawAudio extends Flow{
