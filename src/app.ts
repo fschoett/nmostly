@@ -1,4 +1,4 @@
-import { NmosRegistryHttpService, MdnsService } from "./mdns-service";
+import { NmosRegistryHttpService, MdnsService } from "./discovery-service";
 
 import { IReceiverAudioConfig } from "./resources/receiver";
 import { IDeviceConfig } from "./resources/device";

@@ -1,22 +1,21 @@
 import axios, { AxiosResponse } from "axios";
 import { BaseResource } from "../schemas";
-
+import { INmosRegistryClientConfig } from "./interfaces/i-nmos-registry-http-client-config";
 
 const REGISTER_RESOURCE_PATH: string = "/x-nmos/registration/v1.3/resource";
 
-
-export class NmosRegistryHttpService {
-
+export class NmosRegistryHttpClient{
 
     private _registryHost: string;
 
-    constructor(registryHost?: string) {
-        this._registryHost = registryHost;
+    constructor( config: INmosRegistryClientConfig ) {
+        this._registryHost = config.href;
     }
 
     get registryHost() { return this._registryHost;}
 
     set registryHost( newHost: string ){ this._registryHost = newHost;}
+
 
     public async postResource(model: BaseResource, type: string): Promise<AxiosResponse> {
         return new Promise(async (resolve, reject) => {
@@ -42,7 +41,4 @@ export class NmosRegistryHttpService {
         })
     }
 
-    public async updateResource( model: BaseResource){
-
-    }
 }

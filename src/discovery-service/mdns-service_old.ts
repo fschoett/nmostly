@@ -10,7 +10,7 @@ import {
     NmosRegistryHttpService
 } from ".";
 
-export class MdnsService {
+export class MdnsService_old {
 
     private REGISTER_RESOURCE_PATH = "/x-nmos/registration/v1.3/resource";
     private HEALTH_CHECK_PATH = "/x-nmos/registration/v1.3/health/nodes/";
@@ -144,63 +144,8 @@ export class MdnsService {
         }
 
 
-        this.postAllResourcesToRegistry();
     }
 
-
-    private async postAllResourcesToRegistry() {
-        await this.postNodeToRegistry();
-        await this.postDevicesToRegistry();
-        await this.postSourcesToRegistry();
-        await this.postFlowsToRegistry();
-        await this.postSendersToRegistry();
-        await this.postReceiversToRegistry();
-    }
-
-    private async postNodeToRegistry() {
-        await this.nmosRegistryService.postResource(this.nmosNode.getModel(), "node");
-        this.startHeartbeat();
-    }
-
-    private async postDevicesToRegistry() {
-        const deviceModels = this.nmosNode.getAllDeviceModels();
-        deviceModels.forEach(async device => {
-            await this.nmosRegistryService.postResource(device, "device")
-        });
-    }
-
-    private async postSourcesToRegistry() {
-        const sourceModels = this.nmosNode.getAllSourceModels();
-        sourceModels.forEach(async source => {
-            await this.nmosRegistryService.postResource(source, "source");
-        });
-    }
-
-    private postReceiversToRegistry() {
-        const receiverModels = this.nmosNode.getAllReceiverModels();
-        receiverModels.forEach(async receiver => {
-            await this.nmosRegistryService.postResource(receiver, "receiver");
-        });
-    }
-
-    private postSendersToRegistry() {
-        const senderModels = this.nmosNode.getAllSenderModels();
-        senderModels.forEach(async sender => {
-            await this.nmosRegistryService.postResource(sender, "sender");
-        });
-    }
-
-    private postFlowsToRegistry() {
-        const flowModels = this.nmosNode.getAllFlowModels();
-        flowModels.forEach(async flow => {
-            await this.nmosRegistryService.postResource(flow, "flow");
-        });
-    }
-
-    private nodeAndOrRegistryIsNull(): boolean {
-        // TODO: Check if parantheses can be omitted!
-        return (this.nmosNode == null || this.selectedRegistry == null);
-    }
 
     private startHeartbeat() {
         console.log("Starting Heartbeat!");
