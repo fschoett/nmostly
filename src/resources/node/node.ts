@@ -29,6 +29,7 @@ export class Node extends ResourceCore {
 
     hostname: string;
 
+    // TODO: Remove bad defaults!
     tmp: NodeResource["api"]["endpoints"] = [
         {
             port: 4000,
