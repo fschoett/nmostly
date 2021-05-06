@@ -8,7 +8,6 @@ import {
 import { AppService } from "../../services/app-service";
 
 import { ResourceCore    } from "../resource-core";
-import { ConstraintRtp   } from "../constraint/constraint-rtp";
 import { IReceiverConfig } from ".";
 import { IReceiver } from "./i-receiver";
 
@@ -26,19 +25,14 @@ export class Receiver extends ResourceCore implements IReceiver {
 
     private transport: TransportType;
     private constraints: Constraints;
-    private onUpdateCallback;
 
     constructor(appService: AppService, config: IReceiverConfig) {
         super(appService, config);
         this.transport = config.transport || "urn:x-nmos:transport:rtp";
         this.device_id = config.device_id;
         this.constraints = null;
-        this.onUpdateCallback = config.onUpdateCallback || ( ()=> console.warn("Update Callback not implemented yet") )
-    }
 
-    private onUpdate(){
-        this.version = this.appService.utilsService.generateVersion();
-        this.onUpdateCallback( this );
+        this.setOnUpdateCallback( config.onUpdateCallback );
     }
 
     public getConstraints(): Constraints{

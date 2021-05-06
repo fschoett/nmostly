@@ -5,5 +5,5 @@ export interface ISenderConfig extends IResourceCoreConfig{
     flow_id: string;
     device_id: string;
     transport?: TransportType;
-    onUpdateCallback( updatedSender: SenderResource ): void;
+    // onUpdateCallback( updatedSender: SenderResource ): void;
 }

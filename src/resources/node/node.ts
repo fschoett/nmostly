@@ -21,57 +21,28 @@ import { ISource } from "../source/i-source";
 
 export class Node extends ResourceCore {
 
+    private caps: NodeResource["caps"] = { };
+    private deviceList: Device[] = [];
+
     private href: string;
-    private caps;
-    private services: NodeResource["services"];
+    private hostname: string;
 
-    private deviceList: Device[];
+    private services:   NodeResource["services"];
+    private api :       NodeResource["api"];
+    private clocks:     NodeResource["clocks"] = [];
+    private interfaces: NodeResource["interfaces"] = [];
 
-    hostname: string;
-
-    // TODO: Remove bad defaults!
-    tmp: NodeResource["api"]["endpoints"] = [
-        {
-            port: 4000,
-            protocol: "http",
-            host: "1234"
-        }
-    ]
-    api: NodeResource["api"] = {
-        versions: [
-            "v1.3"
-        ],
-        endpoints: [
-            {
-                host: "192.168.178.102",
-                port: 5432,
-                protocol: "http"
-            }
-        ]
-    };
-    clocks: NodeResource["clocks"] = [
-        {
-            name: "clk0",
-            ref_type: "internal"
-        }
-    ];
-    interfaces = [
-        {
-            chassis_id: "null",
-            name: "eth0",
-            port_id: "c8-08-e9-d1-ae-31"
-        }
-    ];
 
     constructor(appService: IAppService, config: INodeConfig) {
         super(appService, config);
 
-        // this.href = config.href;
-        this.href = config.href || "http://localhost:80/"
-        this.caps = {};
-        this.services = [];
-        this.deviceList = [];
-        this.hostname = config.hostname || "nmos-virtnode.local";
+        this.href     = config.href;
+        this.hostname = config.hostname;
+
+        this.services   = config.services;
+        this.api        = config.api;
+        this.clocks     = config.clocks;
+        this.interfaces = config.interfaces;
     }
 
     addDevice(newDevice: Device) {

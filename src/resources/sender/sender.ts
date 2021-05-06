@@ -1,6 +1,4 @@
 import { ResourceCore  } from "../resource-core";
-import { ConstraintRtp } from "../constraint/constraint-rtp";
-import { StageSender   } from "../stage/stage-sender";
 import { ISenderConfig } from ".";
 import { TransportFile } from "../../schemas/is-05-connection-api/generated/receiver-stage-schema";
 import { Constraints, SenderResource, StagedSenderResource, TransportType } from "../../schemas";
@@ -17,34 +15,29 @@ export class Sender extends ResourceCore {
     constraints: Constraints;
 
     // Set defalt transport type to rtp
-    private transport: TransportType = "urn:x-nmos:transport:rtp";
+    private transport: TransportType;
     private staged: StagedSenderResource;
-    private onUpdateCallback;
+    // private onUpdateCallback;
 
     constructor(appService: IAppService, config: ISenderConfig) {
         super(appService, config);
+
         this.flow_id = config.flow_id;
-        if( config.transport ){
-            this.transport = config.transport;
-        }
+        this.transport = config.transport ?? "urn:x-nmos:transport:rtp";
         this.device_id = config.device_id;
         this.manifest_href = null;
         this.interface_bindings = [];
+
         this.subscription = {
             receiver_id: null,
             active: false
         };
+
         this.constraints = null;
 
-        this.onUpdateCallback = config.onUpdateCallback;
+        this.setOnUpdateCallback( config.onUpdateCallback );
         // add callback as parameter if sender is staged and activated!
     }
-
-    private onUpdate( ){
-        this.version = this.appService.utilsService.generateVersion();
-        this.onUpdateCallback( this );
-    }
-
 
     // Currently only immediate staging is implemented! 
     public stage( updatedSender: StagedSenderResource ){

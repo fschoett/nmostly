@@ -10,10 +10,10 @@ import {
 } from "../../schemas";
 
 import { ResourceCore } from "../resource-core";
-import { IReceiver, Receiver     } from "../receiver";
+import { IReceiver,   } from "../receiver";
 import { Sender       } from "../sender";
 import { IFlow        } from "../flow";
-import { ISource, Source } from "../source";
+import { ISource,     } from "../source";
 
 
 export class Device extends ResourceCore {
@@ -23,6 +23,8 @@ export class Device extends ResourceCore {
     private receiverList: IReceiver[] = [];
     private senderList: Sender[] = [];
     private sourceList: ISource[] = [];
+
+    private type: DeviceResource[ "type" ] = "urn:x-nmos:device:generic";
 
     constructor(
         appService: IAppService,
@@ -45,14 +47,17 @@ export class Device extends ResourceCore {
 
     public addSender(newSender: Sender) {
         this.senderList.push(newSender);
+        this.onUpdate();
     }
 
-    public addReceiver(newReceiver: Receiver) {
+    public addReceiver(newReceiver: IReceiver) {
         this.receiverList.push(newReceiver);
+        this.onUpdate();
     }
 
-    public addSource(newSource: Source) {
+    public addSource(newSource: ISource) {
         this.sourceList.push(newSource);
+        this.onUpdate();
     }
 
     public getSender(senderId: string): Sender {
@@ -95,7 +100,7 @@ export class Device extends ResourceCore {
             description: this.description,
             tags: this.tags,
 
-            type: "urn:x-nmos:device:generic",
+            type: this.type,
             controls: [],
             node_id: this.node_id,
             senders: this.senders,
