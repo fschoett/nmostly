@@ -6,7 +6,7 @@ import { NmosRegistryHttpClient } from "./nmos-registry-http-client";
 export class DiscoveryService {
 
     private nmosRegistryHttpClient: NmosRegistryHttpClient;
-    private mdnsService;
+    private mdnsService: MdnsService;
 
     constructor(private nmosMediator: INmosMediator) {
         this.mdnsService = new MdnsService({
@@ -17,13 +17,16 @@ export class DiscoveryService {
     private onNewRegistryFound(registry: unknown) {
         console.log("Found a new registry!");
         this.nmosRegistryHttpClient = new NmosRegistryHttpClient({
-            href: this.mdnsService.getRegistryHref
+            href: this.mdnsService.getHref()
         });
         this.postAllResourcesToRegistry();
     }
 
     private async postAllResourcesToRegistry() {
         await this.postNodeToRegistry();
+
+        this.mdnsService.startHeartbeat( this.nmosMediator.getNode().id );
+
         await this.postDevicesToRegistry();
         await this.postSourcesToRegistry();
         await this.postFlowsToRegistry();
