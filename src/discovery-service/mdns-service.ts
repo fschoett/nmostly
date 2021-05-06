@@ -29,6 +29,8 @@ export class MdnsService {
     // startMdnsService
 
     private startMdnsService() {
+        console.log("MdnsService: startMdnsService");
+        
 
         const mdns = multicastdns({});
 
@@ -41,7 +43,7 @@ export class MdnsService {
 
 
             if (registryEntries.length > 0) {
-                console.log("Found registry at: ", registryEntries[0].data);
+                console.log("MdnsService: Found registry at: ", registryEntries[0].data);
 
                 const additionals: IMdnsAnswer[] = res.additionals;
                 console.log(registryEntries, additionals);
@@ -55,7 +57,7 @@ export class MdnsService {
                 console.log(srvEntry);
 
                 if (!(txtEntry && aEntry && srvEntry)) {
-                    console.log("Additionals are empty.. perform new mdns query");
+                    console.log("MdnsService: Additionals are empty.. perform new mdns query");
                     this.performMdnsQuery(mdns);
                     return;
                 };
@@ -103,6 +105,9 @@ export class MdnsService {
 
     private performMdnsQuery( mdns ) {
 
+        console.log("MdnsService: performMdnsQuery");
+        
+
         const registryServiceType = '_nmos-register._tcp.local';
 
         const query = {
@@ -121,6 +126,8 @@ export class MdnsService {
     // stop heartbeat
 
     public startHeartbeat( nodeId: string ) {
+        console.log( `MdnsService: startHeartbeat(${nodeId})`);
+        
         this.nodeId = nodeId;
         this.performHeartbeat();
     }
@@ -130,7 +137,7 @@ export class MdnsService {
         url.pathname = this.HEALTH_CHECK_PATH + this.nodeId;
 
         let requestStart: Date = new Date();
-        console.log("Perform Heartbeat");
+        console.log( `MdnsService: performingHeartbeat(${this.nodeId})`);
 
 
         axios.post(url.toString())
@@ -141,7 +148,7 @@ export class MdnsService {
                 }, this.HEARTBEAT_INTERVAL_IN_S * 1000);
             })
             .catch((error) => {
-                console.log("Request Error!");
+                console.log( `MdnsService: performingHearbeat(${this.nodeId}): Request Error!`);
                 console.log(error);
                 this.stopHeartbeat();
             });

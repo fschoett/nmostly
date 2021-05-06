@@ -15,7 +15,7 @@ export class DiscoveryService {
     }
 
     private onNewRegistryFound(registry: unknown) {
-        console.log("Found a new registry!");
+        console.log("DiscoveryService: onNewRegistryFound");
         this.nmosRegistryHttpClient = new RegistryHttpClient({
             href: this.mdnsService.getHref()
         });
@@ -23,24 +23,30 @@ export class DiscoveryService {
     }
 
     private async postAllResourcesToRegistry() {
-        await this.postNodeToRegistry();
+        try {
+            await this.postNodeToRegistry();
 
-        this.mdnsService.startHeartbeat( this.nmosMediator.getNode().id );
+            this.mdnsService.startHeartbeat(this.nmosMediator.getNode().id);
 
-        await this.postDevicesToRegistry();
-        await this.postSourcesToRegistry();
-        await this.postFlowsToRegistry();
-        await this.postSendersToRegistry();
-        await this.postReceiversToRegistry();
+            await this.postDevicesToRegistry();
+            await this.postSourcesToRegistry();
+            await this.postFlowsToRegistry();
+            await this.postSendersToRegistry();
+            await this.postReceiversToRegistry();
+        } catch (error) {
+            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error );
+        }
     }
 
     private async postNodeToRegistry() {
+        console.log("DiscoveryService: postNodeToRegistry");
         await this.nmosRegistryHttpClient.postResource(
             this.nmosMediator.getNode().getModel(), "node"
         );
     }
 
     private async postDevicesToRegistry() {
+        console.log("DiscoveryService: postDevicesToRegistry");
         const deviceModels = this.nmosMediator
             .getNode()
             .getAllDeviceModels();
@@ -51,6 +57,7 @@ export class DiscoveryService {
     }
 
     private async postSourcesToRegistry() {
+        console.log("DiscoveryService: postSourceToRegistry");
         const sourceModels = this.nmosMediator
             .getNode()
             .getAllSourceModels();
@@ -61,6 +68,7 @@ export class DiscoveryService {
     }
 
     private postReceiversToRegistry() {
+        console.log("DiscoveryService: postReceiversToRegistry");
         const receiverModels = this.nmosMediator
             .getNode()
             .getAllReceiverModels();
@@ -71,6 +79,7 @@ export class DiscoveryService {
     }
 
     private postSendersToRegistry() {
+        console.log("DiscoveryService: postSendersToRegistry");
         const senderModels = this.nmosMediator
             .getNode()
             .getAllSenderModels();
@@ -81,6 +90,7 @@ export class DiscoveryService {
     }
 
     private postFlowsToRegistry() {
+        console.log("DiscoveryService: postFlowsToRegistry");
         const flowModels = this.nmosMediator
             .getNode()
             .getAllFlowModels();

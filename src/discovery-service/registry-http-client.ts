@@ -21,6 +21,8 @@ export class RegistryHttpClient{
         return new Promise(async (resolve, reject) => {
             // Configure On Success callback. If no callback was passed, use default callback
             // Build request url
+            console.log(`RegistryHttpClient: postResource(${model.label}, ${type})`);
+            
             const url: URL = new URL("http://" + this.registryHost);
             url.pathname = `${REGISTER_RESOURCE_PATH}/`;
             const urlString = url.toString();
