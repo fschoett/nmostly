@@ -4,7 +4,7 @@ import { INmosRegistryClientConfig } from "./interfaces/i-nmos-registry-http-cli
 
 const REGISTER_RESOURCE_PATH: string = "/x-nmos/registration/v1.3/resource";
 
-export class NmosRegistryHttpClient{
+export class RegistryHttpClient{
 
     private _registryHost: string;
 

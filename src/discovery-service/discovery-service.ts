@@ -1,11 +1,11 @@
 import { INmosMediator } from "../api";
 import { MdnsService } from "./mdns-service";
-import { NmosRegistryHttpClient } from "./nmos-registry-http-client";
+import { RegistryHttpClient } from "./registry-http-client";
 
 // Acts as the mediator/ Facade of the mdns service
 export class DiscoveryService {
 
-    private nmosRegistryHttpClient: NmosRegistryHttpClient;
+    private nmosRegistryHttpClient: RegistryHttpClient;
     private mdnsService: MdnsService;
 
     constructor(private nmosMediator: INmosMediator) {
@@ -16,7 +16,7 @@ export class DiscoveryService {
 
     private onNewRegistryFound(registry: unknown) {
         console.log("Found a new registry!");
-        this.nmosRegistryHttpClient = new NmosRegistryHttpClient({
+        this.nmosRegistryHttpClient = new RegistryHttpClient({
             href: this.mdnsService.getHref()
         });
         this.postAllResourcesToRegistry();
