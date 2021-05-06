@@ -58,7 +58,9 @@ export class ConnectionApiController implements IConnectionApiController{
         throw new Error("Method not implemented.");
     }
     onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource ): ReceiverResource {
-        const currReceiver = this.nmosMediator.getNode().getReceiver( receiverId );
+        const currReceiver = this.nmosMediator
+            .getNode()
+            .getReceiver( receiverId );
 
         currReceiver.stage( updatedReceiver );
 

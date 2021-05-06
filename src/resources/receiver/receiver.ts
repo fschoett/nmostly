@@ -1,6 +1,4 @@
 import { 
-    AudioReceiverResource, 
-    ReceiverResource,
     ReceiverResource1,
     StagedReceiverResource
 } from "../../schemas";
@@ -9,7 +7,6 @@ import { AppService } from "../../services/app-service";
 
 import { ResourceCore    } from "../resource-core";
 import { ConstraintRtp   } from "../constraint/constraint-rtp";
-import { StageReceiver   } from "../stage/stage-receiver";
 import { IReceiverConfig } from ".";
 import { IReceiver } from "./i-receiver";
 
@@ -25,7 +22,9 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
     constraints: ConstraintRtp;
-    staged: StageReceiver;
+    staged: StagedReceiverResource;
+
+    private onUpdateCallback;
 
     constructor(appService: AppService, config: IReceiverConfig) {
         super(appService, config);
@@ -33,20 +32,31 @@ export class Receiver extends ResourceCore implements IReceiver {
         this.device_id = config.device_id;
 
         this.constraints = new ConstraintRtp();
+
+        this.onUpdateCallback = config.onUpdateCallback || ( ()=> console.warn("Update Callback not implemented yet") )
+    }
+
+    private onUpdate(){
+        this.version = this.appService.utilsService.generateVersion();
+        this.onUpdateCallback( this );
     }
 
     public getConstraints(): ConstraintRtp {
         return this.constraints;
     }
 
-    public getStaged(): StageReceiver {
+    public stage( stagedReceiver: StagedReceiverResource ){
+        this.staged = stagedReceiver;
+
+        if( this.staged.activation.mode == "activate_immediate" ){
+            this.onUpdate();
+        }
+    }
+
+    public getStaged(): StagedReceiverResource {
         return this.staged;
     }
 
-    public stage( stagedReceiver: StagedReceiverResource ){
-        console.log( "Stage the sender!", stagedReceiver );
-        
-    }
 
     public getBaseReceiverModel(): ReceiverResource1{
         return {

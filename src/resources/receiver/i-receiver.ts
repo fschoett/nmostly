@@ -6,7 +6,7 @@ export interface IReceiver{
     id: string;
 
     getConstraints(): ConstraintRtp;
-    getStaged(): StageReceiver;
+    getStaged(): StagedReceiverResource;
 
     stage( stagedReceiver: StagedReceiverResource );
 
