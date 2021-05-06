@@ -47,7 +47,6 @@ const nodeConfig: INodeConfig = {
 
 const nodeApi = new NmosMediator(5500, nodeConfig);
 
-/*
 const newDevice: IDeviceConfig = {
     description: "Description",
     label: "first/device",
@@ -86,7 +85,6 @@ const newSender: ISenderConfig = {
     flow_id: flowId
 };
 nodeApi.addSender(newSender, flowId);
-*/
 
 // nodeApi.addSender( newDeviceId, newSender );
 

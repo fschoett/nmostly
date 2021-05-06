@@ -1,7 +1,11 @@
-import { IFlow, IFlowConfig } from ".";
+// import { IFlow, IFlowConfig } from ".";
+import { ResourceCore } from "../resource-core";
+
+import { IFlow } from "./i-flow";
+import { IFlowConfig  } from "./i-flow-config";
+
 import { FlowResource1 } from "../../schemas";
 import { IAppService } from "../../utils";
-import { ResourceCore } from "../resource-core";
 
 export class Flow extends ResourceCore implements IFlow {
 
