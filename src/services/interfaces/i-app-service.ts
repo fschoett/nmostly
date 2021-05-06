@@ -1,5 +1,5 @@
 import { ILogger } from "./i-logger";
-import { IMdnsClientService } from "./i-mdns-client-service";
+import { IMdnsClientService } from "../../mdns-service/i-mdns-client-service";
 import { IUtilsService } from "./i-utils-service";
 
 interface IAppService{
