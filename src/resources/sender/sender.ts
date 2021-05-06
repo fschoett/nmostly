@@ -2,7 +2,7 @@ import { ResourceCore  } from "../resource-core";
 import { ISenderConfig } from ".";
 import { TransportFile } from "../../schemas/is-05-connection-api/generated/receiver-stage-schema";
 import { Constraints, SenderResource, StagedSenderResource, TransportType } from "../../schemas";
-import { IAppService } from "../../services";
+import { IAppService } from "../../utils";
 
 export class Sender extends ResourceCore {
 

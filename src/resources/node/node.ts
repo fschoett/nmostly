@@ -1,4 +1,3 @@
-import { IAppService } from "../../services/interfaces/i-app-service";
 import { INodeConfig } from ".";
 
 import {
@@ -16,6 +15,7 @@ import { IFlow } from "../flow/i-flow";
 import { IReceiver } from "../receiver/i-receiver";
 import { Sender } from "../sender";
 import { ISource } from "../source/i-source";
+import { IAppService } from "../../utils";
 
 
 

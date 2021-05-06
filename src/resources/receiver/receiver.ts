@@ -5,11 +5,11 @@ import {
     TransportType
 } from "../../schemas";
 
-import { AppService } from "../../services/app-service";
-
 import { ResourceCore    } from "../resource-core";
 import { IReceiverConfig } from ".";
 import { IReceiver } from "./i-receiver";
+
+import { AppService } from "../../utils";
 
 export class Receiver extends ResourceCore implements IReceiver {
 

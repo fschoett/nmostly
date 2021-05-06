@@ -1,4 +1,4 @@
-import { IAppService   } from "../../services/interfaces/i-app-service";
+import { IAppService   } from "../../utils";
 import { IDeviceConfig } from ".";
 
 import { 

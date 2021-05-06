@@ -1,4 +1,4 @@
-import axios, { AxiosAdapter, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { BaseResource } from "../schemas";
 
 

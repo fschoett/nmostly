@@ -1,12 +1,14 @@
 
+import axios from "axios";
+import * as multicastdns from "multicast-dns";
+
 import { Node } from "../resources/node";
 
-import axios from "axios";
-import { NmosRegistryHttpService } from "./nmos-registry-http-service";
-import { IMdnsRegistryModel } from "./i-mdns-registry-model";
-import { IMdnsAnswer } from "./i-mdns-response-answer";
-
-const multicastdns = require('multicast-dns');
+import {
+    IMdnsRegistryModel,
+    IMdnsAnswer,
+    NmosRegistryHttpService
+} from ".";
 
 export class MdnsService {
 

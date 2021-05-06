@@ -1,9 +1,9 @@
-import { IAppService } from "../../services/interfaces/i-app-service";
 import { SourceResource, SourceResource1 } from "../../schemas";
 
 import { ResourceCore } from "../resource-core";
 import { IFlow, FlowRawAudio } from "../flow";
 import { ISource, ISourceConfig } from ".";
+import { IAppService } from "../../utils";
 
 export class Source extends ResourceCore implements ISource{
 
