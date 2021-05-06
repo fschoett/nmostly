@@ -37,6 +37,10 @@ export class Source extends ResourceCore implements ISource{
     // public get flow(){ return this._flow; }
     public getFlow(): IFlow { return this._flow }
 
+    public getModel(){
+        return null;
+    }
+
     public getBaseSourceModel(): SourceResource1 {
         return {
             ...this.getBaseResource(),

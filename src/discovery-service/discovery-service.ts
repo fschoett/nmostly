@@ -34,7 +34,7 @@ export class DiscoveryService {
             await this.postSendersToRegistry();
             await this.postReceiversToRegistry();
         } catch (error) {
-            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error );
+            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error.response.data.error, error.response.data.debug );
         }
     }
 

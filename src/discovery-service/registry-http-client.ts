@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { BaseResource } from "../schemas";
 import { INmosRegistryClientConfig } from "./interfaces/i-nmos-registry-http-client-config";
 

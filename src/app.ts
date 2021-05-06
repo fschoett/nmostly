@@ -1,5 +1,3 @@
-import { NmosRegistryHttpService, MdnsService } from "./discovery-service";
-
 import { IReceiverAudioConfig } from "./resources/receiver";
 import { IDeviceConfig } from "./resources/device";
 import { ISenderConfig } from "./resources/sender";
@@ -10,14 +8,14 @@ import { NmosMediator } from "./api";
 const nodeConfig: INodeConfig = {
     description: "Schoettlers first Node instance",
     hostname: "fs-tower",
-    href: "http://localhost",
+    href: "http://127.0.0.1:5500/",
     label: "FS-FIRST-NODE",
-    tags: [],
+    tags: ["debug_node"],
     api: {
         versions: ["v1.3"],
         endpoints: [
             {
-                host: "localhost",
+                host: "127.0.0.1",
                 port: 5500,
                 protocol: "http"
             }
@@ -25,21 +23,21 @@ const nodeConfig: INodeConfig = {
     },
     services: [
         {
-            href: "",
-            type: ""
+            href: "http://127.0.0.1:5500/",
+            type: "urn:x-nmos:service:storequery"
         }
     ],
     clocks: [
         {
-            name: "Name",
+            name: "clk0",
             ref_type: "internal"
         }
     ],
     interfaces: [
         {
-            chassis_id: "raspberry",
+            chassis_id: "Ethernet 3",
             name: "eth0",
-            port_id: "mac address"
+            port_id: "74-D4-35-BB-25-1C"
         }
     ],
     onUpdateCallback: () => { console.log("Updating NODE") },
@@ -90,11 +88,7 @@ nodeApi.addSender(newSender, flowId);
 
 async function startup() {
     await nodeApi.startServer();
-    console.log("Started Node!");
-
-    let nmosHttpClient = new NmosRegistryHttpService();
-    // let mdnsService = new MdnsService(nmosHttpClient);
-    // mdnsService.registerAllResources(nodeApi.getNode());
+    console.log("App: Started server");
 }
 
 startup();

@@ -1,8 +1,9 @@
 import axios from "axios";
-import * as multicastdns from "multicast-dns";
 
 import { IMdnsAnswer, IMdnsRegistryModel } from ".";
 import { IMdnsServiceConfig } from "./interfaces/i-mdns-service-config";
+
+const multicastdns = require("multicast-dns");
 
 
 
@@ -21,7 +22,7 @@ export class MdnsService {
         this.startMdnsService();
     }
 
-    public getHref(){
+    public getHref() {
         return this.selectedRegistry.host;
     }
 
@@ -30,13 +31,18 @@ export class MdnsService {
 
     private startMdnsService() {
         console.log("MdnsService: startMdnsService");
-        
 
-        const mdns = multicastdns({});
+
+        const mdns = multicastdns({
+            multicast: true,
+            interface: "192.168.178.41",
+            reuseAddr: true
+        });
 
         const registryServiceType = '_nmos-register._tcp.local';
 
         mdns.on('response', res => {
+            
             const registryEntries: IMdnsAnswer[] = res.answers
                 .filter(el => el.name === registryServiceType);
 
@@ -93,7 +99,7 @@ export class MdnsService {
                 // see https://specs.amwa.tv/is-04/releases/v1.3/docs/3.1._Discovery_-_Registered_Operation.html
                 // also check if the new registry is "more suitable" than the old one?
                 this.selectedRegistry = registryModel;
-                this.onNewRegisteryFoundCallback( this.selectedRegistry );
+                this.onNewRegisteryFoundCallback(this.selectedRegistry);
 
                 // register resources in regsiterz
 
@@ -103,10 +109,10 @@ export class MdnsService {
         this.performMdnsQuery(mdns);
     }
 
-    private performMdnsQuery( mdns ) {
+    private performMdnsQuery(mdns) {
 
         console.log("MdnsService: performMdnsQuery");
-        
+
 
         const registryServiceType = '_nmos-register._tcp.local';
 
@@ -119,15 +125,18 @@ export class MdnsService {
 
         mdns.query(query);
 
+        console.log("MdnsService: performMdnsQuery - finished");
+        
+
     }
 
     // start heartbeat
     // perform hearbeat
     // stop heartbeat
 
-    public startHeartbeat( nodeId: string ) {
-        console.log( `MdnsService: startHeartbeat(${nodeId})`);
-        
+    public startHeartbeat(nodeId: string) {
+        console.log(`MdnsService: startHeartbeat(${nodeId})`);
+
         this.nodeId = nodeId;
         this.performHeartbeat();
     }
@@ -137,7 +146,7 @@ export class MdnsService {
         url.pathname = this.HEALTH_CHECK_PATH + this.nodeId;
 
         let requestStart: Date = new Date();
-        console.log( `MdnsService: performingHeartbeat(${this.nodeId})`);
+        console.log(`MdnsService: performingHeartbeat(${this.nodeId})`);
 
 
         axios.post(url.toString())
@@ -148,7 +157,7 @@ export class MdnsService {
                 }, this.HEARTBEAT_INTERVAL_IN_S * 1000);
             })
             .catch((error) => {
-                console.log( `MdnsService: performingHearbeat(${this.nodeId}): Request Error!`);
+                console.log(`MdnsService: performingHearbeat(${this.nodeId}): Request Error!`);
                 console.log(error);
                 this.stopHeartbeat();
             });

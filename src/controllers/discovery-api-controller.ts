@@ -44,10 +44,11 @@ export class DiscoveryApiController implements IDiscoveryApiController {
     }
 
     onGetDevice(deviceId: string): DeviceResource {
-        return this.nmosMediator
+        const currDevice = this.nmosMediator
             .getNode()
             .getDevice(deviceId)
-            .getModel();
+        
+        return currDevice ? currDevice.getModel() : null;
     }
 
     onGetReceiverList(): CollectionOfReceivers {
@@ -57,10 +58,11 @@ export class DiscoveryApiController implements IDiscoveryApiController {
     }
 
     onGetReceiver(receiverId: string): ReceiverResource {
-        return this.nmosMediator
+        const currReceiver = this.nmosMediator
             .getNode()
             .getReceiver(receiverId)
-            .getModel();
+        
+        return currReceiver ? currReceiver.getModel() : null;
     }
 
     onGetSenderList(): CollectionOfSenders {
@@ -70,10 +72,11 @@ export class DiscoveryApiController implements IDiscoveryApiController {
     }
 
     onGetSender(senderId: string): SenderResource {
-        return this.nmosMediator
+        const currSender = this.nmosMediator
             .getNode()
-            .getSender( senderId )
-            .getModel();
+            .getSender( senderId );
+
+        return currSender ? currSender.getModel() : null;
     }
 
     onGetSourceList(): CollectionOfSources {
@@ -83,10 +86,11 @@ export class DiscoveryApiController implements IDiscoveryApiController {
     }
 
     onGetSource(sourceId: string): SourceResource {
-        return this.nmosMediator
+        const currSource = this.nmosMediator
             .getNode()
-            .getSource( sourceId )
-            .getModel();
+            .getSource( sourceId );
+        
+        return currSource ? currSource.getModel() : null;
     }
 
     onGetFlowList(): CollectionOfFlows {
@@ -96,10 +100,11 @@ export class DiscoveryApiController implements IDiscoveryApiController {
     }
 
     onGetFlow(flowId: string): FlowResource {
-        return this.nmosMediator
+        const currFlow =  this.nmosMediator
             .getNode()
-            .getFlow( flowId )
-            .getModel();
+            .getFlow( flowId );
+
+        return currFlow ? currFlow.getModel() : null;
     }
 
 }

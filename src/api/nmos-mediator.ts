@@ -8,13 +8,14 @@ import { CoreRouter } from "../endpoints/core-router";
 import { IReceiverAudioConfig, ReceiverAudio } from "../resources/receiver";
 import { IDeviceConfig, Device } from "../resources/device";
 import { ISenderConfig, Sender } from "../resources/sender";
-import { ISourceConfig, Source } from "../resources/source";
+import { ISourceConfig, Source, SourceAudio } from "../resources/source";
 import { INodeConfig } from "../resources/node";
 import { IFlow } from "../resources/flow/i-flow";
 import { Node } from "../resources/node"
 
 // Import mediator interface
 import { INmosMediator } from ".";
+import { DiscoveryService } from "../discovery-service";
 
 
 
@@ -25,6 +26,7 @@ export class NmosMediator implements INmosMediator {
     private coreRouter: CoreRouter;
     private appService: IAppService;
 
+    private discoveryService: DiscoveryService;
 
     constructor(private port: number, nodeConfig: INodeConfig) {
         this.appService = new AppService();
@@ -41,6 +43,7 @@ export class NmosMediator implements INmosMediator {
         if (this.coreRouter) {
             this.coreRouter.startServer();
         }
+        this.discoveryService = new DiscoveryService( this );
     }
 
     public addDevice(config: IDeviceConfig): string {
@@ -50,7 +53,7 @@ export class NmosMediator implements INmosMediator {
     }
 
     public addSource(config: ISourceConfig, deviceId: string): string {
-        const newSource = new Source(this.appService, config);
+        const newSource = new SourceAudio(this.appService, config);
 
         this.node.getDeviceList()
             .find(device => device.id === deviceId)

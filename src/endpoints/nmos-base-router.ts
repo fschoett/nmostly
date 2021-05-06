@@ -11,7 +11,7 @@ export class NmosBaseRouter{
 
         // According to amwa nmos is-04
         this.router.get("/", (req, res) => { returnJson(res, ["x-nmos/"]) });
-        this.router.get("/x-nmos/", (req, res) => { returnJson(res, ["node/"]) });
+        this.router.get("/x-nmos/", (req, res) => { returnJson(res, ["node/", "connection/"]) });
 
         // according to is-04 respective is-05
         this.router.get("/x-nmos/node/", (req, res) => { returnJson(res, ["v1.3/"]) });
