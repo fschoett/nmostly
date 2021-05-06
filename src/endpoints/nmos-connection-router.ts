@@ -23,7 +23,9 @@ import {
 
     Constraints,
     TransportType,
-    TransportFile
+    TransportFile,
+    StagedReceiverResource,
+    StagedSenderResource
 } from "../schemas";
 
 import { returnJson } from "../utils/return-nmos-json";
@@ -113,7 +115,7 @@ export class NmosConnectionRouter{
 
         this.router.get("/single/senders/:id/staged/", (req, res) => {
             const senderId = req.params.id;
-            let response: SenderResource = cntrlr.onGetSenderStaged(senderId);
+            let response:StagedSenderResource = cntrlr.onGetSenderStaged(senderId);
             returnJson( res, response );
             // returnJson(res, this.nodeApi.node.getSender(req.params.id).getStaged());
         });
@@ -132,19 +134,19 @@ export class NmosConnectionRouter{
 
         this.router.get("/single/senders/:id/active/", (req, res) => {
             const senderId = req.params.id;
-            const response: SenderResource = cntrlr.onGetSenderActive(senderId);
+            const response: StagedSenderResource = cntrlr.onGetSenderActive(senderId);
             returnJson(res, {});
         });
 
         this.router.get("/single/senders/:id/transportfile/", (req, res) => {
             const senderId = req.params.id;
-            const response: TransportFile = cntrlr.onGetSenderTransportfile(senderId);
+            const response: TransportFile = cntrlr.onGetSenderTransportFile(senderId);
             res.send(response);
         });
 
         this.router.get("/single/senders/:id/transporttype/", (req, res) => {
             const senderId = req.params.id;
-            const response: TransportType = cntrlr.onGetSenderTransporttype(senderId);
+            const response: TransportType = cntrlr.onGetSenderTransportType(senderId);
             returnJson(res, response);
         });
 
@@ -171,7 +173,7 @@ export class NmosConnectionRouter{
 
         this.router.get("/single/receivers/:id/staged/", (req, res) => {
             const receiverId = req.params.id;
-            const response: ReceiverResource = cntrlr.onGetReceiverStaged(receiverId);
+            const response: StagedReceiverResource = cntrlr.onGetReceiverStaged(receiverId);
             returnJson(res, response);
             // returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getStaged());
         });
@@ -190,7 +192,7 @@ export class NmosConnectionRouter{
 
         this.router.get("/single/receivers/:id/active/", (req, res) => {
             const receiverId = req.params.id;
-            const response: ReceiverResource = cntrlr.onGetReceiverActive(receiverId);
+            const response: StagedReceiverResource = cntrlr.onGetReceiverActive(receiverId);
             returnJson(res, response);
         });
 
