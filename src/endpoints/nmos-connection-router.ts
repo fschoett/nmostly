@@ -68,9 +68,7 @@ export class NmosConnectionRouter{
 
         this.router.post("/bulk/senders", (req, res) => {
             const bulkSenderResource: BulkSenderResource = req.body;
-
             let response: BulkActivationResponse = cntrlr.onPostBulkSenders(bulkSenderResource);
-
             returnJson(res, response);
         });
 
@@ -94,7 +92,6 @@ export class NmosConnectionRouter{
         });
 
         this.router.get("/single/senders/", (req, res) => {
-            //const response: ConnectionAPISenderReceiverBaseResource = this.nodeApi.node.getAllSenderIds().map( el => el + "/");
             const response: ConnectionAPISenderReceiverBaseResource = cntrlr.onGetSenders();
             returnJson(res, response);
         });
@@ -110,25 +107,21 @@ export class NmosConnectionRouter{
             const senderId = req.params.id;
             let response: Constraints = cntrlr.onGetSenderConstraints(senderId);
             returnJson( res, response );
-            // returnJson(res, this.nodeApi.node.getSender(req.params.id).getConstraints().getModel());
         });
 
         this.router.get("/single/senders/:id/staged/", (req, res) => {
             const senderId = req.params.id;
             let response:StagedSenderResource = cntrlr.onGetSenderStaged(senderId);
             returnJson( res, response );
-            // returnJson(res, this.nodeApi.node.getSender(req.params.id).getStaged());
         });
 
         this.router.options("/single/senders/:id/staged/", (req, res) => {
-            // returnJson(res, this.nodeApi.node.getSender(req.params.id).getStaged());
         });
 
         this.router.patch("/single/senders/:id/staged/", (req, res) => {
             const senderId = req.params.id;
             const updatedSender = req.body;
             const response: SenderResource = cntrlr.onPatchSenderStaged(senderId, updatedSender);
-            // returnJson( res,  this.nodeApi.node.getSender( req.params.id ).getStaged() );
             returnJson(res, response);
         });
 
@@ -138,6 +131,7 @@ export class NmosConnectionRouter{
             returnJson(res, {});
         });
 
+        // TODO: If transportfile is null, try to get href to sdp file directly
         this.router.get("/single/senders/:id/transportfile/", (req, res) => {
             const senderId = req.params.id;
             const response: TransportFile = cntrlr.onGetSenderTransportFile(senderId);
@@ -153,7 +147,6 @@ export class NmosConnectionRouter{
         this.router.get("/single/receivers/", (req, res) => {
             const response: ConnectionAPISenderReceiverBaseResource = cntrlr.onGetReceivers();
             returnJson(res, response);
-            // returnJson( res, this.nodeApi.node.getAllReceiverIds().map( el => el + "/"))
         });
 
         this.router.get("/single/receivers/:id", (req, res) => {
@@ -168,14 +161,12 @@ export class NmosConnectionRouter{
             const receiverId = req.params.id;
             const response: Constraints = cntrlr.onGetReceiverConstraints(receiverId);
             returnJson(res, response);
-            // returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getConstraints().getModel());
         });
 
         this.router.get("/single/receivers/:id/staged/", (req, res) => {
             const receiverId = req.params.id;
             const response: StagedReceiverResource = cntrlr.onGetReceiverStaged(receiverId);
             returnJson(res, response);
-            // returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getStaged());
         });
 
         this.router.options("/single/receivers/:id/staged/", (req, res) => {
@@ -187,7 +178,6 @@ export class NmosConnectionRouter{
             const updatedReceiver = req.body;
             const response: ReceiverResource = cntrlr.onPatchReceiverStaged(receiverId, updatedReceiver);
             returnJson(res, response);
-            //returnJson(res, this.nodeApi.node.getReceiver(req.params.id).getStaged());
         });
 
         this.router.get("/single/receivers/:id/active/", (req, res) => {

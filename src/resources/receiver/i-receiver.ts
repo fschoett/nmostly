@@ -8,7 +8,6 @@ export interface IReceiver{
     getActive(): StagedReceiverResource;
     getTransportType(): TransportType;
 
-
     stage( stagedReceiver: StagedReceiverResource );
 
     getModel?(): ReceiverResource;
