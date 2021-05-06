@@ -1,12 +1,13 @@
-import { ReceiverResource, StagedReceiverResource } from "../../schemas";
-import { ConstraintRtp } from "../constraint/constraint-rtp";
-import { StageReceiver } from "../stage/stage-receiver";
+import { Constraints, ReceiverResource, StagedReceiverResource, TransportType } from "../../schemas";
 
 export interface IReceiver{
     id: string;
 
-    getConstraints(): ConstraintRtp;
+    getConstraints(): Constraints;
     getStaged(): StagedReceiverResource;
+    getActive(): StagedReceiverResource;
+    getTransportType(): TransportType;
+
 
     stage( stagedReceiver: StagedReceiverResource );
 

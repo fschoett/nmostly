@@ -13,21 +13,21 @@ import {
 } from "../schemas";
 
 export interface IConnectionApiController {
-    onPostBulkSenders(senders: BulkSenderResource): BulkActivationResponse[];
-    onPostBulkReceivers(receivers: BulkReceiverResource): BulkActivationResponse[];
+    onPostBulkSenders(senders: BulkSenderResource): BulkActivationResponse;
+    onPostBulkReceivers(receivers: BulkReceiverResource): BulkActivationResponse;
 
     onGetSenders(): ConnectionAPISenderReceiverBaseResource;
     onGetSenderConstraints(senderId: string): Constraints;
-    onGetSenderStaged(senderId: string): SenderResource;
+    onGetSenderStaged(senderId: string): StagedSenderResource;
     onPatchSenderStaged(senderId: string, stagedSender: StagedSenderResource): SenderResource;
-    onGetSenderActive(senderId: string): SenderResource;
-    onGetSenderTransportfile(senderId: string): TransportFile;
-    onGetSenderTransporttype(senderId: string): TransportType;
+    onGetSenderActive(senderId: string): StagedSenderResource;
+    onGetSenderTransportFile(senderId: string): TransportFile;
+    onGetSenderTransportType(senderId: string): TransportType;
 
     onGetReceivers(): ConnectionAPISenderReceiverBaseResource;
     onGetReceiverConstraints(receiverId: string): Constraints;
-    onGetReceiverStaged(receiverId: string): ReceiverResource;
+    onGetReceiverStaged(receiverId: string): StagedReceiverResource;
     onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource;
-    onGetReceiverActive(receiverId: string): ReceiverResource;
+    onGetReceiverActive(receiverId: string): StagedReceiverResource;
     onGetReceiverTransporttype(receiverId: string): TransportType;
 }

@@ -67,7 +67,7 @@ export class NmosConnectionRouter{
         this.router.post("/bulk/senders", (req, res) => {
             const bulkSenderResource: BulkSenderResource = req.body;
 
-            let response: BulkActivationResponse[] = cntrlr.onPostBulkSenders(bulkSenderResource);
+            let response: BulkActivationResponse = cntrlr.onPostBulkSenders(bulkSenderResource);
 
             returnJson(res, response);
         });
@@ -82,7 +82,7 @@ export class NmosConnectionRouter{
 
         this.router.post("/bulk/receivers", (req, res) => {
             const bulkReceiverResource: BulkReceiverResource = req.body;
-            let response: BulkActivationResponse[] = cntrlr.onPostBulkReceivers(bulkReceiverResource);
+            let response: BulkActivationResponse = cntrlr.onPostBulkReceivers(bulkReceiverResource);
             returnJson(res, response);
         });
 

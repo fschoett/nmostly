@@ -1,6 +1,8 @@
 import { 
+    Constraints,
     ReceiverResource1,
-    StagedReceiverResource
+    StagedReceiverResource,
+    TransportType
 } from "../../schemas";
 
 import { AppService } from "../../services/app-service";
@@ -14,25 +16,23 @@ export class Receiver extends ResourceCore implements IReceiver {
 
 
     device_id: string;
-    transport: string;
     interface_bindings: string[] = [];
     subscription: {
         sender_id: string,
         active: boolean
     }
 
-    constraints: ConstraintRtp;
     staged: StagedReceiverResource;
 
+    private transport: TransportType;
+    private constraints: Constraints;
     private onUpdateCallback;
 
     constructor(appService: AppService, config: IReceiverConfig) {
         super(appService, config);
-
+        this.transport = config.transport || "urn:x-nmos:transport:rtp";
         this.device_id = config.device_id;
-
-        this.constraints = new ConstraintRtp();
-
+        this.constraints = null;
         this.onUpdateCallback = config.onUpdateCallback || ( ()=> console.warn("Update Callback not implemented yet") )
     }
 
@@ -41,7 +41,7 @@ export class Receiver extends ResourceCore implements IReceiver {
         this.onUpdateCallback( this );
     }
 
-    public getConstraints(): ConstraintRtp {
+    public getConstraints(): Constraints{
         return this.constraints;
     }
 
@@ -55,6 +55,15 @@ export class Receiver extends ResourceCore implements IReceiver {
 
     public getStaged(): StagedReceiverResource {
         return this.staged;
+    }
+
+    // TODO: Implement correct logic!
+    public getActive(): StagedReceiverResource {
+        return this.staged;
+    }
+
+    public getTransportType(): TransportType {
+        return this.transport;
     }
 
 

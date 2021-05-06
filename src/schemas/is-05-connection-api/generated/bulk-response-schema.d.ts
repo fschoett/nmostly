@@ -16,15 +16,7 @@ export type BulkActivationResponse = {
   /**
    * HTTP status code that would have resulted from an individual activation on this device
    */
-  code: (
-    | {
-        [k: string]: unknown;
-      }
-    | {
-        [k: string]: unknown;
-      }
-  ) &
-    number;
+  code: number;
   /**
    * Human readable message which is suitable for user interface display, and helpful to the user. Only included if 'code' indicates an error state
    */

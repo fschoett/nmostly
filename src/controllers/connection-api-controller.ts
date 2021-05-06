@@ -3,74 +3,172 @@ import { BulkSenderResource, BulkActivationResponse, BulkReceiverResource, Conne
 import { IConnectionApiController } from "./i-connection-api-controller";
 
 
-export class ConnectionApiController implements IConnectionApiController{
+export class ConnectionApiController implements IConnectionApiController {
 
     private nmosMediator: INmosMediator;
 
-    constructor( nmosMediator: INmosMediator ){
+    constructor(nmosMediator: INmosMediator) {
         this.nmosMediator = nmosMediator;
     }
 
-    onPostBulkSenders(senders: BulkSenderResource): BulkActivationResponse[] {
-        throw new Error("Method not implemented.");
+    onPostBulkSenders(senders: BulkSenderResource): BulkActivationResponse {
+        let response: BulkActivationResponse;
+
+        // find each sender in node and stage it with the current sender params
+        senders.forEach(sender => {
+            try {
+                this.nmosMediator
+                    .getNode()
+                    .getSender(sender.id)
+                    .stage(sender.params);
+
+                response.push({
+                    id: sender.id,
+                    code: 200
+                });
+            }
+            catch (error) {
+                // In case of an error occuring during staging, return a 400 with the error description
+                response.push({
+                    id: sender.id,
+                    code: 400,
+                    error: error
+                });
+
+            }
+        });
+
+        return response;
     }
-    onPostBulkReceivers(receivers: BulkReceiverResource): BulkActivationResponse[] {
-        throw new Error("Method not implemented.");
+
+    onPostBulkReceivers(receivers: BulkReceiverResource): BulkActivationResponse {
+        let response: BulkActivationResponse;
+
+        // find each sender in node and stage it with the current sender params
+        receivers.forEach(receiver => {
+            try {
+                this.nmosMediator
+                    .getNode()
+                    .getReceiver(receiver.id)
+                    .stage(receiver.params);
+
+                response.push({
+                    id: receiver.id,
+                    code: 200
+                });
+            }
+            catch (error) {
+                // In case of an error occuring during staging, return a 400 with the error description
+                response.push({
+                    id: receiver.id,
+                    code: 400,
+                    error: error
+                });
+
+            }
+        });
+
+        return response;
     }
+
+
+    // Return a lsit of all available sender ids
     onGetSenders(): ConnectionAPISenderReceiverBaseResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllSenderModels()
+            .map(senderModel => senderModel.id);
     }
+
     onGetSenderConstraints(senderId: string): Constraints {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getSender( senderId )
+            .getConstraints()
     }
-    onGetSenderStaged(senderId: string): SenderResource {
-        throw new Error("Method not implemented.");
+
+    onGetSenderStaged(senderId: string): StagedSenderResource {
+        return this.nmosMediator
+            .getNode()
+            .getSender( senderId )
+            .getStaged();
     }
 
     // Find the sender according to the senderId and stage the "changed"
     onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): SenderResource {
         const currSender = this.nmosMediator
             .getNode()
-            .getSender( senderId );
+            .getSender(senderId);
 
-        currSender.stage( updatedSender );
+        currSender.stage(updatedSender);
 
         // Return the new model of the sender
         return currSender.getModel();
     }
 
-    onGetSenderActive(senderId: string): SenderResource {
+    // What exactly should this path do??
+    onGetSenderActive(senderId: string): StagedSenderResource{
+       // all auto flags should be resolved to the actual values.. how to?
+       return this.nmosMediator
+        .getNode()
+        .getSender( senderId )
+        .getActive();
+    }
+
+    onGetSenderTransportFile(senderId: string): TransportFile {
         throw new Error("Method not implemented.");
     }
-    onGetSenderTransportfile(senderId: string): TransportFile {
-        throw new Error("Method not implemented.");
+
+    onGetSenderTransportType(senderId: string): TransportType {
+        return this.nmosMediator
+            .getNode()
+            .getSender( senderId )
+            .getTransportType();
     }
-    onGetSenderTransporttype(senderId: string): TransportType {
-        throw new Error("Method not implemented.");
-    }
+
+    // Return a list of all available receiver ids
     onGetReceivers(): ConnectionAPISenderReceiverBaseResource {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getAllReceiverModels()
+            .map(receiverModel => receiverModel.id);
     }
+
     onGetReceiverConstraints(receiverId: string): Constraints {
-        throw new Error("Method not implemented.");
+        return this.nmosMediator
+            .getNode()
+            .getReceiver( receiverId )
+            .getConstraints()
     }
-    onGetReceiverStaged(receiverId: string): ReceiverResource {
-        throw new Error("Method not implemented.");
+
+    onGetReceiverStaged(receiverId: string): StagedReceiverResource{
+        return this.nmosMediator
+            .getNode()
+            .getReceiver( receiverId )
+            .getStaged();
     }
-    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource ): ReceiverResource {
+
+    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource {
         const currReceiver = this.nmosMediator
             .getNode()
-            .getReceiver( receiverId );
+            .getReceiver(receiverId);
 
-        currReceiver.stage( updatedReceiver );
+        currReceiver.stage(updatedReceiver);
 
         return currReceiver.getModel();
     }
-    onGetReceiverActive(receiverId: string): ReceiverResource {
-        throw new Error("Method not implemented.");
-    }
-    onGetReceiverTransporttype(receiverId: string): TransportType {
-        throw new Error("Method not implemented.");
+
+    onGetReceiverActive(receiverId: string): StagedReceiverResource{
+        return this.nmosMediator
+            .getNode()
+            .getReceiver( receiverId )
+            .getActive();
     }
 
+    onGetReceiverTransporttype(receiverId: string): TransportType {
+        return this.nmosMediator
+            .getNode()
+            .getReceiver( receiverId )
+            .getTransportType();
+    }
 }
