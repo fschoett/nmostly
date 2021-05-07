@@ -37,6 +37,20 @@ export class Receiver extends ResourceCore implements IReceiver {
             sender_id: null
         };
 
+        this.staged = {
+            activation: {
+                mode: null,
+                requested_time: null,
+            },
+            master_enable: false,
+            sender_id:  null,
+            transport_file: {
+                data: null,
+                type: null
+            },
+            transport_params: []
+        }
+
         // this.setOnUpdateCallback( config.onUpdateCallback );
     }
 
@@ -54,6 +68,7 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
     public getStaged(): StagedReceiverResource {
+        // TODO: Better suited in constructor?
         return this.staged;
     }
 

@@ -27,6 +27,7 @@ import {
     StagedReceiverResource,
     StagedSenderResource
 } from "../schemas";
+import { returnNotFound } from "../utils";
 
 import { returnJson } from "../utils/return-nmos-json";
 
@@ -106,13 +107,15 @@ export class NmosConnectionRouter{
         this.router.get("/single/senders/:id/constraints/", (req, res) => {
             const senderId = req.params.id;
             let response: Constraints = cntrlr.onGetSenderConstraints(senderId);
-            returnJson( res, response );
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.get("/single/senders/:id/staged/", (req, res) => {
             const senderId = req.params.id;
             let response:StagedSenderResource = cntrlr.onGetSenderStaged(senderId);
-            returnJson( res, response );
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.options("/single/senders/:id/staged/", (req, res) => {
@@ -141,12 +144,14 @@ export class NmosConnectionRouter{
         this.router.get("/single/senders/:id/transporttype/", (req, res) => {
             const senderId = req.params.id;
             const response: TransportType = cntrlr.onGetSenderTransportType(senderId);
-            returnJson(res, response);
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.get("/single/receivers/", (req, res) => {
             const response: ConnectionAPISenderReceiverBaseResource = cntrlr.onGetReceivers();
-            returnJson(res, response);
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.get("/single/receivers/:id", (req, res) => {
@@ -160,13 +165,15 @@ export class NmosConnectionRouter{
         this.router.get("/single/receivers/:id/constraints/", (req, res) => {
             const receiverId = req.params.id;
             const response: Constraints = cntrlr.onGetReceiverConstraints(receiverId);
-            returnJson(res, response);
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.get("/single/receivers/:id/staged/", (req, res) => {
             const receiverId = req.params.id;
             const response: StagedReceiverResource = cntrlr.onGetReceiverStaged(receiverId);
-            returnJson(res, response);
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.options("/single/receivers/:id/staged/", (req, res) => {
@@ -183,13 +190,15 @@ export class NmosConnectionRouter{
         this.router.get("/single/receivers/:id/active/", (req, res) => {
             const receiverId = req.params.id;
             const response: StagedReceiverResource = cntrlr.onGetReceiverActive(receiverId);
-            returnJson(res, response);
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
 
         this.router.get("/single/receivers/:id/transporttype/", (req, res) => {
             const receiverId = req.params.id;
             const response: TransportType = cntrlr.onGetReceiverTransporttype(receiverId);
-            returnJson(res, {});
+            if( response ){ returnJson ( res, response )}
+            else{ returnNotFound( res ) }
         });
     }
 }

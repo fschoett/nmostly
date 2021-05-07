@@ -115,8 +115,12 @@ export class ConnectionApiController implements IConnectionApiController {
         .getActive();
     }
 
+    // Returns the transport file if one has been found, elsewise return zero!
     onGetSenderTransportFile(senderId: string): TransportFile {
-        throw new Error("Method not implemented.");
+        const currSender =  this.nmosMediator
+            .getNode()
+            .getSender( senderId );
+        if( currSender ){ return currSender.getTransportFile() }
     }
 
     onGetSenderTransportType(senderId: string): TransportType {
@@ -142,10 +146,12 @@ export class ConnectionApiController implements IConnectionApiController {
     }
 
     onGetReceiverStaged(receiverId: string): StagedReceiverResource{
-        return this.nmosMediator
+        const currReceiver = this.nmosMediator
             .getNode()
-            .getReceiver( receiverId )
-            .getStaged();
+            .getReceiver( receiverId );
+        if( currReceiver ){
+            return currReceiver.getStaged();
+        }
     }
 
     onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource {

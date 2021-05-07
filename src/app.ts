@@ -87,6 +87,7 @@ nodeApi.addSender(newSender, flowId);
 async function startup() {
     await nodeApi.startServer();
     console.log("App: Started server");
+    /*
     setTimeout( ()=> {
         console.log( "Performing stage!")
         nodeApi.getNode().getAllReceivers()[0].stage({
@@ -97,6 +98,7 @@ async function startup() {
             sender_id: "123412341234",
         });
     }, 20000 );
+    */
 }
 
 startup();
