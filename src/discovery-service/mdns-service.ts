@@ -23,7 +23,7 @@ export class MdnsService {
     }
 
     public getHref() {
-        return this.selectedRegistry.host;
+        return this.selectedRegistry.ipv4;
     }
 
     // start registry
@@ -42,7 +42,7 @@ export class MdnsService {
         const registryServiceType = '_nmos-register._tcp.local';
 
         mdns.on('response', res => {
-            
+
             const registryEntries: IMdnsAnswer[] = res.answers
                 .filter(el => el.name === registryServiceType);
 
@@ -106,7 +106,10 @@ export class MdnsService {
             }
         });
 
-        this.performMdnsQuery(mdns);
+        setTimeout(() => {
+            this.performMdnsQuery(mdns);
+        }, 5000);
+
     }
 
     private performMdnsQuery(mdns) {
@@ -126,7 +129,7 @@ export class MdnsService {
         mdns.query(query);
 
         console.log("MdnsService: performMdnsQuery - finished");
-        
+
 
     }
 

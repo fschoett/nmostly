@@ -32,7 +32,12 @@ export class Receiver extends ResourceCore implements IReceiver {
         this.device_id = config.device_id;
         this.constraints = null;
 
-        this.setOnUpdateCallback( config.onUpdateCallback );
+        this.subscription = config.subscription || {
+            active: false,
+            sender_id: null
+        };
+
+        // this.setOnUpdateCallback( config.onUpdateCallback );
     }
 
     public getConstraints(): Constraints{
@@ -40,6 +45,7 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
     public stage( stagedReceiver: StagedReceiverResource ){
+        console.log( "Activate receiver!")
         this.staged = stagedReceiver;
 
         if( this.staged.activation.mode == "activate_immediate" ){

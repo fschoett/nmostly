@@ -7,10 +7,10 @@ import { NmosMediator } from "./api";
 
 const nodeConfig: INodeConfig = {
     description: "Schoettlers first Node instance",
-    hostname: "fs-tower",
+    hostname: "fs-tower.local",
     href: "http://127.0.0.1:5500/",
     label: "FS-FIRST-NODE",
-    tags: ["debug_node"],
+    tags: {},
     api: {
         versions: ["v1.3"],
         endpoints: [
@@ -22,10 +22,6 @@ const nodeConfig: INodeConfig = {
         ]
     },
     services: [
-        {
-            href: "http://127.0.0.1:5500/",
-            type: "urn:x-nmos:service:storequery"
-        }
     ],
     clocks: [
         {
@@ -35,7 +31,7 @@ const nodeConfig: INodeConfig = {
     ],
     interfaces: [
         {
-            chassis_id: "Ethernet 3",
+            chassis_id: "74-D4-35-BB-25-1C",
             name: "eth0",
             port_id: "74-D4-35-BB-25-1C"
         }
@@ -48,7 +44,8 @@ const nodeApi = new NmosMediator(5500, nodeConfig);
 const newDevice: IDeviceConfig = {
     description: "Description",
     label: "first/device",
-    tags: {}
+    tags: {},
+    connection_href: "http://192.168.178.41:5500/x-nmos/connection/v1.1"
 };
 const newDeviceId = nodeApi.addDevice(newDevice);
 
@@ -57,6 +54,7 @@ const firstReceiver: IReceiverAudioConfig = {
     description: "Receiver Description",
     device_id: newDeviceId,
     tags: {},
+    onUpdateCallback : ()=> { console.log("onUpdateCallback: TopLevel!")}
 };
 const newReceiverId = nodeApi.addReceiverAudio(firstReceiver, newDeviceId);
 
@@ -69,7 +67,7 @@ const firstSource: ISourceConfig = {
     parents: [],
     clock_name: null,
 };
-const newSourceId = nodeApi.addSource(firstSource, newDeviceId);
+const newSourceId = nodeApi.addAudioSource(firstSource, newDeviceId);
 
 //let flowId = nodeApi.node.getSource(newSourceId).flow.id
 const flowId = nodeApi.getNode().getSource(newSourceId).getFlow().id;
@@ -89,6 +87,16 @@ nodeApi.addSender(newSender, flowId);
 async function startup() {
     await nodeApi.startServer();
     console.log("App: Started server");
+    setTimeout( ()=> {
+        console.log( "Performing stage!")
+        nodeApi.getNode().getAllReceivers()[0].stage({
+            activation: {
+                mode: "activate_immediate"
+            },
+            master_enable: true,
+            sender_id: "123412341234",
+        });
+    }, 20000 );
 }
 
 startup();

@@ -9,6 +9,9 @@ export class SourceAudio extends Source {
 
     constructor( appService: IAppService, config: ISourceConfig ){
         super( appService, config );
+        this.channels = [{
+            label: "First Channel Of Audio Sender"
+        }];
     }
 
     public getModel(): AudioSourceResource{

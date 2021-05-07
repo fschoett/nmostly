@@ -4,7 +4,7 @@ import {
     NodeResource,
     CollectionOfDevices,
     CollectionOfReceivers,
-    CollectionOfSenders,
+     CollectionOfSenders,
     CollectionOfSources,
     CollectionOfFlows
 } from "../../schemas/is-04-discovery-api";
@@ -21,28 +21,41 @@ import { IAppService } from "../../utils";
 
 export class Node extends ResourceCore {
 
-    private caps: NodeResource["caps"] = { };
+    private caps: NodeResource["caps"] = {};
     private deviceList: Device[] = [];
 
     private href: string;
     private hostname: string;
 
-    private services:   NodeResource["services"];
-    private api :       NodeResource["api"];
-    private clocks:     NodeResource["clocks"] = [];
+    private services: NodeResource["services"];
+    private api: NodeResource["api"];
+    private clocks: NodeResource["clocks"] = [];
     private interfaces: NodeResource["interfaces"] = [];
 
 
     constructor(appService: IAppService, config: INodeConfig) {
         super(appService, config);
 
-        this.href     = config.href;
+        this.href = config.href;
         this.hostname = config.hostname;
 
-        this.services   = config.services;
-        this.api        = config.api;
-        this.clocks     = config.clocks;
-        this.interfaces = config.interfaces;
+        this.services = config.services;
+        this.api = config.api;
+        this.clocks = config.clocks;
+        this.interfaces = this.cleanupInterfaceConfig(config.interfaces);
+    }
+
+    cleanupInterfaceConfig(interfaceList: NodeResource["interfaces"]) {
+        if (interfaceList) {
+            return interfaceList.map((currInterface) => {
+                currInterface.chassis_id = currInterface.chassis_id.toLowerCase();
+                currInterface.port_id = currInterface.port_id.toLowerCase();
+                return currInterface;
+            });
+        }
+        else{
+            return [];
+        }
     }
 
     addDevice(newDevice: Device) {
@@ -162,7 +175,7 @@ export class Node extends ResourceCore {
             .reduce((acc, curr) => acc.concat(curr));
     }
 
-    public getAllSourceModels():CollectionOfSources {
+    public getAllSourceModels(): CollectionOfSources {
         return this
             .getAllSources()
             .map(currSource => currSource.getModel()) as CollectionOfSources

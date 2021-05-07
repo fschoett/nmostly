@@ -52,7 +52,7 @@ export class NmosMediator implements INmosMediator {
         return newDevice.id;
     }
 
-    public addSource(config: ISourceConfig, deviceId: string): string {
+    public addAudioSource( config: ISourceConfig, deviceId: string): string{
         const newSource = new SourceAudio(this.appService, config);
 
         this.node.getDeviceList()
@@ -80,6 +80,13 @@ export class NmosMediator implements INmosMediator {
     }
 
     public addReceiverAudio(config: IReceiverAudioConfig, deviceId: string): string {
+
+        // HiJack/ enrich callback
+        let tmpCallback = config.onUpdateCallback;
+        config.onUpdateCallback = ()=>{
+            console.log( "Ha! i am the new callback now!" )
+            tmpCallback();
+        };
         const newReceiver = new ReceiverAudio(this.appService, config);
         const foundDevice = this.node.getDevice(deviceId);
 

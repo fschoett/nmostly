@@ -13,7 +13,8 @@ export interface INmosMediator{
     // Should abstract/ simplify the creation of resources by providing simple interfaces/ functions to work with
     // Note: AddNode is implemented in the constructor of the mediator
     addDevice( config: IDeviceConfig ): string;
-    addSource( config: ISourceConfig, deviceId: string ): string;
+    // addSource( config: ISourceConfig, deviceId: string ): string;
+    addAudioSource ( config: ISourceConfig, deviceId: string ): string;
     addSender( config: ISenderConfig, flowId: string   ): string;
     addReceiverAudio( config: IReceiverAudioConfig, deviceId: string ): string;
 

@@ -35,6 +35,7 @@ export {
     SourceResource,
     SourceResource1,
     AudioSourceResource,
+    Component,
     DataSourceResource,
     GenericSourceResource,
     SourceResource1 as SharedSourceResource

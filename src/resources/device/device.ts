@@ -25,6 +25,7 @@ export class Device extends ResourceCore {
     private sourceList: ISource[] = [];
 
     private type: DeviceResource[ "type" ] = "urn:x-nmos:device:generic";
+    private controls: DeviceResource["controls"] = [];
 
     constructor(
         appService: IAppService,
@@ -33,6 +34,12 @@ export class Device extends ResourceCore {
     ) {
         super(appService, config);
         this._node_id = node_id;
+
+        // Make sure that the control api can be found by other devices
+        this.controls.push({
+            href: config.connection_href || "no connection configured!",
+            type: "urn:x-nmos:control:sr-ctrl/v1.1"
+        });
     }
 
 
@@ -101,7 +108,7 @@ export class Device extends ResourceCore {
             tags: this.tags,
 
             type: this.type,
-            controls: [],
+            controls: this.controls,
             node_id: this.node_id,
             senders: this.senders,
             receivers: this.receivers

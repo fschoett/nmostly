@@ -8,7 +8,7 @@ import { FlowRawAudio } from "../flow";
 
 export class Source extends ResourceCore implements ISource{
 
-    private caps: SourceResource["caps"];
+    private caps: SourceResource["caps"] = {};
     private device_id: string;
     private parents: string[] = [];
     private clock_name: string;
@@ -20,7 +20,7 @@ export class Source extends ResourceCore implements ISource{
 
         this.device_id = config.device_id;
         this.parents = config.parents;
-        this.clock_name = config.clock_name;
+        this.clock_name = config.clock_name || "clk1";
 
         this._flow = new FlowRawAudio( appService, {
             description: "First Flow",
