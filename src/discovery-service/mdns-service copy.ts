@@ -1,25 +1,27 @@
 import axios from "axios";
 
 import { IMdnsAnswer, IMdnsRegistryModel } from ".";
-import { Node } from "../resources/node";
 import { containsPTREntry, parseMdnsResponse } from "../utils";
 import { IMdnsServiceConfig } from "./interfaces/i-mdns-service-config";
 
 const multicastdns = require("multicast-dns");
 
+
+
 export class MdnsService {
 
+    private REGISTER_RESOURCE_PATH = "/x-nmos/registration/v1.3/resource";
     private HEALTH_CHECK_PATH = "/x-nmos/registration/v1.3/health/nodes/";
     private HEARTBEAT_INTERVAL_IN_S: number = 5;
-
     private selectedRegistry: IMdnsRegistryModel;
+
     private onNewRegisteryFoundCallback;
     private nodeId: string;
 
     private registryList: IMdnsRegistryModel[] = [];
-    private isHeartbeating: boolean = false;
 
     constructor(config: IMdnsServiceConfig) {
+        // await service discovery
         this.onNewRegisteryFoundCallback = config.onNewRegistryFound || (() => { console.log("registryfoundcallback not implemented"); });
         this.startMdnsService();
     }
@@ -28,30 +30,16 @@ export class MdnsService {
         return this.selectedRegistry.ipv4;
     }
 
-    // Set a new nodeid to perform a nodeId against. If a registry exists, start a heartbeat
-    public setNodeId( nodeId ){
-        console.log(`Setting the new nodeid to ${nodeId}`);
-        this.nodeId = nodeId;
-        
-        if( this.isHeartbeating ){
-            this.stopHeartbeat();
-        }
-
-        if( this.selectedRegistry ){
-            this.startHeartbeat();
-        }
-    }
-
-    // Start listening on mdns responses (also perform an initial mdns request)
     private startMdnsService() {
         console.log("MdnsService: startMdnsService");
 
-        // Configure mdns library
+
         const mdns = multicastdns({
             multicast: true,
             interface: "192.168.178.41",
             reuseAddr: true
         });
+
 
         mdns.on('response', res => {
 
@@ -86,7 +74,6 @@ export class MdnsService {
 
         });
 
-        // Perorm a single mdns query at service startup
         this.performMdnsQuery(mdns);
 
     }
@@ -95,8 +82,6 @@ export class MdnsService {
     private selectRegistry() {
         let highestPrio = -1;
         let highestPrioRegistry: IMdnsRegistryModel;
-
-        // Select the registry with the highest prio (or the first one)
         this.registryList.forEach( (registry ) => {
             if (registry.priority > highestPrio) {
                 highestPrio = registry.priority;
@@ -104,29 +89,30 @@ export class MdnsService {
             }
         });
 
-        // If no registry has been selected before, select the current one
         if( !this.selectedRegistry ){ this.selectedRegistry = highestPrioRegistry }
 
-        // Only set new selected registry if the host values are different
         if( this.selectedRegistry.host != highestPrioRegistry.host ){
-            this.selectedRegistry = highestPrioRegistry;
-            this.onNewRegistrySelected();
+            this.setRegistry( highestPrioRegistry )
             this.onNewRegisteryFoundCallback( this.selectedRegistry );
         }
     }
 
-    // Callback if a new registry has been selected
-    private onNewRegistrySelected(){
-        this.stopHeartbeat();
+    private setRegistry( registry ){
+        // set current registry
+        this.selectedRegistry = registry;
 
+        // start heartbeat
         if( this.nodeId ){
             this.stopHeartbeat();
-            this.startHeartbeat();
+            this.startHeartbeat( this.nodeId );
         }
     }
 
     private performMdnsQuery(mdns) {
+
         console.log("MdnsService: performMdnsQuery");
+
+
         const registryServiceType = '_nmos-register._tcp.local';
 
         const query = {
@@ -137,13 +123,16 @@ export class MdnsService {
         };
 
         mdns.query(query);
+
         console.log("MdnsService: performMdnsQuery - finished");
+
+
     }
 
+    public startHeartbeat(nodeId: string) {
+        console.log(`MdnsService: startHeartbeat(${nodeId})`);
 
-    private startHeartbeat() {
-        console.log(`MdnsService: startHeartbeat(${this.nodeId})`);
-        this.isHeartbeating = true;
+        this.nodeId = nodeId;
         this.performHeartbeat();
     }
 
@@ -152,43 +141,33 @@ export class MdnsService {
         url.pathname = this.HEALTH_CHECK_PATH + this.nodeId;
 
         let requestStart: Date = new Date();
+        console.log(`MdnsService: performingHeartbeat(${this.nodeId})`);
+
 
         axios.post(url.toString())
             .then((response) => {
-                console.log("Hearbeat response: ",response.status);
+                console.log(response.status);
                 setTimeout(() => {
-                    if( this.isHeartbeating ){
-                        this.performHeartbeat();
-                    }
-                    else{
-                        this.isHeartbeating = false;
-                    }
+                    this.performHeartbeat();
                 }, this.HEARTBEAT_INTERVAL_IN_S * 1000);
             })
             .catch((error) => {
                 console.log(`MdnsService: performingHearbeat(${this.nodeId}): Request Error!`);
-                this.onHeartbeatError();
+                this.onHeartbeatTimeout();
             });
 
     }
 
     private stopHeartbeat() {
-        console.log( "Stopping heartbeat");
-        this.isHeartbeating = false;
+        console.log("Stoping Heartbeat");
+        
     }
 
-    private onHeartbeatError(){
-        this.stopHeartbeat();
+    private onHeartbeatTimeout(){
+        // Remove current selectedRegistry from registryList
+        this.registryList.filter( registry => registry.host != this.selectedRegistry.host );
 
-        // Wait heartbeat interval to prevent heartbeat interval to gon on
-        setTimeout( ()=> {
-            // Remove current selectedRegistry from registryList
-            this.registryList.filter( registry => registry.host != this.selectedRegistry.host );
-
-            // select registry
-            this.selectRegistry();
-
-        }, this.HEARTBEAT_INTERVAL_IN_S * 1000 );
+        // select registry
+        this.selectRegistry();
     }
-
 }
