@@ -1,4 +1,4 @@
-import { ResourceCore  } from "../resource-core";
+import { ResourceCore } from "../resource-core";
 import { ISenderConfig } from ".";
 import { TransportFile } from "../../schemas/is-05-connection-api/generated/receiver-stage-schema";
 import { Constraints, SenderResource, StagedSenderResource, TransportType } from "../../schemas";
@@ -40,31 +40,75 @@ export class Sender extends ResourceCore {
                 activation_time: null
             },
             master_enable: false,
-            receiver_id:  null,
+            receiver_id: null,
             transport_params: []
         };
 
 
         this.constraints = this.createEmptyConstraintObject();
 
-        this.setOnUpdateCallback( config.onUpdateCallback );
+        this.setOnUpdateCallback(config.onUpdateCallback);
         // add callback as parameter if sender is staged and activated!
     }
 
     // Currently only immediate staging is implemented! 
-    public stage( updatedSender: StagedSenderResource ){
-        if( !updatedSender ) return false;
+    public stage(updatedSender: StagedSenderResource) {
+        if (!updatedSender) return;
+        if (!this.validateStagedInput(updatedSender)) return;
 
-        console.log( "Staging sender", updatedSender )
+        let isUpdated = false;
 
-        // update staged entry
-        this.staged = updatedSender;
+        const currStagedKeyList = Object.keys(this.staged);
+        const stagedSenderKeys = Object.keys(updatedSender);
 
-        // if staging is now, execute it
-        if( this.staged.activation.mode == "activate_immediate" ){
-            // call callback
-            this.onUpdate();
+        // Update only valid keys of the staged object
+        // Object assign would also add values that do not match the interface specs
+        stagedSenderKeys.forEach(currKey => {
+            currStagedKeyList.some(el => {
+                if (el == currKey) {
+                    this.staged[el] = updatedSender[currKey];
+                    // Object.assign( this.staged[ el], updatedSender[currKey]);
+                    isUpdated = true;
+                    return true;
+                }
+            });
+        })
+
+        if (isUpdated) this.onUpdate();
+        if (this.staged.activation.mode == "activate_immediate") {
+            let tmpReturn = this.getStaged();
+
+            tmpReturn.activation.activation_time = ((Date.now() / 1000).toString() + "000000").replace( ".", ":");
+            tmpReturn.activation.requested_time = null;
+
+            this.staged.activation.mode = null;
+            this.staged.activation.requested_time = null;
+            this.staged.activation.activation_time = null;
+
+            this.onActivation();
+            return tmpReturn;
         }
+        return this.staged;
+    }
+
+    private validateStagedInput(stageSender: StagedSenderResource): boolean {
+        const currStagedKeyList = Object.keys(this.staged);
+        const stagedSenderKeys = Object.keys(stageSender);
+
+        if (stagedSenderKeys.length < 1) return false;
+
+        let isValid = true;
+        stagedSenderKeys.forEach(key => {
+            let foundKey = currStagedKeyList.some(inputKey => inputKey === key)
+            if (!foundKey) isValid = false;
+        });
+
+        return isValid;
+    }
+
+    private onActivation() {
+        console.log("Sender ", this.id, " was activated");
+
     }
 
     public isActive(): boolean {
@@ -75,16 +119,26 @@ export class Sender extends ResourceCore {
         return this.constraints;
     }
 
-    public getStaged(): StagedSenderResource{
-        return this.staged;
+    // Clone staged object
+    public getStaged(): StagedSenderResource {
+        return {
+            activation: {
+                mode: this.staged.activation.mode,
+                activation_time: this.staged.activation.activation_time,
+                requested_time: this.staged.activation.requested_time
+            },
+            master_enable: this.staged.master_enable,
+            receiver_id: this.staged.receiver_id,
+            transport_params: this.staged.transport_params
+        }
     }
 
     // TODO: Implement correct logic!
-    public getActive(): StagedSenderResource{
+    public getActive(): StagedSenderResource {
         return this.staged;
     }
 
-    public getTransportFile() : TransportFile{
+    public getTransportFile(): TransportFile {
         return null;
     }
 

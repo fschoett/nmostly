@@ -28,6 +28,8 @@ import {
     StagedSenderResource
 } from "../schemas";
 import { returnNotFound } from "../utils";
+import { return400 } from "../utils/return-400";
+import { return405 } from "../utils/return-405";
 
 import { returnJson } from "../utils/return-nmos-json";
 
@@ -60,7 +62,7 @@ export class NmosConnectionRouter{
         });
 
         this.router.get("/bulk/senders", (req, res: Response) => {
-            res.sendStatus(405);
+            return405( res, "Method not allowed");
         });
 
         this.router.options("/bulk/senders", (req, res) => {
@@ -74,7 +76,7 @@ export class NmosConnectionRouter{
         });
 
         this.router.get("/bulk/receivers", (req, res) => {
-            res.sendStatus(405);
+            return405( res, "Method not allowed");
         });
 
         this.router.options("/bulk/receivers", (req, res) => {
@@ -125,8 +127,9 @@ export class NmosConnectionRouter{
             const senderId = req.params.id;
             console.log( req.body );
             const updatedSender = req.body;
-            const response: SenderResource = cntrlr.onPatchSenderStaged(senderId, updatedSender);
-            returnJson(res, response);
+            const response: StagedSenderResource= cntrlr.onPatchSenderStaged(senderId, updatedSender);
+            if( response ){ returnJson ( res, response )}
+            else{ console.log( "Patch invalid"); return400( res, "Wrong Patch")}
         });
 
         this.router.get("/single/senders/:id/active/", (req, res) => {
@@ -184,8 +187,13 @@ export class NmosConnectionRouter{
         this.router.patch("/single/receivers/:id/staged/", (req, res) => {
             const receiverId = req.params.id;
             const updatedReceiver = req.body;
-            const response: ReceiverResource = cntrlr.onPatchReceiverStaged(receiverId, updatedReceiver);
-            returnJson(res, response);
+            const response: StagedReceiverResource = cntrlr.onPatchReceiverStaged(receiverId, updatedReceiver);
+            if( response ){
+                console.log("Staged response: ", response);
+                
+                returnJson ( res, response )
+            }
+            else{ console.log( "Patch invalid"); return400( res, "Wrong Patch")}
         });
 
         this.router.get("/single/receivers/:id/active/", (req, res) => {

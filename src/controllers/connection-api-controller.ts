@@ -116,14 +116,13 @@ export class ConnectionApiController implements IConnectionApiController {
     }
 
     // Find the sender according to the senderId and stage the "changed"
-    onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): SenderResource {
+    onPatchSenderStaged(senderId: string, updatedSender: StagedSenderResource): StagedSenderResource {
         const currSender = this.nmosMediator
             .getNode()
             .getSender(senderId);
 
         if (currSender) {
-            currSender.stage(updatedSender);
-            return currSender.getModel();
+            return currSender.stage(updatedSender);
         }
     }
 
@@ -180,7 +179,7 @@ export class ConnectionApiController implements IConnectionApiController {
         if (currReceiver) return currReceiver.getStaged();
     }
 
-    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource {
+    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource):  StagedReceiverResource{
         console.log(receiverId);
         const currReceiver = this.nmosMediator
             .getNode()
@@ -188,8 +187,7 @@ export class ConnectionApiController implements IConnectionApiController {
 
         if (currReceiver) {
             console.log( "Try to patch receiver staged: ", updatedReceiver );
-            currReceiver.stage(updatedReceiver);
-            return currReceiver.getModel();
+            return currReceiver.stage(updatedReceiver);
         }
     }
 

@@ -1,11 +1,11 @@
-import { 
+import {
     Constraints,
     ReceiverResource1,
     StagedReceiverResource,
     TransportType
 } from "../../schemas";
 
-import { ResourceCore    } from "../resource-core";
+import { ResourceCore } from "../resource-core";
 import { IReceiverConfig } from ".";
 import { IReceiver } from "./i-receiver";
 
@@ -45,7 +45,7 @@ export class Receiver extends ResourceCore implements IReceiver {
                 activation_time: null
             },
             master_enable: false,
-            sender_id:  null,
+            sender_id: null,
             transport_file: {
                 data: null,
                 type: null
@@ -56,24 +56,83 @@ export class Receiver extends ResourceCore implements IReceiver {
         // this.setOnUpdateCallback( config.onUpdateCallback );
     }
 
-    public getConstraints(): Constraints{
+    public getConstraints(): Constraints {
         return this.constraints;
     }
 
-    public stage( stagedReceiver: StagedReceiverResource ){
-        if( !stagedReceiver ) return;
+    public stage(stagedReceiver: StagedReceiverResource) {
+        if (!stagedReceiver) return;
+        if (!this.validateStagedInput(stagedReceiver)) return;
 
-        console.log( "Activate receiver!")
-        this.staged = stagedReceiver;
+        let isUpdated = false;
 
-        if( this.staged.activation.mode == "activate_immediate" ){
-            this.onUpdate();
+        const currStagedKeyList = Object.keys(this.staged);
+        const stagedReceiverKeys = Object.keys(stagedReceiver);
+
+        // Update only valid keys of the staged object
+        // Object assign would also add values that do not match the interface specs
+        stagedReceiverKeys.forEach(currKey => {
+            currStagedKeyList.some(el => {
+                if (el == currKey) {
+                    this.staged[el] = stagedReceiver[currKey]; // this led to overwriting of defaults!
+                    // Object.assign( this.staged[ el], stagedReceiver[currKey]);
+                    isUpdated = true;
+                    return true;
+                }
+            });
+        })
+
+        if( isUpdated ) this.onUpdate();
+
+        if (this.staged.activation.mode == "activate_immediate"){
+            let tmpReturn = this.getStaged();
+
+            tmpReturn.activation.activation_time = ((Date.now() / 1000).toString() + "000000").replace( ".", ":");
+            tmpReturn.activation.requested_time = null;
+
+            this.staged.activation.mode = null;
+            this.staged.activation.requested_time = null;
+            this.staged.activation.activation_time = null;
+
+            this.onActivation();
+            return tmpReturn;
         }
+
+        return this.staged;
+    }
+
+    private validateStagedInput(stageSender: StagedReceiverResource): boolean {
+        const currStagedKeyList = Object.keys(this.staged);
+        const stagedSenderKeys = Object.keys(stageSender);
+
+        if( stagedSenderKeys.length < 1 ) return false;
+
+        let isValid = true;
+        stagedSenderKeys.forEach(key => {
+            let foundKey =currStagedKeyList.some(inputKey => inputKey === key)
+            if (!foundKey) isValid = false;
+        });
+        
+        return isValid;
+    }
+
+    private onActivation(){
+        console.log("Receiver ", this.id, " was activated");
+        
     }
 
     public getStaged(): StagedReceiverResource {
-        // TODO: Better suited in constructor?
-        return this.staged;
+        return {
+            activation: {
+                mode: this.staged.activation.mode,
+                activation_time: this.staged.activation.activation_time,
+                requested_time: this.staged.activation.requested_time
+            },
+            master_enable: this.staged.master_enable,
+            sender_id: this.staged.sender_id,
+            transport_params: this.staged.transport_params,
+            transport_file: this.staged.transport_file
+        }
     }
 
     // TODO: Implement correct logic!
@@ -86,7 +145,7 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
 
-    public getBaseReceiverModel(): ReceiverResource1{
+    public getBaseReceiverModel(): ReceiverResource1 {
         return {
             ...this.getBaseResource(),
 
