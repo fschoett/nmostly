@@ -124,20 +124,20 @@ export class Receiver extends ResourceCore implements IReceiver {
     public getStaged(): StagedReceiverResource {
         return {
             activation: {
-                mode: this.staged.activation.mode,
-                activation_time: this.staged.activation.activation_time,
-                requested_time: this.staged.activation.requested_time
+                mode: this.staged.activation.mode || null,
+                activation_time: this.staged.activation.activation_time || null,
+                requested_time: this.staged.activation.requested_time || null
             },
-            master_enable: this.staged.master_enable,
-            sender_id: this.staged.sender_id,
-            transport_params: this.staged.transport_params,
-            transport_file: this.staged.transport_file
+            master_enable: this.staged.master_enable || false,
+            sender_id: this.staged.sender_id || null,
+            transport_params: this.staged.transport_params || [],
+            transport_file: this.staged.transport_file || { data: null, type: null }
         }
     }
 
     // TODO: Implement correct logic!
     public getActive(): StagedReceiverResource {
-        return this.staged;
+        return this.getStaged();
     }
 
     public getTransportType(): TransportType {

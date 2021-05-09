@@ -123,19 +123,19 @@ export class Sender extends ResourceCore {
     public getStaged(): StagedSenderResource {
         return {
             activation: {
-                mode: this.staged.activation.mode,
-                activation_time: this.staged.activation.activation_time,
-                requested_time: this.staged.activation.requested_time
+                mode: this.staged.activation.mode || null,
+                activation_time: this.staged.activation.activation_time || null,
+                requested_time: this.staged.activation.requested_time || null
             },
-            master_enable: this.staged.master_enable,
-            receiver_id: this.staged.receiver_id,
-            transport_params: this.staged.transport_params
+            master_enable: this.staged.master_enable || false,
+            receiver_id: this.staged.receiver_id|| null,
+            transport_params: this.staged.transport_params || []
         }
     }
 
     // TODO: Implement correct logic!
     public getActive(): StagedSenderResource {
-        return this.staged;
+        return this.getStaged();
     }
 
     public getTransportFile(): TransportFile {
