@@ -10,7 +10,8 @@ export class DiscoveryService {
 
     constructor(private nmosMediator: INmosMediator) {
         this.mdnsService = new MdnsService({
-            onNewRegistryFound: (data) => { this.onNewRegistryFound(data); }
+            onNewRegistryFound: (data) => { this.onNewRegistryFound(data); },
+            interfaceIp: "192.168.178.41"
         });
     }
 
@@ -25,16 +26,26 @@ export class DiscoveryService {
     private async postAllResourcesToRegistry() {
         try {
 
-            await this.postNodeToRegistry();
+            let nodeRes = await this.postNodeToRegistry();
+
+            if( nodeRes.status != 201  ){
+                console.log("Error while trying to post registry.. break!", nodeRes.statusText );
+                
+                return;
+            }
+
+            // this.mdnsService.startHeartbeat(this.nmosMediator.getNode().id);
+            this.mdnsService.setNodeId( this.nmosMediator.getNode().id );
+
             await this.postDevicesToRegistry();
             await this.postSourcesToRegistry();
             await this.postFlowsToRegistry();
             await this.postSendersToRegistry();
             await this.postReceiversToRegistry();
 
-            this.mdnsService.startHeartbeat(this.nmosMediator.getNode().id);
+
         } catch (error) {
-            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error.response.data.error, error.response.data.debug);
+            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error );
         }
     }
 
@@ -43,8 +54,12 @@ export class DiscoveryService {
         const res = await this.nmosRegistryHttpClient.postResource(
             this.nmosMediator.getNode().getModel(), "node"
         );
-        console.log("DiscoveryService: postNodeToRegistry: Success", res.status);
 
+        // if res.status == 200 > try to unregister node first
+        // if res.status == 4xx > do nothing. User interaction is needed!
+        // is res.status == 409 > version conflict!
+
+        return res;
     }
 
     private async postDevicesToRegistry() {

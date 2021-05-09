@@ -2,7 +2,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import { BaseResource } from "../schemas";
 import { INmosRegistryClientConfig } from "./interfaces/i-nmos-registry-http-client-config";
 
-const REGISTER_RESOURCE_PATH: string = "/x-nmos/registration/v1.3/resource";
+const REGISTER_RESOURCE_PATH: string = "/x-nmos/registration/v9.0/resource";
 
 export class RegistryHttpClient {
 
@@ -34,11 +34,11 @@ export class RegistryHttpClient {
 
         // Perform the http request with the help of the axios api
         try {
-            const response = axios.post(urlString, requestBody);
+            const response = await axios.post(urlString, requestBody);
             return response;
         } catch (error) {
-            console.log(error.response.data, type);
-            // reject(error);
+            console.log(error.response.status, type);
+            return error.response;
         }
     }
 

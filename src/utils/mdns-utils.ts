@@ -114,6 +114,7 @@ function tryExtractRegistryFromAdditionals( response ): IMdnsRegistryModel {
 }
 
 function parseTxtDataString(txtDataString: string){
+    console.log( txtDataString );
     const protoIndex = txtDataString.indexOf("api_proto");
     const verIndex = txtDataString.indexOf("api_ver");
     const authIndex = txtDataString.indexOf("api_auth");
@@ -126,7 +127,18 @@ function parseTxtDataString(txtDataString: string){
     let apiAuth = apiAuthString == "true";
     let apiPri = parseInt(apiPriString);
 
-    return { apiProto, apiVer, apiAuth, apiPri }
+    const allData = txtDataString.split( ",");
+    const newApiVer = [ allData.find( el => el.includes( "api_ver") ).split( "=")[1] ];
+    const newApiProto = allData.find( el => el.includes( "api_proto") ).split( "=")[1]
+    const newApiPri = parseInt( allData.find( el => el.includes( "pri")).split( "=")[1] );
+
+
+    return { 
+        apiProto: newApiProto,
+        apiVer : newApiVer,
+        apiAuth,
+        apiPri: newApiPri
+    }
 }
 
 /*
