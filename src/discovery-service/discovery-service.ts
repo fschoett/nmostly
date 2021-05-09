@@ -30,7 +30,7 @@ export class DiscoveryService {
 
             if( nodeRes.status != 201  ){
                 console.log("Error while trying to post registry.. break!", nodeRes.statusText );
-                
+                this.mdnsService.onRegistryError();
                 return;
             }
 

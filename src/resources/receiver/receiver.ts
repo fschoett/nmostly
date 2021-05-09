@@ -30,7 +30,8 @@ export class Receiver extends ResourceCore implements IReceiver {
         super(appService, config);
         this.transport = config.transport || "urn:x-nmos:transport:rtp";
         this.device_id = config.device_id;
-        this.constraints = null;
+
+        this.constraints = this.createEmptyConstraintObject();
 
         this.subscription = config.subscription || {
             active: false,
@@ -41,6 +42,7 @@ export class Receiver extends ResourceCore implements IReceiver {
             activation: {
                 mode: null,
                 requested_time: null,
+                activation_time: null
             },
             master_enable: false,
             sender_id:  null,
@@ -59,6 +61,8 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
     public stage( stagedReceiver: StagedReceiverResource ){
+        if( !stagedReceiver ) return;
+
         console.log( "Activate receiver!")
         this.staged = stagedReceiver;
 
@@ -91,5 +95,24 @@ export class Receiver extends ResourceCore implements IReceiver {
             interface_bindings: this.interface_bindings,
             subscription: this.subscription
         };
+    }
+
+
+    private createEmptyConstraintObject(): Constraints {
+        return [{
+            destination_port: {},
+            fec1D_destination_port: {},
+            fec2D_destination_port: {},
+            fec_destination_ip: {},
+            fec_enabled: {},
+            fec_mode: {},
+            interface_ip: {},
+            multicast_ip: {},
+            rtcp_destination_ip: {},
+            rtcp_destination_port: {},
+            rtcp_enabled: {},
+            rtp_enabled: {},
+            source_ip: {}
+        }]
     }
 }

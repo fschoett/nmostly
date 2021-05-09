@@ -1,8 +1,6 @@
 import axios from "axios";
-import e from "express";
 
-import { IMdnsAnswer, IMdnsRegistryModel } from ".";
-import { Node } from "../resources/node";
+import { IMdnsRegistryModel } from ".";
 import { containsPTREntry, parseMdnsResponse } from "../utils";
 import { IMdnsServiceConfig } from "./interfaces/i-mdns-service-config";
 
@@ -48,6 +46,14 @@ export class MdnsService {
         }
     }
 
+    // Remove the current registry from the registryList
+    public onRegistryError(){
+        this.registryList = this.registryList
+            .filter(registry => registry.ptr!= this.selectedRegistry.ptr);
+
+        this.selectRegistry();
+    }
+
     // Start listening on mdns responses (also perform an initial mdns request)
     private startMdnsService() {
         console.log("MdnsService: startMdnsService");
@@ -89,7 +95,7 @@ export class MdnsService {
 
     }
 
-    // Add/ Update a registry to the registryList. then trigger setRegistry()
+    // Try Add/ Update a registry to the registryList
     private tryAddRegistry(registry: IMdnsRegistryModel): boolean {
 
         // does registry fit to the current node?

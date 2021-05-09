@@ -33,7 +33,19 @@ export class Sender extends ResourceCore {
             active: false
         };
 
-        this.constraints = null;
+        this.staged = {
+            activation: {
+                mode: null,
+                requested_time: null,
+                activation_time: null
+            },
+            master_enable: false,
+            receiver_id:  null,
+            transport_params: []
+        };
+
+
+        this.constraints = this.createEmptyConstraintObject();
 
         this.setOnUpdateCallback( config.onUpdateCallback );
         // add callback as parameter if sender is staged and activated!
@@ -41,6 +53,9 @@ export class Sender extends ResourceCore {
 
     // Currently only immediate staging is implemented! 
     public stage( updatedSender: StagedSenderResource ){
+        if( !updatedSender ) return false;
+
+        console.log( "Staging sender", updatedSender )
 
         // update staged entry
         this.staged = updatedSender;
@@ -93,4 +108,24 @@ export class Sender extends ResourceCore {
             subscription: this.subscription
         };
     }
+
+
+    private createEmptyConstraintObject(): Constraints {
+        return [{
+            destination_port: {},
+            fec1D_destination_port: {},
+            fec2D_destination_port: {},
+            fec_destination_ip: {},
+            fec_enabled: {},
+            fec_mode: {},
+            interface_ip: {},
+            multicast_ip: {},
+            rtcp_destination_ip: {},
+            rtcp_destination_port: {},
+            rtcp_enabled: {},
+            rtp_enabled: {},
+            source_ip: {}
+        }]
+    }
+
 }

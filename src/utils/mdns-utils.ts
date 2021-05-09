@@ -86,11 +86,6 @@ function tryExtractRegistryFromAdditionals(response): IMdnsRegistryModel {
     if (!(txtEntry && aEntry && srvEntry)) { return; }
 
     const srvData = srvEntry.data;
-
-    txtEntry.data.forEach(element => {
-        console.log(element.toString());
-    });
-
     let txtDataObj = parseTxtData(txtEntry.data);
 
     const apiInfo = {

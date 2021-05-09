@@ -57,6 +57,8 @@ export interface ActivationResource {
    * String formatted TAI timestamp (<seconds>:<nanoseconds>) indicating time (absolute or relative) for activation. Should be null or not present if 'mode' is null.
    */
   requested_time?: string | null;
+
+  activation_time?: string | null;
 }
 /**
  * Transport file parameters. 'data' and 'type' must both be strings or both be null. If 'type' is non-null 'data' is expected to contain a valid instance of the specified media type.

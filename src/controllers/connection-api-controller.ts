@@ -12,7 +12,15 @@ export class ConnectionApiController implements IConnectionApiController {
     }
 
     onPostBulkSenders(senders: BulkSenderResource): BulkActivationResponse {
-        let response: BulkActivationResponse;
+        let response: BulkActivationResponse = [];
+
+        if (!senders) {
+            response.push({
+                code: 400,
+                id: "errorounous!"
+            });
+            return response;
+        }
 
         // find each sender in node and stage it with the current sender params
         senders.forEach(sender => {
@@ -42,7 +50,16 @@ export class ConnectionApiController implements IConnectionApiController {
     }
 
     onPostBulkReceivers(receivers: BulkReceiverResource): BulkActivationResponse {
-        let response: BulkActivationResponse;
+        let response: BulkActivationResponse = [];
+
+
+        if (!receivers) {
+            response.push({
+                code: 400,
+                id: "errorounous!"
+            });
+            return response;
+        }
 
         // find each sender in node and stage it with the current sender params
         receivers.forEach(receiver => {
@@ -74,24 +91,28 @@ export class ConnectionApiController implements IConnectionApiController {
 
     // Return a lsit of all available sender ids
     onGetSenders(): ConnectionAPISenderReceiverBaseResource {
-        return this.nmosMediator
+        const senderModels = this.nmosMediator
             .getNode()
             .getAllSenderModels()
-            .map(senderModel => senderModel.id);
+
+        if (senderModels.length > 0)
+            return senderModels.map(senderModel => senderModel.id + "/");
     }
 
     onGetSenderConstraints(senderId: string): Constraints {
-        return this.nmosMediator
+        const currSender = this.nmosMediator
             .getNode()
-            .getSender( senderId )
-            .getConstraints()
+            .getSender(senderId);
+
+        if (currSender) return currSender.getConstraints();
     }
 
     onGetSenderStaged(senderId: string): StagedSenderResource {
-        return this.nmosMediator
+        const currSender = this.nmosMediator
             .getNode()
-            .getSender( senderId )
-            .getStaged();
+            .getSender(senderId);
+
+        if (currSender) return currSender.getStaged();
     }
 
     // Find the sender according to the senderId and stage the "changed"
@@ -100,81 +121,91 @@ export class ConnectionApiController implements IConnectionApiController {
             .getNode()
             .getSender(senderId);
 
-        currSender.stage(updatedSender);
-
-        // Return the new model of the sender
-        return currSender.getModel();
+        if (currSender) {
+            currSender.stage(updatedSender);
+            return currSender.getModel();
+        }
     }
 
     // What exactly should this path do??
-    onGetSenderActive(senderId: string): StagedSenderResource{
-       // all auto flags should be resolved to the actual values.. how to?
-       return this.nmosMediator
-        .getNode()
-        .getSender( senderId )
-        .getActive();
+    onGetSenderActive(senderId: string): StagedSenderResource {
+        // all auto flags should be resolved to the actual values.. how to?
+        const currSender = this.nmosMediator
+            .getNode()
+            .getSender(senderId);
+
+        if (currSender) return currSender.getActive();
     }
 
     // Returns the transport file if one has been found, elsewise return zero!
     onGetSenderTransportFile(senderId: string): TransportFile {
-        const currSender =  this.nmosMediator
+        const currSender = this.nmosMediator
             .getNode()
-            .getSender( senderId );
-        if( currSender ){ return currSender.getTransportFile() }
+            .getSender(senderId);
+
+        if (currSender) return currSender.getTransportFile();
     }
 
     onGetSenderTransportType(senderId: string): TransportType {
-        return this.nmosMediator
+        const currSender = this.nmosMediator
             .getNode()
-            .getSender( senderId )
-            .getTransportType();
+            .getSender(senderId);
+
+        if (currSender) return currSender.getTransportType();
     }
 
     // Return a list of all available receiver ids
     onGetReceivers(): ConnectionAPISenderReceiverBaseResource {
-        return this.nmosMediator
+        const currReceiverModels = this.nmosMediator
             .getNode()
             .getAllReceiverModels()
-            .map(receiverModel => receiverModel.id);
+
+        if (currReceiverModels.length > 0)
+            return currReceiverModels.map(receiverModel => receiverModel.id + "/");
     }
 
     onGetReceiverConstraints(receiverId: string): Constraints {
-        return this.nmosMediator
-            .getNode()
-            .getReceiver( receiverId )
-            .getConstraints()
-    }
-
-    onGetReceiverStaged(receiverId: string): StagedReceiverResource{
         const currReceiver = this.nmosMediator
             .getNode()
-            .getReceiver( receiverId );
-        if( currReceiver ){
-            return currReceiver.getStaged();
-        }
+            .getReceiver(receiverId)
+
+        if (currReceiver) return currReceiver.getConstraints();
     }
 
-    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource {
+    onGetReceiverStaged(receiverId: string): StagedReceiverResource {
         const currReceiver = this.nmosMediator
             .getNode()
             .getReceiver(receiverId);
 
-        currReceiver.stage(updatedReceiver);
-
-        return currReceiver.getModel();
+        if (currReceiver) return currReceiver.getStaged();
     }
 
-    onGetReceiverActive(receiverId: string): StagedReceiverResource{
-        return this.nmosMediator
+    onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource): ReceiverResource {
+        console.log(receiverId);
+        const currReceiver = this.nmosMediator
             .getNode()
-            .getReceiver( receiverId )
-            .getActive();
+            .getReceiver(receiverId);
+
+        if (currReceiver) {
+            console.log( "Try to patch receiver staged: ", updatedReceiver );
+            currReceiver.stage(updatedReceiver);
+            return currReceiver.getModel();
+        }
+    }
+
+    onGetReceiverActive(receiverId: string): StagedReceiverResource {
+        const currReceiver = this.nmosMediator
+            .getNode()
+            .getReceiver(receiverId);
+
+        if (currReceiver) return currReceiver.getActive();
     }
 
     onGetReceiverTransporttype(receiverId: string): TransportType {
-        return this.nmosMediator
+        const currReceiver = this.nmosMediator
             .getNode()
-            .getReceiver( receiverId )
-            .getTransportType();
+            .getReceiver(receiverId)
+
+        if (currReceiver) return currReceiver.getTransportType();
     }
 }

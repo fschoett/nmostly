@@ -41,7 +41,7 @@ export class NmosConnectionRouter{
     constructor(private connApiController: IConnectionApiController) {
 
         // Create express instance and register its endpoints
-        this.router = express();
+        this.router = express.Router();
         this.registerEndpoints();
     }
 
@@ -123,6 +123,7 @@ export class NmosConnectionRouter{
 
         this.router.patch("/single/senders/:id/staged/", (req, res) => {
             const senderId = req.params.id;
+            console.log( req.body );
             const updatedSender = req.body;
             const response: SenderResource = cntrlr.onPatchSenderStaged(senderId, updatedSender);
             returnJson(res, response);
@@ -131,7 +132,7 @@ export class NmosConnectionRouter{
         this.router.get("/single/senders/:id/active/", (req, res) => {
             const senderId = req.params.id;
             const response: StagedSenderResource = cntrlr.onGetSenderActive(senderId);
-            returnJson(res, {});
+            returnJson(res, response );
         });
 
         // TODO: If transportfile is null, try to get href to sdp file directly

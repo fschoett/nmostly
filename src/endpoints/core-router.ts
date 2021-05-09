@@ -27,6 +27,7 @@ export class CoreRouter{
 
         // Setup endpoints
         this.router = express();
+        this.router.use( express.json() )
 
         // Setup cors settings according to nmos specification
         this.router.use( this.nmosMiddlewareCors );
@@ -75,7 +76,7 @@ export class CoreRouter{
     // middleware cors
     private nmosMiddlewareCors(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET, PUT, POST, HEAD, OPTIONS, DELETE");
+        res.header("Access-Control-Allow-Methods", "GET, PUT, POST, PATCH, HEAD, OPTIONS, DELETE");
         res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
         res.header("Access-Control-Max-Age", "3600");
 
