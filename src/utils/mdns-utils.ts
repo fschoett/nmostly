@@ -4,20 +4,20 @@ const REGISTRY_SERVICE_NAME = '_nmos-register._tcp.local';
 
 export function parseMdnsResponse(response): IMdnsRegistryModel {
 
-    // try extract from answer.
+    // try extract from mdns answer
     try {
-        const answerRegistry = tryExtractRegistryFromAnswers( response );
-        if( answerRegistry ){ return answerRegistry; }
+        const answerRegistry = tryExtractRegistryFromAnswers(response);
+        if (answerRegistry) { return answerRegistry; }
     } catch (error) {
-        console.error( error );
+        console.error(error);
     }
 
+    // if no further information are found, try extract from additionals entry
     try {
-        // if nothing found, try extract from additionals
-        return tryExtractRegistryFromAdditionals( response );
-        
+        return tryExtractRegistryFromAdditionals(response);
+
     } catch (error) {
-        console.error( error );
+        console.error(error);
     }
 }
 
@@ -30,10 +30,10 @@ export function containsPTREntry(response): boolean {
     return (ptrList.length > 0)
 }
 
-function tryExtractRegistryFromAnswers( response ): IMdnsRegistryModel {
-    const mdnsAnswers = response.answers as IMdnsAnswer[] ;
+function tryExtractRegistryFromAnswers(response): IMdnsRegistryModel {
+    const mdnsAnswers = response.answers as IMdnsAnswer[];
 
-    let ptrList = mdnsAnswers.filter(entry => entry.type === "PTR" && entry.name === REGISTRY_SERVICE_NAME );
+    let ptrList = mdnsAnswers.filter(entry => entry.type === "PTR" && entry.name === REGISTRY_SERVICE_NAME);
     let fullName = ptrList[0].data;
 
     let srvList = mdnsAnswers.filter(entry => entry.type === "SRV" && entry.name === fullName);
@@ -49,13 +49,13 @@ function tryExtractRegistryFromAnswers( response ): IMdnsRegistryModel {
 
     let txtEntry = mdnsAnswers.filter(entry => entry.type === "TXT" && entry.name === fullName);
 
-    let txtDataObj = parseTxtDataString(txtEntry[0].data.toString());
+    let txtDataObj = parseTxtData(txtEntry[0].data);
 
     const apiInfo = {
         api_proto: txtDataObj.apiProto || "http",
         api_ver: txtDataObj.apiVer || ["v1.3"],
         api_auth: txtDataObj.apiAuth || false,
-        api_pri: txtDataObj.apiPri
+        api_pri: txtDataObj.priority || 99
     };
 
     return {
@@ -75,8 +75,8 @@ function tryExtractRegistryFromAnswers( response ): IMdnsRegistryModel {
     }
 }
 
-function tryExtractRegistryFromAdditionals( response ): IMdnsRegistryModel {
-    
+function tryExtractRegistryFromAdditionals(response): IMdnsRegistryModel {
+
     const mdnsAdditionals: IMdnsAnswer[] = response.additionals;
 
     const txtEntry = mdnsAdditionals.find(el => el.type === 'TXT');
@@ -87,15 +87,20 @@ function tryExtractRegistryFromAdditionals( response ): IMdnsRegistryModel {
 
     const srvData = srvEntry.data;
 
-    let txtDataObj = parseTxtDataString(txtEntry.data.toString());
+    txtEntry.data.forEach(element => {
+        console.log(element.toString());
+    });
+
+    let txtDataObj = parseTxtData(txtEntry.data);
 
     const apiInfo = {
         api_proto: txtDataObj.apiProto || "http",
         api_ver: txtDataObj.apiVer || ["v1.3"],
         api_auth: txtDataObj.apiAuth || false,
-        api_pri: txtDataObj.apiPri
+        api_pri: txtDataObj.priority || 99
     };
 
+    // Return extracted data as registry
     return {
         ipv4: aEntry.data,
         host: aEntry.name,
@@ -113,39 +118,22 @@ function tryExtractRegistryFromAdditionals( response ): IMdnsRegistryModel {
     }
 }
 
-function parseTxtDataString(txtDataString: string){
-    console.log( txtDataString );
-    const protoIndex = txtDataString.indexOf("api_proto");
-    const verIndex = txtDataString.indexOf("api_ver");
-    const authIndex = txtDataString.indexOf("api_auth");
-    const priIndex = txtDataString.indexOf("pri");
+// Parse txt entries from the
+function parseTxtData(txtData: Buffer[]) {
 
-    const apiProto = txtDataString.substring(protoIndex, verIndex - 1).split("=")[1];
-    const apiVer = txtDataString.substring(verIndex, authIndex - 1).split("=")[1].split(",");
-    const apiAuthString = txtDataString.substring(authIndex, priIndex - 1).split("=")[1];
-    const apiPriString = txtDataString.substring(priIndex, txtDataString.length).split("=")[1];
-    let apiAuth = apiAuthString == "true";
-    let apiPri = parseInt(apiPriString);
+    // parse txt data entries
+    let txtDataEntryObject = {};
+    txtData.forEach(txtDataEntry => {
+        let currDataEntrySplit = txtDataEntry.toString().split("=");
+        txtDataEntryObject[currDataEntrySplit[0]] = currDataEntrySplit[1];
+    });
 
-    const allData = txtDataString.split( ",");
-    const newApiVer = [ allData.find( el => el.includes( "api_ver") ).split( "=")[1] ];
-    const newApiProto = allData.find( el => el.includes( "api_proto") ).split( "=")[1]
-    const newApiPri = parseInt( allData.find( el => el.includes( "pri")).split( "=")[1] );
+    // make sure that data types are correct
+    const apiVer   = txtDataEntryObject[ "api_ver"   ].split(",");
+    const apiProto = txtDataEntryObject[ "api_proto" ];
+    const apiAuth  = txtDataEntryObject[ "api_auth"  ] == "true";
+    const priority = parseInt(txtDataEntryObject["pri"]);
 
-
-    return { 
-        apiProto: newApiProto,
-        apiVer : newApiVer,
-        apiAuth,
-        apiPri: newApiPri
-    }
+    // return parsed txt entries as object
+    return { apiVer, apiProto, apiAuth, priority }
 }
-
-/*
-    private containsPTREntry(entryList: IMdnsAnswer[]): boolean {
-        if (!entryList) { return false }
-
-        let ptrList = entryList.filter(entry => entry.type === "PTR" && entry.name === this.REGISTRY_SERVICE_NMAE);
-        return (ptrList.length > 0)
-    }
-    */

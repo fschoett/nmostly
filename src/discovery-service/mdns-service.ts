@@ -22,6 +22,10 @@ export class MdnsService {
 
     private interfaceIp;
 
+    private apiVer: string = "v1.3";
+    private apiProto: string = "http";
+    private apiAuth: boolean = false;
+
     constructor(config: IMdnsServiceConfig) {
         this.onNewRegisteryFoundCallback = config.onNewRegistryFound || (() => { console.log("registryfoundcallback not implemented"); });
         this.interfaceIp = config.interfaceIp;
@@ -29,13 +33,13 @@ export class MdnsService {
     }
 
     public getHref() {
-        return this.selectedRegistry.ipv4+ ":" + this.selectedRegistry.srv_port;
+        return this.selectedRegistry.ipv4 + ":" + this.selectedRegistry.srv_port;
     }
 
     // Set a new nodeid to perform a nodeId against. If a registry exists, start a heartbeat
     public setNodeId(nodeId) {
         console.log(`Setting the new nodeid to ${nodeId}`);
-        if( this.nodeId == nodeId ){ return; }
+        if (this.nodeId == nodeId) { return; }
 
         this.nodeId = nodeId;
 
@@ -58,7 +62,6 @@ export class MdnsService {
         mdns.on('response', res => {
 
             // Only process response if answer containd ptr entry with correct name entry
-
             if (!containsPTREntry(res)) {
                 console.log("No ptr entries in res.answers!");
                 return;
@@ -74,28 +77,10 @@ export class MdnsService {
                 return;
             }
 
-            // Add to registry List if not a duplicat
-            if (!(this.registryList.find(el => el.ptr== foundRegistry.ptr))) {
-                //if( foundRegistry.api_ver.find( el => el === "v1.3" )){
-                    if( foundRegistry.api_proto == "http" || foundRegistry.api_proto == "https"){
-                        this.registryList.push(foundRegistry);
-                        console.log("Found registry", foundRegistry)
-                    }
-                    else{
-                        return;
-                    }
-                //}
-                //else{
-                    return;
-                //}
+            // Try add registry to registry list. Is succeeded: choose the best registry
+            if( this.tryAddRegistry( foundRegistry ) ){
+                this.selectRegistry();
             }
-            else {
-                console.log("Registry already exists in foundRegistry List");
-                console.log( foundRegistry );
-            }
-
-            // iterate over regsitries and select suitable one
-            this.selectRegistry();
 
         });
 
@@ -103,6 +88,36 @@ export class MdnsService {
         this.performMdnsQuery(mdns);
 
     }
+
+    // Add/ Update a registry to the registryList. then trigger setRegistry()
+    private tryAddRegistry(registry: IMdnsRegistryModel): boolean {
+
+        // does registry fit to the current node?
+        if( !this.registryCompliesToRequirements( registry )){
+            return false;
+        }
+
+        // Remove Registry from list if it already exists
+        const existingIndex = this.registryList.findIndex(el => el.ptr == registry.ptr);
+        if( existingIndex != -1 ){
+            this.registryList = this.registryList.splice( existingIndex, 1 );
+        }
+
+        // Add registry to List;
+        this.registryList.push(registry);
+        return true;
+    }
+
+
+    // See https://specs.amwa.tv/is-04/releases/v1.3/docs/3.1._Discovery_-_Registered_Operation.html
+    private registryCompliesToRequirements(registry: IMdnsRegistryModel) {
+        return (
+            registry.api_auth == this.apiAuth
+            && registry.api_proto == this.apiProto
+            && registry.api_ver.find(el => el == this.apiVer)
+        )
+    }
+
 
     // select the best registry according to the nmow amwa specifications;
     private selectRegistry() {
@@ -126,17 +141,8 @@ export class MdnsService {
         this.selectedRegistry = highestPrioRegistry
         this.onNewRegistrySelected();
         this.onNewRegisteryFoundCallback(this.selectedRegistry);
-
-        /*
-        // Only set new selected registry if the host values are different
-        if (this.selectedRegistry.host != highestPrioRegistry.host) {
-
-            this.selectedRegistry = highestPrioRegistry;
-            this.onNewRegistrySelected();
-            this.onNewRegisteryFoundCallback(this.selectedRegistry);
-        }
-        */
     }
+
 
     // Callback if a new registry has been selected
     private onNewRegistrySelected() {
@@ -150,6 +156,7 @@ export class MdnsService {
         }
     }
 
+    // Trigger a mdns query
     private performMdnsQuery(mdns) {
         console.log("MdnsService: performMdnsQuery");
         const registryServiceType = '_nmos-register._tcp.local';
@@ -168,14 +175,14 @@ export class MdnsService {
 
     private startHeartbeat() {
         console.log(`MdnsService: startHeartbeat(${this.nodeId})`);
-        if( this.isHeartbeating ){
+        if (this.isHeartbeating) {
             this.stopHeartbeat();
-            setTimeout( ()=>{
+            setTimeout(() => {
                 this.performHeartbeat();
                 this.isHeartbeating = true;
-            }, this.HEARTBEAT_INTERVAL_IN_S * 1000 );
+            }, this.HEARTBEAT_INTERVAL_IN_S * 1000);
         }
-        else{
+        else {
             this.performHeartbeat();
             this.isHeartbeating = true;
         }
