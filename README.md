@@ -4,7 +4,7 @@ NMOStly is a typescript implementations of the most parts of the AMWA IS-04 and 
 See [Networked Media Open Specifiactions](https://specs.amwa.tv/nmos/)
 
 ## Why?
-As part of my masters-thesis i started developing a TypeScript library for interfacing with NMOS devices.
+As part of my masters-thesis at the TH-Cologne, I started developing a TypeScript library for interfacing with NMOS devices.
 In contrast to the rather complex implementation by SONY ([nmos-cpp](https://github.com/sony/nmos-cpp))
 an nmos node can be started in only 10 lines of javascript:
 
@@ -28,6 +28,23 @@ nodeApi.startServer();
 This small snippet will start a Test Node with one audio receiver and one audio source.
 The methods of the nodeApi accept many options to overwrite the defaults set by nmostly
 
+# Installation
+Simply run 
+```bash
+npm i nmostly
+```
+in your terminal.
+
+# Usage
+
+# Third Party Software
+NMOStly uses the following open source projects:
+
+- [axios](https://github.com/axios/axios)
+- [express.js](https://github.com/types/express)
+- [multicast-dns](https://github.com/mafintosh/multicast-dns)
+- [TypeScript](https://github.com/microsoft/TypeScript)
+- [uuid](https://github.com/uuidjs/uuid)
 
 # License
 

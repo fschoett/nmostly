@@ -1,6 +1,6 @@
 {
   "name": "nmostly",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TS NMOS library implementing only a few parts of the specification",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Fabian Schoettler",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "devDependencies": {
     "typescript": "^4.2.3"
   },
