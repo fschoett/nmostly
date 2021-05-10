@@ -35,6 +35,12 @@ npm i nmostly
 ```
 in your terminal.
 
+# Warning
+NMOStly has been developed by me and is heavily un-tested.. So please be careful when using it in a production environment.
+At the current state of the project it is not recommended!
+
+NMOStly is mainly intended for small, quick and ugly prototyping work!
+
 # Usage
 
 # Third Party Software
