@@ -44,8 +44,8 @@ export class NmosMediator implements INmosMediator {
     constructor(config: IAppSettings) {
         this.appService = new AppService();
 
-        this.port = config.port || 5500,
-            this.macAddr = config.macAddr;
+        this.port = config.port || 5500;
+        this.macAddr = config.macAddr;
         this.ip = config.ipv4 || "127.0.0.1";
         this.hostName = config.hostname || "nmostly-defaultnode.local";
         this.description = config.description || "";
