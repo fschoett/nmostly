@@ -13,10 +13,10 @@ an nmos node can be started in only 10 lines of javascript:
 import Nmostly from "nmostly";
 
 const nodeApi = new Nmostly( {
-    ifaceName: "eth0",
-    ipv4: "192.168.178.41",
-    macAddr: "74-D4-35-BB-25-1C",
-    port: 5500
+    ifaceName : "eth0",
+    ipv4      : "192.168.178.41",
+    macAddr   : "74-D4-35-BB-25-1C",
+    port      : 5500
 });
 
 nodeApi.addReceiverAudio();
