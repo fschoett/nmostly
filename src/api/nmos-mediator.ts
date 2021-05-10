@@ -16,6 +16,8 @@ import { Node } from "../resources/node"
 // Import mediator interface
 import { INmosMediator } from ".";
 import { DiscoveryService } from "../discovery-service";
+import { ReceiverResource } from "../schemas";
+import { ResourceCore } from "../resources/resource-core";
 
 
 
@@ -83,8 +85,9 @@ export class NmosMediator implements INmosMediator {
 
         // HiJack/ enrich callback
         let tmpCallback = config.onUpdateCallback;
-        config.onUpdateCallback = ()=>{
+        config.onUpdateCallback = ( resource )=>{
             tmpCallback();
+            this.discoveryService.updateResource( resource.getModel(), "receiver");
         };
         const newReceiver = new ReceiverAudio(this.appService, config);
         const foundDevice = this.node.getDevice(deviceId);

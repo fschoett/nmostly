@@ -1,6 +1,7 @@
 import { IReceiver } from ".";
 import { Constraints, TransportType } from "../../schemas";
 import { IResourceCoreConfig } from "../resource-core";
+import { ReceiverAudio } from "./receiver-audio";
 
 export interface IReceiverConfig extends IResourceCoreConfig{
     device_id: string;
@@ -12,5 +13,4 @@ export interface IReceiverConfig extends IResourceCoreConfig{
 }
 
 export interface IReceiverAudioConfig extends IReceiverConfig{
-
 }

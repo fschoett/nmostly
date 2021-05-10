@@ -22,6 +22,7 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
     staged: StagedReceiverResource;
+    active: StagedReceiverResource;
 
     private transport: TransportType;
     private constraints: Constraints;
@@ -52,6 +53,21 @@ export class Receiver extends ResourceCore implements IReceiver {
             },
             transport_params: this.createDummyStagedResource()
         }
+
+        this.active = {
+            activation: {
+                mode: null,
+                requested_time: null,
+                activation_time: null
+            },
+            master_enable: false,
+            sender_id: null,
+            transport_file: {
+                data: null,
+                type: null
+            },
+            transport_params: this.createDummyActiveResource()
+        };
 
         // this.setOnUpdateCallback( config.onUpdateCallback );
     }
@@ -94,7 +110,6 @@ export class Receiver extends ResourceCore implements IReceiver {
             });
         })
 
-        if (isUpdated) this.onUpdate();
 
         if (this.staged.activation.mode == "activate_immediate") {
             let tmpReturn = this.getStaged();
@@ -106,9 +121,11 @@ export class Receiver extends ResourceCore implements IReceiver {
             this.staged.activation.requested_time = null;
             this.staged.activation.activation_time = null;
 
-            this.onActivation();
+            this.onActivation( true );
             return tmpReturn;
         }
+
+        if (isUpdated) this.onUpdate();
 
         return this.staged;
     }
@@ -128,7 +145,17 @@ export class Receiver extends ResourceCore implements IReceiver {
         return isValid;
     }
 
-    private onActivation() {
+    private onActivation( isActivated?: boolean ) {
+        this.subscription.active = true;
+        this.onUpdate();
+        Object.assign( this.active.transport_params[0], this.staged.transport_params[0] );
+
+        // Replace all auto values
+        for( let key in this.active.transport_params[0] ){
+            if( this.active.transport_params[0][key] === "auto"){
+                this.active.transport_params[0][key] = this.createDummyStagedResource()[key];
+            }
+        }
         console.log("Receiver ", this.id, " was activated");
 
     }
@@ -149,9 +176,7 @@ export class Receiver extends ResourceCore implements IReceiver {
 
     // TODO: Implement correct logic!
     public getActive(): StagedReceiverResource {
-        let tmp = this.getStaged();
-        tmp.transport_params = this.createDummyActiveResource();
-        return tmp;
+        return this.staged;
     }
 
     public getTransportType(): TransportType {

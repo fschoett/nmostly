@@ -1,4 +1,5 @@
 import { INmosMediator } from "../api";
+import { ResourceCore } from "../resources/resource-core";
 import { MdnsService } from "./mdns-service";
 import { RegistryHttpClient } from "./registry-http-client";
 
@@ -28,14 +29,14 @@ export class DiscoveryService {
 
             let nodeRes = await this.postNodeToRegistry();
 
-            if( nodeRes.status != 201  ){
-                console.log("Error while trying to post registry.. break!", nodeRes.statusText );
+            if (nodeRes.status != 201) {
+                console.log("Error while trying to post registry.. break!", nodeRes.statusText);
                 this.mdnsService.onRegistryError();
                 return;
             }
 
             // this.mdnsService.startHeartbeat(this.nmosMediator.getNode().id);
-            this.mdnsService.setNodeId( this.nmosMediator.getNode().id );
+            this.mdnsService.setNodeId(this.nmosMediator.getNode().id);
 
             await this.postDevicesToRegistry();
             await this.postSourcesToRegistry();
@@ -43,9 +44,8 @@ export class DiscoveryService {
             await this.postSendersToRegistry();
             await this.postReceiversToRegistry();
 
-
         } catch (error) {
-            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error );
+            console.error("DiscoveryService: postAllResourcesToRegistry: Error: ", error);
         }
     }
 
@@ -135,6 +135,23 @@ export class DiscoveryService {
                 console.log(error.response.data);
             }
         }));
+    }
+
+    public async updateResource(resource: any, type: string) {
+        try {
+            await this.nmosRegistryHttpClient.postResource(resource, type);
+            console.log("DiscoveryService: updatingResource ", resource.label, type);
+        } catch (error) {
+            console.log(error.response.data);
+        }
+    }
+
+    public async removeResource( resource: any, type: string){
+        try {
+            await this.nmosRegistryHttpClient.deleteResource( resource, type );
+        } catch (error) {
+            console.error( error.response.data );
+        }
     }
 
 }

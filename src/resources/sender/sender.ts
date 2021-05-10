@@ -17,6 +17,8 @@ export class Sender extends ResourceCore {
     // Set defalt transport type to rtp
     private transport: TransportType;
     private staged: StagedSenderResource;
+
+    private active: StagedSenderResource;
     // private onUpdateCallback;
 
     constructor(appService: IAppService, config: ISenderConfig) {
@@ -44,6 +46,9 @@ export class Sender extends ResourceCore {
             transport_params: this.createDummyStagedResource()
         };
 
+        this.active = this.getStaged();
+        this.active.transport_params = this.createDummyActiveResource();
+
         this.constraints = config.constraints || this.createDefaultConstraintObject();
 
         this.setOnUpdateCallback(config.onUpdateCallback);
@@ -52,6 +57,8 @@ export class Sender extends ResourceCore {
 
     // Currently only immediate staging is implemented! 
     public stage(updatedSender: StagedSenderResource) {
+        console.log(updatedSender);
+        
 
         // Valiate input
         try {
@@ -98,7 +105,7 @@ export class Sender extends ResourceCore {
             this.staged.activation.requested_time = null;
             this.staged.activation.activation_time = null;
 
-            this.onActivation();
+            this.onActivation( true );
             return tmpReturn;
         }
         return this.staged;
@@ -119,8 +126,18 @@ export class Sender extends ResourceCore {
         return isValid;
     }
 
-    private onActivation() {
-        console.log("Sender ", this.id, " was activated");
+    private onActivation( isActive?: boolean ) {
+        this.subscription.active = isActive || false;
+
+        Object.assign( this.active.transport_params[0], this.staged.transport_params[0] );
+
+        // Replace all auto values
+        for( let key in this.active.transport_params[0] ){
+            if( this.active.transport_params[0][key] === "auto"){
+                this.active.transport_params[0][key] = this.createDummyActiveResource()[0][key];
+            }
+        }
+        console.log("Sender", this.id, " was activated", this.active);
 
     }
 
@@ -148,9 +165,7 @@ export class Sender extends ResourceCore {
 
     // TODO: Implement correct logic!
     public getActive(): StagedSenderResource {
-        let tmp = this.getStaged();
-        tmp.transport_params = this.createDummyActiveResource();
-        return tmp;
+        return this.active;
     }
 
     public getTransportFile(): TransportFile {

@@ -2,5 +2,5 @@ export interface IResourceCoreConfig{
     label: string;
     description: string;
     tags: {};
-    onUpdateCallback?(): void;
+    onUpdateCallback?( callbackData?: any ): void;
 }
