@@ -21,8 +21,7 @@ const nodeConfig: INodeConfig = {
             }
         ]
     },
-    services: [
-    ],
+    services: [],
     clocks: [
         {
             name: "clk0",
@@ -54,7 +53,7 @@ const firstReceiver: IReceiverAudioConfig = {
     description: "Receiver Description",
     device_id: newDeviceId,
     tags: {},
-    onUpdateCallback : ()=> { console.log("onUpdateCallback: AppLevel Callback")}
+    onUpdateCallback: () => { console.log("onUpdateCallback: AppLevel Callback") }
 };
 const newReceiverId = nodeApi.addReceiverAudio(firstReceiver, newDeviceId);
 
@@ -87,18 +86,24 @@ nodeApi.addSender(newSender, flowId);
 async function startup() {
     await nodeApi.startServer();
     console.log("App: Started server");
-    /*
-    setTimeout( ()=> {
-        console.log( "Performing stage!")
-        nodeApi.getNode().getAllReceivers()[0].stage({
-            activation: {
-                mode: "activate_immediate"
-            },
-            master_enable: true,
-            sender_id: "123412341234",
+    setTimeout(() => {
+        const sndDeviceId = nodeApi.addDevice({
+
+            description: "Updated Device!!",
+            label: "updated-device",
+            tags: {},
+            connection_href: "http://192.168.178.41:5500/x-nmos/connection/v1.1"
         });
-    }, 20000 );
-    */
+
+        nodeApi.addAudioSource({
+            label: "Audio Source 2",
+            description: "This is the second audio source! It is added to the second device!",
+            device_id: sndDeviceId,
+            tags: {},
+            parents: [],
+            clock_name: null
+        }, sndDeviceId );
+    }, 10000);
 }
 
 startup();

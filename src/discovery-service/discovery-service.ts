@@ -24,16 +24,18 @@ export class DiscoveryService {
         this.postAllResourcesToRegistry();
     }
 
-    private async postAllResourcesToRegistry() {
+    public async postAllResourcesToRegistry() {
         try {
 
             let nodeRes = await this.postNodeToRegistry();
 
-            if (nodeRes.status != 201) {
+            if ( !((nodeRes.status == 201) || (nodeRes.status == 200) || nodeRes.status == 400 )) {
                 console.log("Error while trying to post registry.. break!", nodeRes.statusText);
                 this.mdnsService.onRegistryError();
                 return;
             }
+
+            if( nodeRes.status == 400 ){ console.log( nodeRes )}
 
             // this.mdnsService.startHeartbeat(this.nmosMediator.getNode().id);
             this.mdnsService.setNodeId(this.nmosMediator.getNode().id);
@@ -49,7 +51,7 @@ export class DiscoveryService {
         }
     }
 
-    private async postNodeToRegistry() {
+    public async postNodeToRegistry() {
         console.log("DiscoveryService: postNodeToRegistry");
         const res = await this.nmosRegistryHttpClient.postResource(
             this.nmosMediator.getNode().getModel(), "node"
@@ -62,10 +64,12 @@ export class DiscoveryService {
         return res;
     }
 
-    private async postDevicesToRegistry() {
+    public async postDevicesToRegistry() {
         const deviceModels = this.nmosMediator
             .getNode()
             .getAllDeviceModels();
+
+            console.log( deviceModels.map( device => device.label ));
 
         // awaiting promise.all ensures, that all devices are sent before exiting the method
         await Promise.all(deviceModels.map(async device => {
@@ -77,7 +81,7 @@ export class DiscoveryService {
         }));
     }
 
-    private async postSourcesToRegistry() {
+    public async postSourcesToRegistry() {
         const sourceModels = this.nmosMediator
             .getNode()
             .getAllSourceModels();
@@ -92,7 +96,7 @@ export class DiscoveryService {
         }));
     }
 
-    private async postReceiversToRegistry() {
+    public async postReceiversToRegistry() {
         console.log("DiscoveryService: postReceiversToRegistry");
         const receiverModels = this.nmosMediator
             .getNode()
@@ -107,7 +111,7 @@ export class DiscoveryService {
         }));
     }
 
-    private async postSendersToRegistry() {
+    public async postSendersToRegistry() {
         console.log("DiscoveryService: postSendersToRegistry");
         const senderModels = this.nmosMediator
             .getNode()
@@ -122,7 +126,7 @@ export class DiscoveryService {
         }));
     }
 
-    private async postFlowsToRegistry() {
+    public async postFlowsToRegistry() {
         console.log("DiscoveryService: postFlowsToRegistry");
         const flowModels = this.nmosMediator
             .getNode()

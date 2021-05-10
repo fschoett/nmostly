@@ -39,8 +39,6 @@ export class NmosMediator implements INmosMediator {
         this.setupEndpoints();
     }
 
-
-
     public startServer() {
         if (this.coreRouter) {
             this.coreRouter.startServer();
@@ -51,11 +49,16 @@ export class NmosMediator implements INmosMediator {
     public addDevice(config: IDeviceConfig): string {
         const newDevice = new Device(this.appService, config, this.node.getId());
         this.node.addDevice(newDevice);
+
+        if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
+
         return newDevice.id;
     }
 
     public addAudioSource( config: ISourceConfig, deviceId: string): string{
         const newSource = new SourceAudio(this.appService, config);
+
+        if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
 
         this.node.getDeviceList()
             .find(device => device.id === deviceId)
@@ -77,6 +80,9 @@ export class NmosMediator implements INmosMediator {
             // add flow to sender
             const newSender = new Sender(this.appService, config);
             this.node.getDevice(foundFlow.device_id).addSender(newSender);
+
+            if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
+
             return newSender.id;
         }
     }
@@ -92,7 +98,9 @@ export class NmosMediator implements INmosMediator {
         const newReceiver = new ReceiverAudio(this.appService, config);
         const foundDevice = this.node.getDevice(deviceId);
 
-        foundDevice && foundDevice.addReceiver(newReceiver);
+        if( foundDevice ) foundDevice.addReceiver(newReceiver);
+
+        if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
 
         return newReceiver.id;
     }
@@ -109,9 +117,9 @@ export class NmosMediator implements INmosMediator {
         );
     }
 
-    getNode(): Node {
-        return this.node;
-    }
+    public getNode(): Node { return this.node; }
+
+
 
     // think about setting up a store to prevent calling 
     // getNode().getResource().getModel()?

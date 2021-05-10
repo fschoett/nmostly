@@ -37,14 +37,25 @@ export class Node extends ResourceCore {
         super(appService, config);
 
         this.href = config.href;
-        this.hostname = config.hostname;
+        this.hostname = config.hostname || "nmosty-defaulthost.local";
 
-        this.services = config.services;
-        this.api = config.api;
-        this.clocks = config.clocks;
+        this.services = config.services || [];
+        this.api = config.api || {
+            versions: ["v1.3"],
+            endpoints: [
+                {
+                    host: "127.0.0.1",
+                    port: 5500,
+                    protocol: "http"
+                }
+            ]
+        };
+        this.clocks = config.clocks || [{ name: "clk0", ref_type: "internal"}];
+
         this.interfaces = this.cleanupInterfaceConfig(config.interfaces);
     }
 
+    // Make sure that all mac addresses are lowercase aacording to nmos spec
     cleanupInterfaceConfig(interfaceList: NodeResource["interfaces"]) {
         if (interfaceList) {
             return interfaceList.map((currInterface) => {
