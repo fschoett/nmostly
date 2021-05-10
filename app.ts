@@ -1,5 +1,4 @@
-import { Nmostly } from "./src";
-
+import Nmostly from "./src";
 
 const nodeApi = new Nmostly({
     ifaceName: "eth0",
