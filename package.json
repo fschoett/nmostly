@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "tsc && node dist/index.js",
+    "prepublish": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Fabian Schoettler",
