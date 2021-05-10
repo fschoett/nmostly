@@ -30,3 +30,5 @@ The methods of the nodeApi accept many options to overwrite the defaults set by 
 
 
 # License
+
+GNU General Publlic License v3.0. See [./LICENSE](./LICENSE)
