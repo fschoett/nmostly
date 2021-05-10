@@ -5,6 +5,7 @@ import { IFlow } from "../flow";
 import { ISource, ISourceConfig } from ".";
 import { IAppService } from "../../utils";
 import { FlowRawAudio } from "../flow";
+import { ResourceType } from "../../utils/label-generator";
 
 export class Source extends ResourceCore implements ISource{
 
@@ -16,23 +17,21 @@ export class Source extends ResourceCore implements ISource{
     private _flow: IFlow;
 
     constructor( appService: IAppService, config: ISourceConfig ){
-        super( appService, config );
+        super( appService, config,  ResourceType.source );
 
         this.device_id = config.device_id;
         this.parents = config.parents;
         this.clock_name = config.clock_name || "clk1";
 
         this._flow = new FlowRawAudio( appService, {
-            description: "First Flow",
-            label: "First label",
             source_id: this.id,
             device_id: this.device_id,
-            tags: {},
             sample_rate: 48000,
             bit_depth: 16
         });
     }
 
+    public setFlow( flow: IFlow) { this._flow = flow }
 
     // public get flow(){ return this._flow; }
     public getFlow(): IFlow { return this._flow }

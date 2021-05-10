@@ -8,7 +8,7 @@ import { CoreRouter } from "../endpoints/core-router";
 import { IReceiverAudioConfig, ReceiverAudio } from "../resources/receiver";
 import { IDeviceConfig, Device } from "../resources/device";
 import { ISenderConfig, Sender } from "../resources/sender";
-import { ISourceConfig, Source, SourceAudio } from "../resources/source";
+import { ISource, ISourceConfig, Source, SourceAudio } from "../resources/source";
 import { INodeConfig } from "../resources/node";
 import { IFlow } from "../resources/flow/i-flow";
 import { Node } from "../resources/node"
@@ -18,6 +18,8 @@ import { INmosMediator } from ".";
 import { DiscoveryService } from "../discovery-service";
 import { ReceiverResource } from "../schemas";
 import { ResourceCore } from "../resources/resource-core";
+import { IAppSettings } from "./i-app-settings";
+import { IAddReceiverAudioConfig, IAddSenderConfig, IAddSourceAudioConfig } from "./i-add-resource-config";
 
 
 
@@ -25,82 +27,154 @@ import { ResourceCore } from "../resources/resource-core";
 export class NmosMediator implements INmosMediator {
 
     private node: Node;
+    private deviceId: string;
     private coreRouter: CoreRouter;
     private appService: IAppService;
 
     private discoveryService: DiscoveryService;
 
-    constructor(private port: number, nodeConfig: INodeConfig) {
+    private ip: string;
+    private port: number;
+    private macAddr: string;
+    private hostName: string;
+    private description: string;
+    private href: string;
+    private label: string;
+
+    constructor(config: IAppSettings) {
         this.appService = new AppService();
 
-        const newNode = new Node(this.appService, nodeConfig);
+        this.port = config.port || 5500,
+            this.macAddr = config.macAddr;
+        this.ip = config.ipv4 || "127.0.0.1";
+        this.hostName = config.hostname || "nmostly-defaultnode.local";
+        this.description = config.description || "";
+        this.href = this.tryBuildHref(this.ip, this.port);
+        this.label = config.label || "nmostly-node-default";
 
+        const nodeConfig: INodeConfig = {
+            description: this.description,
+            hostname: this.hostName,
+            href: this.href,
+            label: this.label,
+            tags: {},
+            api: {
+                versions: ["v1.3"],
+                endpoints: [{
+                    host: config.ipv4,
+                    port: config.port,
+                    protocol: "http"
+                }]
+            },
+            interfaces: [{
+                chassis_id: config.macAddr,
+                name: config.ifaceName,
+                port_id: config.macAddr
+            }]
+        }
+
+        const newNode = new Node(this.appService, config.nodeConfig || nodeConfig);
         this.node = newNode;
+
+        this.deviceId = this.addDevice();
+
         this.setupEndpoints();
     }
+
 
     public startServer() {
         if (this.coreRouter) {
             this.coreRouter.startServer();
         }
-        this.discoveryService = new DiscoveryService( this );
+        this.discoveryService = new DiscoveryService(this);
     }
 
-    public addDevice(config: IDeviceConfig): string {
-        const newDevice = new Device(this.appService, config, this.node.getId());
+    public addDevice(config?: IDeviceConfig): string {
+        let tmpConfig: IDeviceConfig;
+        if (config) {
+            tmpConfig = {
+                description: config.description,
+                label: config.label,
+                connection_href: config.connection_href || this.buildConnectionHref(),
+            };
+        }
+        else {
+            tmpConfig = {
+                connection_href: this.buildConnectionHref()
+            }
+        }
+        const newDevice = new Device(this.appService, tmpConfig, this.node.getId());
         this.node.addDevice(newDevice);
 
-        if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
+        if (this.discoveryService) this.discoveryService.postAllResourcesToRegistry();
 
         return newDevice.id;
     }
 
-    public addAudioSource( config: ISourceConfig, deviceId: string): string{
-        const newSource = new SourceAudio(this.appService, config);
+    public addAudioSource( config?: IAddSourceAudioConfig ): string {
+        if( !config ){ config = {} }
+        let currDeviceId = config.device_id || this.deviceId;
+        const sourceConfig: ISourceConfig = {
+            clock_name: config.clock_name || "clk0",
+            device_id: currDeviceId,
+            parents: config.parents || [],
+            description: config.description,
+            label: config.label,
+            tags: config.tags,
+            onUpdateCallback: config.onUpdateCallback
+        };
 
-        if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
+        const newSource = new SourceAudio(this.appService, sourceConfig);
+
+        if (this.discoveryService) this.discoveryService.postAllResourcesToRegistry();
 
         this.node.getDeviceList()
-            .find(device => device.id === deviceId)
+            .find(device => device.id === currDeviceId )
             .addSource(newSource);
 
         return newSource.id;
     }
 
-    public addSender(config: ISenderConfig, flowId: string): string {
-        let flowList: IFlow[] = this.node
-            .getDeviceList()
-            .map(device => device.getSourceList().map(source => source.getFlow()))
-            .reduce((acc, curr) => acc.concat(curr));
+    public addSender( config: IAddSenderConfig): string {
+        if( !config ){ throw new Error( "addSender is missing config object!")}
 
-        let foundFlow: IFlow = flowList.find(flow => flow.id === flowId);
+        let currDeviceId = config.device_id || this.deviceId;
+        config.device_id = currDeviceId;
+
+        let foundFlow = this.getNode().getFlow( config.flow_id );
 
         if (foundFlow) {
             // create new sender
             // add flow to sender
-            const newSender = new Sender(this.appService, config);
+            const newSender = new Sender(this.appService, config as ISenderConfig);
             this.node.getDevice(foundFlow.device_id).addSender(newSender);
 
-            if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
+            if (this.discoveryService) this.discoveryService.postAllResourcesToRegistry();
 
             return newSender.id;
         }
     }
 
-    public addReceiverAudio(config: IReceiverAudioConfig, deviceId: string): string {
+    public addReceiverAudio(config?: IAddReceiverAudioConfig): string {
 
         // HiJack/ enrich callback
-        let tmpCallback = config.onUpdateCallback;
-        config.onUpdateCallback = ( resource )=>{
+        let parsedConfig = config || { device_id : this.deviceId};
+        if( !parsedConfig.device_id ){ parsedConfig.device_id = this.deviceId }
+
+        let tmpCallback = parsedConfig.onUpdateCallback || ( ()=>{} );
+        parsedConfig.onUpdateCallback = (resource) => {
             tmpCallback();
-            this.discoveryService.updateResource( resource.getModel(), "receiver");
+            this.discoveryService.updateResource(resource.getModel(), "receiver");
         };
-        const newReceiver = new ReceiverAudio(this.appService, config);
-        const foundDevice = this.node.getDevice(deviceId);
+        let newConfig: IReceiverAudioConfig = { device_id: parsedConfig.device_id };
+        Object.assign(newConfig, parsedConfig );
 
-        if( foundDevice ) foundDevice.addReceiver(newReceiver);
+        const newReceiver = new ReceiverAudio(this.appService, newConfig);
+        const foundDevice = this.node.getDevice( parsedConfig.device_id );
 
-        if( this.discoveryService ) this.discoveryService.postAllResourcesToRegistry();
+        if (foundDevice) foundDevice.addReceiver(newReceiver);
+
+        if (this.discoveryService) this.discoveryService.postAllResourcesToRegistry();
 
         return newReceiver.id;
     }
@@ -120,6 +194,13 @@ export class NmosMediator implements INmosMediator {
     public getNode(): Node { return this.node; }
 
 
+    private tryBuildHref(ip, port) {
+        return `http://${ip}:${port}/`
+    }
+
+    private buildConnectionHref() {
+        return `http://${this.ip}:${this.port}/x-nmos/connection/v1.1/`;
+    }
 
     // think about setting up a store to prevent calling 
     // getNode().getResource().getModel()?

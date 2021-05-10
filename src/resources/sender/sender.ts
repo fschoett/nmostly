@@ -3,6 +3,7 @@ import { ISenderConfig } from ".";
 import { TransportFile } from "../../schemas/is-05-connection-api/generated/receiver-stage-schema";
 import { Constraints, SenderResource, StagedSenderResource, TransportType } from "../../schemas";
 import { IAppService } from "../../utils";
+import { ResourceType } from "../../utils/label-generator";
 
 export class Sender extends ResourceCore {
 
@@ -22,7 +23,7 @@ export class Sender extends ResourceCore {
     // private onUpdateCallback;
 
     constructor(appService: IAppService, config: ISenderConfig) {
-        super(appService, config);
+        super(appService, config, ResourceType.sender);
 
         this.flow_id = config.flow_id;
         this.transport = config.transport ?? "urn:x-nmos:transport:rtp";

@@ -10,6 +10,7 @@ import { IReceiverConfig } from ".";
 import { IReceiver } from "./i-receiver";
 
 import { AppService } from "../../utils";
+import { ResourceType } from "../../utils/label-generator";
 
 export class Receiver extends ResourceCore implements IReceiver {
 
@@ -28,7 +29,7 @@ export class Receiver extends ResourceCore implements IReceiver {
     private constraints: Constraints;
 
     constructor(appService: AppService, config: IReceiverConfig) {
-        super(appService, config);
+        super(appService, config, ResourceType.receiver);
         this.transport = config.transport || "urn:x-nmos:transport:rtp";
         this.device_id = config.device_id;
 

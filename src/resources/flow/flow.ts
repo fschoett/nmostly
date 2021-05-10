@@ -6,6 +6,7 @@ import { IFlowConfig  } from "./i-flow-config";
 
 import { FlowResource1 } from "../../schemas";
 import { IAppService } from "../../utils";
+import { ResourceType } from "../../utils/label-generator";
 
 export class Flow extends ResourceCore implements IFlow {
 
@@ -14,7 +15,7 @@ export class Flow extends ResourceCore implements IFlow {
     parents: string[] = [];
 
     constructor(appService: IAppService, config: IFlowConfig) {
-        super(appService, config);
+        super(appService, config, ResourceType.flow);
 
         this.device_id = config.device_id;
         this.source_id = config.source_id;

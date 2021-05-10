@@ -14,6 +14,7 @@ import { IReceiver,   } from "../receiver";
 import { Sender       } from "../sender";
 import { IFlow        } from "../flow";
 import { ISource,     } from "../source";
+import { ResourceType } from "../../utils/label-generator";
 
 
 export class Device extends ResourceCore {
@@ -27,12 +28,13 @@ export class Device extends ResourceCore {
     private type: DeviceResource[ "type" ] = "urn:x-nmos:device:generic";
     private controls: DeviceResource["controls"] = [];
 
+
     constructor(
         appService: IAppService,
         config: IDeviceConfig,
         node_id: string
     ) {
-        super(appService, config);
+        super(appService, config, ResourceType.device);
         this._node_id = node_id;
 
         // Make sure that the control api can be found by other devices
