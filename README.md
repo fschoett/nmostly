@@ -1,7 +1,7 @@
 # NMOStly
 
 NMOStly is a typescript implementations of the most parts of the AMWA IS-04 and IS-05 specifications.
-See [https://specs.amwa.tv/nmos/](Networked Media Open Specifiactions)
+See [Networked Media Open Specifiactions](https://specs.amwa.tv/nmos/)
 
 ## Why?
 As part of my masters-thesis i started developing a TypeScript library for interfacing with NMOS devices.
@@ -10,7 +10,7 @@ an nmos node can be started in only 10 lines of javascript:
 
 
 ```javascript
-const Nmostly = require( "./dist").default;
+import Nmostly from "nmostly";
 
 const nodeApi = new Nmostly( {
     ifaceName: "eth0",
