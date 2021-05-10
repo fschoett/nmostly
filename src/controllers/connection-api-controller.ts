@@ -180,13 +180,11 @@ export class ConnectionApiController implements IConnectionApiController {
     }
 
     onPatchReceiverStaged(receiverId: string, updatedReceiver: StagedReceiverResource):  StagedReceiverResource{
-        console.log(receiverId);
         const currReceiver = this.nmosMediator
             .getNode()
             .getReceiver(receiverId);
 
         if (currReceiver) {
-            console.log( "Try to patch receiver staged: ", updatedReceiver );
             return currReceiver.stage(updatedReceiver);
         }
     }

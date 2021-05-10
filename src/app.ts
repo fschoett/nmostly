@@ -54,7 +54,7 @@ const firstReceiver: IReceiverAudioConfig = {
     description: "Receiver Description",
     device_id: newDeviceId,
     tags: {},
-    onUpdateCallback : ()=> { console.log("onUpdateCallback: TopLevel!")}
+    onUpdateCallback : ()=> { console.log("onUpdateCallback: AppLevel Callback")}
 };
 const newReceiverId = nodeApi.addReceiverAudio(firstReceiver, newDeviceId);
 

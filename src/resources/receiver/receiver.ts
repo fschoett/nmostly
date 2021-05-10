@@ -31,7 +31,7 @@ export class Receiver extends ResourceCore implements IReceiver {
         this.transport = config.transport || "urn:x-nmos:transport:rtp";
         this.device_id = config.device_id;
 
-        this.constraints = this.createEmptyConstraintObject();
+        this.constraints = this.createDefaultConstraintObject();
 
         this.subscription = config.subscription || {
             active: false,
@@ -50,7 +50,7 @@ export class Receiver extends ResourceCore implements IReceiver {
                 data: null,
                 type: null
             },
-            transport_params: []
+            transport_params: this.createDummyStagedResource()
         }
 
         // this.setOnUpdateCallback( config.onUpdateCallback );
@@ -61,8 +61,16 @@ export class Receiver extends ResourceCore implements IReceiver {
     }
 
     public stage(stagedReceiver: StagedReceiverResource) {
-        if (!stagedReceiver) return;
-        if (!this.validateStagedInput(stagedReceiver)) return;
+
+        // Valiate input
+        try {
+            if( Object.keys(stagedReceiver).length == 0 ){ // {} should return the staged object according to spec
+                return this.getStaged();
+            }
+            if (!this.validateStagedInput(stagedReceiver)) return;
+        } catch (error) {
+            return;
+        }
 
         let isUpdated = false;
 
@@ -74,20 +82,24 @@ export class Receiver extends ResourceCore implements IReceiver {
         stagedReceiverKeys.forEach(currKey => {
             currStagedKeyList.some(el => {
                 if (el == currKey) {
-                    this.staged[el] = stagedReceiver[currKey]; // this led to overwriting of defaults!
-                    // Object.assign( this.staged[ el], stagedReceiver[currKey]);
+                    if (el === "transport_params") {
+                        Object.assign(this.staged[el][0], stagedReceiver[currKey][0]);
+                    }
+                    else {
+                        this.staged[el] = stagedReceiver[currKey];
+                    }
                     isUpdated = true;
                     return true;
                 }
             });
         })
 
-        if( isUpdated ) this.onUpdate();
+        if (isUpdated) this.onUpdate();
 
-        if (this.staged.activation.mode == "activate_immediate"){
+        if (this.staged.activation.mode == "activate_immediate") {
             let tmpReturn = this.getStaged();
 
-            tmpReturn.activation.activation_time = ((Date.now() / 1000).toString() + "000000").replace( ".", ":");
+            tmpReturn.activation.activation_time = ((Date.now() / 1000).toString() + "000000").replace(".", ":");
             tmpReturn.activation.requested_time = null;
 
             this.staged.activation.mode = null;
@@ -105,20 +117,20 @@ export class Receiver extends ResourceCore implements IReceiver {
         const currStagedKeyList = Object.keys(this.staged);
         const stagedSenderKeys = Object.keys(stageSender);
 
-        if( stagedSenderKeys.length < 1 ) return false;
+        if (stagedSenderKeys.length < 1) return false;
 
         let isValid = true;
         stagedSenderKeys.forEach(key => {
-            let foundKey =currStagedKeyList.some(inputKey => inputKey === key)
+            let foundKey = currStagedKeyList.some(inputKey => inputKey === key)
             if (!foundKey) isValid = false;
         });
-        
+
         return isValid;
     }
 
-    private onActivation(){
+    private onActivation() {
         console.log("Receiver ", this.id, " was activated");
-        
+
     }
 
     public getStaged(): StagedReceiverResource {
@@ -130,14 +142,16 @@ export class Receiver extends ResourceCore implements IReceiver {
             },
             master_enable: this.staged.master_enable || false,
             sender_id: this.staged.sender_id || null,
-            transport_params: this.staged.transport_params || [],
+            transport_params: this.staged.transport_params,
             transport_file: this.staged.transport_file || { data: null, type: null }
         }
     }
 
     // TODO: Implement correct logic!
     public getActive(): StagedReceiverResource {
-        return this.getStaged();
+        let tmp = this.getStaged();
+        tmp.transport_params = this.createDummyActiveResource();
+        return tmp;
     }
 
     public getTransportType(): TransportType {
@@ -156,8 +170,7 @@ export class Receiver extends ResourceCore implements IReceiver {
         };
     }
 
-
-    private createEmptyConstraintObject(): Constraints {
+    private createDefaultConstraintObject(): Constraints {
         return [{
             destination_port: {},
             fec1D_destination_port: {},
@@ -172,6 +185,42 @@ export class Receiver extends ResourceCore implements IReceiver {
             rtcp_enabled: {},
             rtp_enabled: {},
             source_ip: {}
+        }]
+    }
+
+    private createDummyStagedResource(): StagedReceiverResource["transport_params"] {
+        return [{
+            destination_port: "auto",
+            fec1D_destination_port: "auto",
+            fec2D_destination_port: "auto",
+            fec_destination_ip: "auto",
+            fec_enabled: false,
+            fec_mode: "1D",
+            interface_ip: "auto",
+            multicast_ip: null,
+            rtcp_destination_ip: "auto",
+            rtcp_destination_port: "auto",
+            rtcp_enabled: false,
+            rtp_enabled: true,
+            source_ip: null
+        }]
+    }
+
+    private createDummyActiveResource(): StagedReceiverResource["transport_params"] {
+        return [{
+            destination_port: 5004,
+            fec1D_destination_port: 5006,
+            fec2D_destination_port: 5008,
+            fec_destination_ip: "172.23.19.35",
+            fec_enabled: false,
+            fec_mode: "1D",
+            interface_ip: "172.23.19.35",
+            multicast_ip: null,
+            rtcp_destination_ip: "172.23.19.35",
+            rtcp_destination_port: 5005,
+            rtcp_enabled: false,
+            rtp_enabled: true,
+            source_ip: null
         }]
     }
 }

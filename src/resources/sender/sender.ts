@@ -41,11 +41,10 @@ export class Sender extends ResourceCore {
             },
             master_enable: false,
             receiver_id: null,
-            transport_params: []
+            transport_params: this.createDummyStagedResource()
         };
 
-
-        this.constraints = this.createEmptyConstraintObject();
+        this.constraints = config.constraints || this.createDefaultConstraintObject();
 
         this.setOnUpdateCallback(config.onUpdateCallback);
         // add callback as parameter if sender is staged and activated!
@@ -53,8 +52,16 @@ export class Sender extends ResourceCore {
 
     // Currently only immediate staging is implemented! 
     public stage(updatedSender: StagedSenderResource) {
-        if (!updatedSender) return;
-        if (!this.validateStagedInput(updatedSender)) return;
+
+        // Valiate input
+        try {
+            if( Object.keys(updatedSender).length == 0 ){ // {} should return the staged object according to spec
+                return this.getStaged();
+            }
+            if (!this.validateStagedInput(updatedSender)) return;
+        } catch (error) {
+            return;
+        }
 
         let isUpdated = false;
 
@@ -66,7 +73,13 @@ export class Sender extends ResourceCore {
         stagedSenderKeys.forEach(currKey => {
             currStagedKeyList.some(el => {
                 if (el == currKey) {
-                    this.staged[el] = updatedSender[currKey];
+
+                    if (el === "transport_params") {
+                        Object.assign(this.staged[el][0], updatedSender[currKey][0]);
+                    }
+                    else {
+                        this.staged[el] = updatedSender[currKey];
+                    }
                     // Object.assign( this.staged[ el], updatedSender[currKey]);
                     isUpdated = true;
                     return true;
@@ -78,7 +91,7 @@ export class Sender extends ResourceCore {
         if (this.staged.activation.mode == "activate_immediate") {
             let tmpReturn = this.getStaged();
 
-            tmpReturn.activation.activation_time = ((Date.now() / 1000).toString() + "000000").replace( ".", ":");
+            tmpReturn.activation.activation_time = ((Date.now() / 1000).toString() + "000000").replace(".", ":");
             tmpReturn.activation.requested_time = null;
 
             this.staged.activation.mode = null;
@@ -128,14 +141,16 @@ export class Sender extends ResourceCore {
                 requested_time: this.staged.activation.requested_time || null
             },
             master_enable: this.staged.master_enable || false,
-            receiver_id: this.staged.receiver_id|| null,
-            transport_params: this.staged.transport_params || []
+            receiver_id: this.staged.receiver_id || null,
+            transport_params: this.staged.transport_params || [{}]
         }
     }
 
     // TODO: Implement correct logic!
     public getActive(): StagedSenderResource {
-        return this.getStaged();
+        let tmp = this.getStaged();
+        tmp.transport_params = this.createDummyActiveResource();
+        return tmp;
     }
 
     public getTransportFile(): TransportFile {
@@ -164,21 +179,76 @@ export class Sender extends ResourceCore {
     }
 
 
-    private createEmptyConstraintObject(): Constraints {
+    private createDefaultConstraintObject(): Constraints {
         return [{
+            destination_ip: {},
             destination_port: {},
             fec1D_destination_port: {},
+            fec1D_source_port: {},
             fec2D_destination_port: {},
+            fec2D_source_port: {},
+            fec_block_height: {},
+            fec_block_width: {},
             fec_destination_ip: {},
             fec_enabled: {},
             fec_mode: {},
-            interface_ip: {},
-            multicast_ip: {},
+            fec_type: {},
+            rtcp_source_port: {},
             rtcp_destination_ip: {},
             rtcp_destination_port: {},
             rtcp_enabled: {},
             rtp_enabled: {},
-            source_ip: {}
+            source_ip: {},
+            source_port: {
+            }
+        }]
+    }
+
+    private createDummyStagedResource(): StagedSenderResource["transport_params"] {
+        return [{
+            destination_ip: "auto",
+            destination_port: "auto",
+            fec1D_destination_port: "auto",
+            fec1D_source_port: "auto",
+            fec2D_destination_port: "auto",
+            fec2D_source_port: "auto",
+            fec_block_height: 4,
+            fec_block_width: 4,
+            fec_destination_ip: "auto",
+            fec_enabled: false,
+            fec_mode: "1D",
+            fec_type: "XOR",
+            rtcp_destination_ip: "auto",
+            rtcp_destination_port: "auto",
+            rtcp_enabled: false,
+            rtcp_source_port: "auto",
+            rtp_enabled: true,
+            source_ip: "auto",
+            source_port: "auto",
+        }]
+    }
+
+    private createDummyActiveResource(): StagedSenderResource["transport_params"] {
+        return [{
+            destination_ip: "232.21.98.4",
+            destination_port: 5004,
+            fec1D_destination_port: 5006,
+            fec1D_source_port: 5006,
+            fec2D_destination_port: 5008,
+            fec2D_source_port: 5008,
+            fec_block_height: 4,
+            fec_block_width: 4,
+            fec_destination_ip: "172.29.82.23",
+            fec_enabled: false,
+            fec_mode: "1D",
+            fec_type: "XOR",
+            rtcp_destination_ip: "172.29.82.23",
+            rtcp_destination_port: 5005,
+            rtcp_enabled: false,
+            rtcp_source_port: 5005,
+            rtp_enabled: false,
+            source_ip: "172.29.82.23",
+            source_port: 5004,
         }]
     }
 

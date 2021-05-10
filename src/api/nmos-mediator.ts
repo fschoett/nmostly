@@ -84,7 +84,6 @@ export class NmosMediator implements INmosMediator {
         // HiJack/ enrich callback
         let tmpCallback = config.onUpdateCallback;
         config.onUpdateCallback = ()=>{
-            console.log( "Ha! i am the new callback now!" )
             tmpCallback();
         };
         const newReceiver = new ReceiverAudio(this.appService, config);

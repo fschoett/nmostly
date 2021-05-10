@@ -125,7 +125,6 @@ export class NmosConnectionRouter{
 
         this.router.patch("/single/senders/:id/staged/", (req, res) => {
             const senderId = req.params.id;
-            console.log( req.body );
             const updatedSender = req.body;
             const response: StagedSenderResource= cntrlr.onPatchSenderStaged(senderId, updatedSender);
             if( response ){ returnJson ( res, response )}
@@ -189,8 +188,6 @@ export class NmosConnectionRouter{
             const updatedReceiver = req.body;
             const response: StagedReceiverResource = cntrlr.onPatchReceiverStaged(receiverId, updatedReceiver);
             if( response ){
-                console.log("Staged response: ", response);
-                
                 returnJson ( res, response )
             }
             else{ console.log( "Patch invalid"); return400( res, "Wrong Patch")}
