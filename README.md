@@ -1,11 +1,11 @@
 # NMOStly
 
 NMOStly is a typescript implementations of the most parts of the AMWA IS-04 and IS-05 specifications.
-See [https://specs.amwa.tv/nmos/]{Networked Media Open Specifiactions}
+See [https://specs.amwa.tv/nmos/](Networked Media Open Specifiactions)
 
 ## Why?
 As part of my masters-thesis i started developing a TypeScript library for interfacing with NMOS devices.
-In contrast to the rather complex implementation by SONY ([nmos-cpp]{https://github.com/sony/nmos-cpp})
+In contrast to the rather complex implementation by SONY ([nmos-cpp](https://github.com/sony/nmos-cpp))
 an nmos node can be started in only 10 lines of javascript:
 
 
