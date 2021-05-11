@@ -1,6 +1,6 @@
 {
   "name": "nmostly",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "TS NMOS library implementing only a few parts of the specification",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

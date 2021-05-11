@@ -12,7 +12,7 @@ export class DiscoveryService {
     constructor(private nmosMediator: INmosMediator) {
         this.mdnsService = new MdnsService({
             onNewRegistryFound: (data) => { this.onNewRegistryFound(data); },
-            interfaceIp: "192.168.178.41"
+            interfaceIp: nmosMediator.getIp()
         });
     }
 

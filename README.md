@@ -14,8 +14,8 @@ import Nmostly from "nmostly";
 
 const nodeApi = new Nmostly( {
     ifaceName : "eth0",
-    ipv4      : "192.168.178.41",
-    macAddr   : "74-D4-35-BB-25-1C",
+    ipv4      : "192.168.178.123",
+    macAddr   : "00-00-00-00-00-00",
     port      : 5500
 });
 

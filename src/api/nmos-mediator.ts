@@ -193,6 +193,9 @@ export class NmosMediator implements INmosMediator {
 
     public getNode(): Node { return this.node; }
 
+    public getIp(): string {
+        return this.ip;
+    }
 
     private tryBuildHref(ip, port) {
         return `http://${ip}:${port}/`
