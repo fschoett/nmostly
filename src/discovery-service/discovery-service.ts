@@ -14,6 +14,7 @@ export class DiscoveryService {
             onNewRegistryFound: (data) => { this.onNewRegistryFound(data); },
             interfaceIp: nmosMediator.getIp()
         });
+	console.log( nmosMediator.getIp() );
     }
 
     private onNewRegistryFound(registry: unknown) {

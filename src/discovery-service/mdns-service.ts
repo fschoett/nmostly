@@ -47,9 +47,9 @@ export class MdnsService {
     }
 
     // Remove the current registry from the registryList
-    public onRegistryError(){
+    public onRegistryError() {
         this.registryList = this.registryList
-            .filter(registry => registry.ptr!= this.selectedRegistry.ptr);
+            .filter(registry => registry.ptr != this.selectedRegistry.ptr);
 
         this.selectRegistry();
     }
@@ -61,8 +61,8 @@ export class MdnsService {
         // Configure mdns library
         const mdns = multicastdns({
             multicast: true,
-            interface: this.interfaceIp,
-            reuseAddr: true
+            loopback: true,
+            bind: "0.0.0.0"
         });
 
         mdns.on('response', res => {
@@ -84,7 +84,7 @@ export class MdnsService {
             }
 
             // Try add registry to registry list. Is succeeded: choose the best registry
-            if( this.tryAddRegistry( foundRegistry ) ){
+            if (this.tryAddRegistry(foundRegistry)) {
                 this.selectRegistry();
             }
 
@@ -99,14 +99,14 @@ export class MdnsService {
     private tryAddRegistry(registry: IMdnsRegistryModel): boolean {
 
         // does registry fit to the current node?
-        if( !this.registryCompliesToRequirements( registry )){
+        if (!this.registryCompliesToRequirements(registry)) {
             return false;
         }
 
         // Remove Registry from list if it already exists
         const existingIndex = this.registryList.findIndex(el => el.ptr == registry.ptr);
-        if( existingIndex != -1 ){
-            this.registryList = this.registryList.splice( existingIndex, 1 );
+        if (existingIndex != -1) {
+            this.registryList = this.registryList.splice(existingIndex, 1);
         }
 
         // Add registry to List;
