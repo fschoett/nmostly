@@ -153,6 +153,14 @@ export class ConnectionApiController implements IConnectionApiController {
         if (currSender) return currSender.getTransportType();
     }
 
+    onGetSenderSdpHref( senderId: string ): string{
+        const currSender = this.nmosMediator
+            .getNode()
+            .getSender( senderId );
+
+        if( currSender ) return currSender.getSdpHref();
+    }
+
     // Return a list of all available receiver ids
     onGetReceivers(): ConnectionAPISenderReceiverBaseResource {
         const currReceiverModels = this.nmosMediator

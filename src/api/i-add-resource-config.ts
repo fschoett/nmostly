@@ -15,4 +15,5 @@ export interface IAddSourceAudioConfig extends IResourceCoreConfig{
 export interface IAddSenderConfig extends IResourceCoreConfig {
     flow_id: string;
     device_id? : string;
+    onActivationCallback? ( senderId :string): void;
 }

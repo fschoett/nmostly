@@ -140,8 +140,12 @@ export class NmosConnectionRouter{
         // TODO: If transportfile is null, try to get href to sdp file directly
         this.router.get("/single/senders/:id/transportfile/", (req, res) => {
             const senderId = req.params.id;
+            const sdpHref: string = cntrlr.onGetSenderSdpHref( senderId );
+            res.redirect( 307, sdpHref );
+            /*
             const response: TransportFile = cntrlr.onGetSenderTransportFile(senderId);
             res.send(response);
+            */
         });
 
         this.router.get("/single/senders/:id/transporttype/", (req, res) => {

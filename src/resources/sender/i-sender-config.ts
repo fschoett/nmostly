@@ -6,6 +6,9 @@ export interface ISenderConfig extends IResourceCoreConfig{
     device_id: string;
     transport?: TransportType;
 
+    sdpHref?: string;
+    onActivationCallback?( senderId: string ): void;
+
     // onUpdateCallback( updatedSender: SenderResource ): void;
 
     // connection api settings

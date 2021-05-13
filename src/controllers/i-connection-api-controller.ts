@@ -21,6 +21,7 @@ export interface IConnectionApiController {
     onGetSenderActive(senderId: string): StagedSenderResource;
     onGetSenderTransportFile(senderId: string): TransportFile;
     onGetSenderTransportType(senderId: string): TransportType;
+    onGetSenderSdpHref( senderId: string): string;
 
     onGetReceivers(): ConnectionAPISenderReceiverBaseResource;
     onGetReceiverConstraints(receiverId: string): Constraints;

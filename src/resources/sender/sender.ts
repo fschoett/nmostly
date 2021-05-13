@@ -21,6 +21,9 @@ export class Sender extends ResourceCore {
 
     private active: StagedSenderResource;
     // private onUpdateCallback;
+    private sdpHref: string;
+
+    private onActivationCallback;
 
     constructor(appService: IAppService, config: ISenderConfig) {
         super(appService, config, ResourceType.sender);
@@ -30,6 +33,9 @@ export class Sender extends ResourceCore {
         this.device_id = config.device_id;
         this.manifest_href = null;
         this.interface_bindings = [];
+
+        this.sdpHref = config.sdpHref;
+        this.onActivationCallback = config.onActivationCallback || ( ()=>{console.log( "on sender activation")} );
 
         this.subscription = {
             receiver_id: null,
@@ -136,8 +142,7 @@ export class Sender extends ResourceCore {
                 this.active.transport_params[0][key] = this.createDummyActiveResource()[0][key];
             }
         }
-        console.log("Sender", this.id, " was activated", this.active);
-
+        this.onActivationCallback( this.id );
     }
 
     public isActive(): boolean {
@@ -174,6 +179,10 @@ export class Sender extends ResourceCore {
     public getTransportType(): TransportType {
         return this.transport;
     }
+
+    public getSdpHref(): string{
+        return this.sdpHref;
+    };
 
     public getModel(): SenderResource {
         return {
