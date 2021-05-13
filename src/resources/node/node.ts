@@ -73,14 +73,14 @@ export class Node extends ResourceCore {
         this.deviceList.push(newDevice);
     }
 
-    removeDevice(deviceId: string) {
+    removeDevice(deviceId: string): Device {
         let foundIndex = this.deviceList
             .findIndex(currDevice => currDevice.id === deviceId);
 
-        if (foundIndex === -1) return false;
+        if (foundIndex === -1) return;
 
         let removedDevice = this.deviceList.splice(foundIndex, 1);
-        return removedDevice;
+        return removedDevice[0];
     }
 
     public getId() { return this.id }
@@ -98,6 +98,7 @@ export class Node extends ResourceCore {
             .deviceList
             .map(currDevice => currDevice.getModel()) as CollectionOfDevices;
     }
+
 
     // receivers
     public getReceiver(receiverId: string): IReceiver {

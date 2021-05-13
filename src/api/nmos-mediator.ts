@@ -82,6 +82,7 @@ export class NmosMediator implements INmosMediator {
     }
 
 
+
     public startServer() {
         if (this.coreRouter) {
             this.coreRouter.startServer();
@@ -177,6 +178,11 @@ export class NmosMediator implements INmosMediator {
         if (this.discoveryService) this.discoveryService.postAllResourcesToRegistry();
 
         return newReceiver.id;
+    }
+
+    public async removeDeviceAndAllChildren(deviceId: string) {
+        let removedDevice: Device = this.getNode().removeDevice( deviceId );
+        await this.discoveryService.removeResource(  removedDevice.getModel() , "devices");
     }
 
 

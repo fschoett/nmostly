@@ -18,6 +18,8 @@ export interface INmosMediator{
     addSender( config: ISenderConfig, flowId: string   ): string;
     addReceiverAudio( config: IReceiverAudioConfig, deviceId: string ): string;
 
+    removeDeviceAndAllChildren( deviceId: string );
+
     getIp(): string;
 
     // removing/ changing devices directly on the node object!
