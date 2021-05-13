@@ -58,8 +58,6 @@ export class Sender extends ResourceCore {
 
     // Currently only immediate staging is implemented! 
     public stage(updatedSender: StagedSenderResource) {
-        console.log(updatedSender);
-        
 
         // Valiate input
         try {

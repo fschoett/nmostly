@@ -14,11 +14,9 @@ export class DiscoveryService {
             onNewRegistryFound: (data) => { this.onNewRegistryFound(data); },
             interfaceIp: nmosMediator.getIp()
         });
-	console.log( nmosMediator.getIp() );
     }
 
     private onNewRegistryFound(registry: unknown) {
-        console.log("DiscoveryService: onNewRegistryFound");
         this.nmosRegistryHttpClient = new RegistryHttpClient({
             href: this.mdnsService.getHref()
         });
@@ -31,12 +29,11 @@ export class DiscoveryService {
             let nodeRes = await this.postNodeToRegistry();
 
             if ( !((nodeRes.status == 201) || (nodeRes.status == 200) || nodeRes.status == 400 )) {
-                console.log("Error while trying to post registry.. break!", nodeRes.statusText);
                 this.mdnsService.onRegistryError();
                 return;
             }
 
-            if( nodeRes.status == 400 ){ console.log( nodeRes )}
+            if( nodeRes.status == 400 ){ console.error( nodeRes )}
 
             // this.mdnsService.startHeartbeat(this.nmosMediator.getNode().id);
             this.mdnsService.setNodeId(this.nmosMediator.getNode().id);
@@ -53,7 +50,6 @@ export class DiscoveryService {
     }
 
     public async postNodeToRegistry() {
-        console.log("DiscoveryService: postNodeToRegistry");
         const res = await this.nmosRegistryHttpClient.postResource(
             this.nmosMediator.getNode().getModel(), "node"
         );
@@ -70,7 +66,6 @@ export class DiscoveryService {
             .getNode()
             .getAllDeviceModels();
 
-            console.log( deviceModels.map( device => device.label ));
 
         // awaiting promise.all ensures, that all devices are sent before exiting the method
         await Promise.all(deviceModels.map(async device => {
@@ -87,67 +82,71 @@ export class DiscoveryService {
             .getNode()
             .getAllSourceModels();
 
-        await Promise.all(sourceModels.map(async source => {
+
+        return await Promise.all(sourceModels.map(async source => {
             try {
-                await this.nmosRegistryHttpClient.postResource(source, "source");
+                return await this.nmosRegistryHttpClient.postResource(source, "source");
             } catch (error) {
-                console.log(error.response.data);
+                console.error(error.response.data);
+                return error.response;
 
             }
         }));
     }
 
     public async postReceiversToRegistry() {
-        console.log("DiscoveryService: postReceiversToRegistry");
         const receiverModels = this.nmosMediator
             .getNode()
             .getAllReceiverModels();
 
-        await Promise.all(receiverModels.map(async receiver => {
+        return await Promise.all(receiverModels.map(async receiver => {
             try {
-                await this.nmosRegistryHttpClient.postResource(receiver, "receiver");
+                return await this.nmosRegistryHttpClient.postResource(receiver, "receiver");
             } catch (error) {
-                console.log(error.response.data);
+                console.error(error.response.data);
+                return error.response;
             }
         }));
     }
 
     public async postSendersToRegistry() {
-        console.log("DiscoveryService: postSendersToRegistry");
         const senderModels = this.nmosMediator
             .getNode()
             .getAllSenderModels();
 
-        await Promise.all(senderModels.map(async sender => {
+        return await Promise.all(senderModels.map(async sender => {
             try {
-                await this.nmosRegistryHttpClient.postResource(sender, "sender");
+                return await this.nmosRegistryHttpClient.postResource(sender, "sender");
             } catch (error) {
-                console.log(error.response.data);
+                console.error(error.response.data);
+                return error.response;
             }
         }));
     }
 
     public async postFlowsToRegistry() {
-        console.log("DiscoveryService: postFlowsToRegistry");
         const flowModels = this.nmosMediator
             .getNode()
             .getAllFlowModels();
 
-        await Promise.all(flowModels.map(async flow => {
+        let responses = await Promise.all(flowModels.map(async flow => {
             try {
                 await this.nmosRegistryHttpClient.postResource(flow, "flow");
             } catch (error) {
-                console.log(error.response.data);
+                console.error(error.response.data);
+                return error;
             }
         }));
+
+        return responses;
     }
 
     public async updateResource(resource: any, type: string) {
         try {
-            await this.nmosRegistryHttpClient.postResource(resource, type);
-            console.log("DiscoveryService: updatingResource ", resource.label, type);
+            return await this.nmosRegistryHttpClient.postResource(resource, type);
         } catch (error) {
-            console.log(error.response.data);
+            console.error(error.response.data);
+            return error.response;
         }
     }
 

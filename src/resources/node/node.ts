@@ -101,19 +101,29 @@ export class Node extends ResourceCore {
 
 
     // receivers
+    // IMPORTANT: .reduce has to be surrounded with try/catch, as it will throw an error on an empty array
     public getReceiver(receiverId: string): IReceiver {
-        const receiverList: IReceiver[] = this.deviceList
-            .map(device => device.getReceiverList())
-            .reduce((acc, curr) => acc.concat(curr));
+        let receiverList: IReceiver[];
+        try {
+            receiverList = this.deviceList
+                .map(device => device.getReceiverList())
+                .reduce((acc, curr) => acc.concat(curr));
+        } catch (error) {
+            return;
+        }
 
         return receiverList
             .find(sender => sender.id === receiverId);
     }
 
     public getAllReceivers(): IReceiver[] {
-        return this.deviceList
-            .map(device => device.getReceiverList())
-            .reduce((acc, curr) => acc.concat(curr));
+        try {
+            return this.deviceList
+                .map(device => device.getReceiverList())
+                .reduce((acc, curr) => acc.concat(curr));
+        } catch (error) {
+            return [];
+        }
     }
 
     public getAllReceiverModels(): CollectionOfReceivers {
@@ -182,9 +192,13 @@ export class Node extends ResourceCore {
     }
 
     public getAllSources(): ISource[] {
-        return this.deviceList
-            .map(currDevice => currDevice.getSourceList())
-            .reduce((acc, curr) => acc.concat(curr));
+        try {
+            return this.deviceList
+                .map(currDevice => currDevice.getSourceList())
+                .reduce((acc, curr) => acc.concat(curr));
+        } catch (error) {
+            return []
+        }
     }
 
     public getAllSourceModels(): CollectionOfSources {

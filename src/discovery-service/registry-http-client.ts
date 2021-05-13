@@ -19,16 +19,11 @@ export class RegistryHttpClient {
 
 
     public async postResource(model: BaseResource, type: string): Promise<AxiosResponse> {
-        // Configure On Success callback. If no callback was passed, use default callback
-        // Build request url
-        console.log(`RegistryHttpClient: postResource(${model.label}, ${type})`);
-        // console.log( `Host: ${this.registryHost}`);
 
+        // Configure On Success callback. If no callback was passed, use default callback
         const url: URL = new URL("http://" + this.registryHost);
         url.pathname = `${REGISTER_RESOURCE_PATH}/`;
         const urlString = url.toString();
-
-        console.log( urlString );
 
         const requestBody = {
             type: type,
@@ -40,7 +35,7 @@ export class RegistryHttpClient {
             const response = await axios.post(urlString, requestBody);
             return response;
         } catch (error) {
-            console.log(error.response.status, type);
+            console.error(error.response.status, type);
             return error.response;
         }
     }
@@ -48,20 +43,17 @@ export class RegistryHttpClient {
     public async deleteResource(model: BaseResource, type: string): Promise<AxiosResponse> {
         // Configure On Success callback. If no callback was passed, use default callback
         // Build request url
-        console.log(`RegistryHttpClient: deleteResource(${model.label}, ${type})`);
-        // console.log( `Host: ${this.registryHost}`);
 
         const url: URL = new URL("http://" + this.registryHost);
         url.pathname = `${DELETE_RESOURCE_PATH}/${type}/${model.id}`;
         const urlString = url.toString();
-        console.log( urlString );
 
         // Perform the http request with the help of the axios api
         try {
             const response = await axios.delete(urlString);
             return response;
         } catch (error) {
-            console.log(error.response.status, type);
+            console.error(error.response.status, type);
             return error.response;
         }
     }

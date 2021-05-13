@@ -36,7 +36,6 @@ export class MdnsService {
 
     // Set a new nodeid to perform a nodeId against. If a registry exists, start a heartbeat
     public setNodeId(nodeId) {
-        console.log(`Setting the new nodeid to ${nodeId}`);
         if (this.nodeId == nodeId) { return; }
 
         this.nodeId = nodeId;
@@ -56,7 +55,6 @@ export class MdnsService {
 
     // Start listening on mdns responses (also perform an initial mdns request)
     private startMdnsService() {
-        console.log("MdnsService: startMdnsService");
 
         // Configure mdns library
         const mdns = multicastdns({
@@ -69,7 +67,6 @@ export class MdnsService {
 
             // Only process response if answer containd ptr entry with correct name entry
             if (!containsPTREntry(res)) {
-                console.log("No ptr entries in res.answers!");
                 return;
             }
 
@@ -127,7 +124,6 @@ export class MdnsService {
 
     // select the best registry according to the nmow amwa specifications;
     private selectRegistry() {
-        console.log("Selecting registry out of a number of ", this.registryList.length);
         if (this.registryList.length < 1) {
             this.selectedRegistry = null;
             return;
@@ -152,8 +148,6 @@ export class MdnsService {
 
     // Callback if a new registry has been selected
     private onNewRegistrySelected() {
-        console.log("MdnsService: OnNewRegistrySelected...");
-
         this.stopHeartbeat();
 
         if (this.nodeId) {
@@ -164,7 +158,6 @@ export class MdnsService {
 
     // Trigger a mdns query
     private performMdnsQuery(mdns) {
-        console.log("MdnsService: performMdnsQuery");
         const registryServiceType = '_nmos-register._tcp.local';
 
         const query = {
@@ -175,7 +168,6 @@ export class MdnsService {
         };
 
         mdns.query(query);
-        console.log("MdnsService: performMdnsQuery - finished");
     }
 
 
