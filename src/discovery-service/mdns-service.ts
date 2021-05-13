@@ -172,7 +172,6 @@ export class MdnsService {
 
 
     private startHeartbeat() {
-        console.log(`MdnsService: startHeartbeat(${this.nodeId})`);
         if (this.isHeartbeating) {
             this.stopHeartbeat();
             setTimeout(() => {
@@ -194,7 +193,6 @@ export class MdnsService {
 
         axios.post(url.toString())
             .then((response) => {
-                console.log("Heartbeat response: ", response.status);
                 setTimeout(() => {
                     if (this.isHeartbeating) {
                         this.performHeartbeat();
@@ -205,16 +203,12 @@ export class MdnsService {
                 }, this.HEARTBEAT_INTERVAL_IN_S * 1000);
             })
             .catch((error) => {
-                console.log(`MdnsService: performingHearbeat(${this.nodeId}): Request Error!: ${error.response.statusCode}`);
-                // on 404 : node is not known in the registry! > node must reregister each of its resources! (onNodeNotFound)
-
                 this.onHeartbeatError();
             });
 
     }
 
     private stopHeartbeat() {
-        console.log("Stopping heartbeat");
         this.isHeartbeating = false;
     }
 

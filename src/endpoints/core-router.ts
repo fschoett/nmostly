@@ -44,7 +44,6 @@ export class CoreRouter{
     // independently to module creation
     public startServer(){
         this.router.listen( this.port, () => {
-            console.log( "CoreRouter: started http server.. Listening on Port: " , this.port );
         });
     }
 

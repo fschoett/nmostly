@@ -128,7 +128,7 @@ export class NmosConnectionRouter{
             const updatedSender = req.body;
             const response: StagedSenderResource= cntrlr.onPatchSenderStaged(senderId, updatedSender);
             if( response ){ returnJson ( res, response )}
-            else{ console.log( "Patch invalid"); return400( res, "Wrong Patch")}
+            else{ return400( res, "Wrong Patch")}
         });
 
         this.router.get("/single/senders/:id/active/", (req, res) => {
@@ -190,7 +190,7 @@ export class NmosConnectionRouter{
             if( response ){
                 returnJson ( res, response )
             }
-            else{ console.log( "Patch invalid"); return400( res, "Wrong Patch")}
+            else{ return400( res, "Wrong Patch")}
         });
 
         this.router.get("/single/receivers/:id/active/", (req, res) => {
